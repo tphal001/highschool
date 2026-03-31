@@ -1,0 +1,305 @@
+/**
+ * =============================================================================
+ * EDIT THIS FILE TO UPDATE SITE CONTENT (single source of truth)
+ * =============================================================================
+ * Used by js/render.js on each page. Keep wording here; layout lives in HTML/JS.
+ */
+window.SITE_CONTENT = {
+  home: {
+    hero: {
+      badge: "50+ years of excellence · Est. 1976",
+      headline: "Where curiosity meets purpose.",
+      headlineAccent: "purpose",
+      subtext:
+        "Dr. Gadagkar High School, Satararoad nurtures scholarship, character, and leadership for every learner.",
+      image:
+        "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2000&q=80",
+      imageAlt: "Students on campus",
+      primaryCta: { label: "Apply Now", href: "admissions.html" },
+      secondaryCta: { label: "Contact Us", href: "contact.html" },
+      tertiaryCta: { label: "Latest news", href: "news.html" },
+    },
+    legacy: {
+      badge: "50+ Years",
+      title: "50+ Years of Excellence",
+      line:
+        "A legacy of learning, leadership, and community—built together since 1976.",
+      linkLabel: "Read our history →",
+      linkHref: "about.html#history",
+    },
+    aboutPreview: {
+      title: "About our school",
+      subtitle: "Rooted in tradition. Ready for tomorrow.",
+      paragraphs: [
+        "Founded in 1976, we have grown from a small neighbourhood school into a trusted institution serving generations of families in Satararoad and beyond.",
+        "Our focus is simple: strong academics, caring teachers, and a safe, inspiring environment where every student can thrive.",
+      ],
+      linkLabel: "About Us",
+      linkHref: "about.html",
+    },
+    alumniSpotlight: {
+      sectionTitle: "Alumni spotlight",
+      sectionSubtitle:
+        "Our graduates lead in science, public service, business, and the arts—across India and the world.",
+      story: {
+        quote:
+          "The values I learned here—integrity, discipline, and curiosity—still guide my career every day.",
+        name: "Priya Deshmukh",
+        role: "Class of 2012 · Civil services",
+        initials: "PD",
+      },
+      stats: [
+        { label: "Alumni worldwide", value: "12k+" },
+        { label: "Cities represented", value: "40+" },
+        { label: "Next reunion", value: "Oct 2026" },
+      ],
+      linkLabel: "Explore alumni & register",
+      linkHref: "alumni.html",
+    },
+  },
+
+  about: {
+    history: {
+      title: "Our history",
+      sinceYear: 1976,
+      paragraphs: [
+        "Dr. Gadagkar High School, Satararoad was established in 1976 with a modest campus and a bold vision: to offer quality education to every child in the community, regardless of background.",
+        "Over five decades, the school has expanded its facilities, deepened its academic programmes, and built a reputation for holistic development—academics, sports, arts, and service.",
+        "Today we celebrate 50+ years of excellence and look forward to the next chapter with the same spirit of innovation and care.",
+      ],
+    },
+    mission: {
+      title: "Mission",
+      text: "To empower students with knowledge, skills, and values so they contribute meaningfully to society and lead lives of purpose.",
+    },
+    vision: {
+      title: "Vision",
+      text: "To be a leading school where every learner is inspired to excel, innovate, and serve with compassion.",
+    },
+    principal: {
+      name: "Dr. (Mrs.) Anjali Kulkarni",
+      title: "Principal",
+      photo:
+        "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
+      message: [
+        "Welcome to Dr. Gadagkar High School, Satararoad.",
+        "Our school community believes that education is a partnership between students, families, and teachers. Together we nurture curiosity, resilience, and respect.",
+        "We invite you to explore our campus, meet our faculty, and discover how we can support your child’s journey.",
+      ],
+    },
+  },
+
+  academics: {
+    intro:
+      "A balanced curriculum with strong foundations in languages, mathematics, science, and social studies—plus enrichment in arts, sports, and life skills.",
+    programs: [
+      {
+        title: "Primary & middle school",
+        text: "Foundational literacy, numeracy, science discovery, and activity-based learning.",
+      },
+      {
+        title: "Secondary school",
+        text: "Board-aligned preparation with labs, projects, and career guidance.",
+      },
+      {
+        title: "Enrichment",
+        text: "Clubs in robotics, debate, music, sports, and community service.",
+      },
+    ],
+    curriculum: [
+      "State board / aligned syllabus with supplementary materials for depth and application.",
+      "Continuous assessment, projects, and parent–teacher collaboration.",
+      "Digital literacy and library resources across all levels.",
+    ],
+    facilities: [
+      "Science and computer laboratories",
+      "Library and reading rooms",
+      "Sports grounds and indoor games",
+      "Auditorium for arts and assemblies",
+      "Safe transport and campus security",
+    ],
+  },
+
+  news: {
+    intro: "Events, circulars, and official notices—updated regularly.",
+    events: [
+      {
+        date: "2026-04-12",
+        displayDate: "Apr 12, 2026",
+        title: "Annual day rehearsal schedule",
+        summary: "Grade-wise timings and venue details are shared with parents.",
+      },
+      {
+        date: "2026-04-05",
+        displayDate: "Apr 5, 2026",
+        title: "Inter-house sports meet",
+        summary: "Track and field events; students report in house colours.",
+      },
+    ],
+    circulars: [
+      {
+        date: "2026-03-28",
+        displayDate: "Mar 28, 2026",
+        title: "Fee payment window — Term II",
+        summary: "Online and offline options; deadline April 15.",
+      },
+      {
+        date: "2026-03-20",
+        displayDate: "Mar 20, 2026",
+        title: "Uniform vendor update",
+        summary: "Approved vendor list for summer uniforms.",
+      },
+    ],
+    notices: [
+      {
+        date: "2026-03-30",
+        displayDate: "Mar 30, 2026",
+        title: "Holiday — local festival",
+        summary: "School closed as per government notification.",
+      },
+      {
+        date: "2026-03-18",
+        displayDate: "Mar 18, 2026",
+        title: "PTM — schedule now",
+        summary: "Book slots via the parent portal.",
+      },
+    ],
+  },
+
+  /** Home page “quick” list (3 items); can mirror or subset of full announcements */
+  quickAnnouncements: [
+    {
+      datetime: "2026-03-28",
+      date: "Mar 28, 2026",
+      title: "Spring arts showcase — tickets",
+      excerpt: "Music, theater, and visual arts. Early-bird pricing ends April 5.",
+      href: "news.html",
+    },
+    {
+      datetime: "2026-03-22",
+      date: "Mar 22, 2026",
+      title: "Summer programmes registration",
+      excerpt: "STEM labs, creative writing, and sports camps.",
+      href: "news.html",
+    },
+    {
+      datetime: "2026-03-15",
+      date: "Mar 15, 2026",
+      title: "Parent–teacher conferences",
+      excerpt: "Book your slot through the portal.",
+      href: "news.html",
+    },
+  ],
+
+  gallery: {
+    intro: "Moments from campus life—celebrations, learning, and everyday joy.",
+    items: [
+      {
+        title: "Annual day",
+        category: "Events",
+        image:
+          "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Science lab",
+        category: "campus",
+        image:
+          "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Sports day",
+        category: "Events",
+        image:
+          "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Library",
+        category: "campus",
+        image:
+          "https://images.unsplash.com/photo-1521587760476-6c12a4b04090?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Art workshop",
+        category: "activities",
+        image:
+          "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80",
+      },
+      {
+        title: "Assembly",
+        category: "Events",
+        image:
+          "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80",
+      },
+    ],
+  },
+
+  alumni: {
+    intro:
+      "Our alumni network is our strength—mentors, role models, and lifelong friends.",
+    registrationBlurb:
+      "Register to stay connected, receive alumni news, and mentor current students.",
+    stories: [
+      {
+        quote:
+          "The teachers here taught me how to think—not just for exams, but for life.",
+        name: "Rahul Patil",
+        classYear: "2010",
+        role: "Engineer · Pune",
+        initials: "RP",
+      },
+      {
+        quote:
+          "The alumni network opened doors when I moved abroad; I still volunteer for campus events.",
+        name: "Neha Shah",
+        classYear: "2015",
+        role: "Healthcare · London",
+        initials: "NS",
+      },
+      {
+        quote:
+          "From robotics club to my startup, the foundation here was everything.",
+        name: "Vikram Singh",
+        classYear: "2018",
+        role: "Entrepreneur · Bengaluru",
+        initials: "VS",
+      },
+    ],
+    globalPresence: {
+      title: "Global presence",
+      subtitle: "Alumni chapters and representatives",
+      locations: [
+        { city: "Mumbai", region: "India" },
+        { city: "Pune", region: "India" },
+        { city: "Bengaluru", region: "India" },
+        { city: "Dubai", region: "UAE" },
+        { city: "London", region: "UK" },
+        { city: "Toronto", region: "Canada" },
+      ],
+    },
+    mapEmbedUrl:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d73.85!3d18.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMbjCsDMwJzAwLjAiTiA3M8KwNTEnMDAuMCJF!5e0!3m2!1sen!2sin!4v1",
+  },
+
+  admissions: {
+    intro:
+      "We welcome families who share our commitment to learning and values. Follow the steps below to apply.",
+    process: [
+      "Submit the inquiry form online or visit the school office.",
+      "Attend a campus tour and interaction with admissions.",
+      "Complete registration and document verification.",
+      "Receive confirmation and fee payment schedule.",
+    ],
+    requirements: [
+      "Birth certificate and previous school records",
+      "Passport-size photographs",
+      "Address proof (Aadhaar / utility bill)",
+      "Transfer certificate (if applicable)",
+    ],
+  },
+
+  contact: {
+    hours: "Mon–Sat · 9:00 AM – 4:00 PM",
+    mapEmbed:
+      "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d73.85!3d18.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMbjCsDMwJzAwLjAiTiA3M8KwNTEnMDAuMCJF!5e0!3m2!1sen!2sin!4v1",
+  },
+};
