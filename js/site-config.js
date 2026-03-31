@@ -4,13 +4,14 @@
  *
  * Deploy: push to GitHub → Vercel builds the same static site.
  *
- * FORMS (Contact, Admissions, Alumni):
- *   FormSubmit.co is NOT used (often shows “web server is down”).
- *   Use Web3Forms — free, works on Vercel:
- *     1. https://web3forms.com — sign up with tphalke9@gmail.com and copy your Access Key.
- *     2. Paste it into web3formsAccessKey below. Submissions go to that Gmail.
- *     3. In Web3Forms dashboard, add your site domain (e.g. highschool-gold.vercel.app) if asked.
- *     4. Push to GitHub and redeploy.
+ * FORMS (Contact, Admissions, Alumni) — Web3Forms:
+ *   1. Go to https://web3forms.com and sign in (use tphalke9@gmail.com if you want mail there).
+ *   2. When it asks to “Create a form” / “Add form” — that is normal. Create one form, name it anything
+ *      (e.g. “School website”). You are not building the HTML there; we already did in this project.
+ *   3. Open that form in the dashboard and copy the Access Key (long string).
+ *   4. Paste it into web3formsAccessKey below (quotes, one line).
+ *   5. If the dashboard has “Allowed domains” / “Sites”, add highschool-gold.vercel.app (or your domain).
+ *   6. Push to GitHub and redeploy Vercel.
  */
 window.SITE_CONFIG = {
   schoolName: "Dr. Gadagkar High School, Satararoad",
@@ -24,7 +25,7 @@ window.SITE_CONFIG = {
   contactEmail: "tphalke9@gmail.com",
 
   /** REQUIRED for forms. Get from https://web3forms.com - leave empty until set (forms show setup instructions). */
-  web3formsAccessKey: "",
+  web3formsAccessKey: "0fcbbf69-3552-4c1e-9f97-bba9b7e3daeb",
 
   /** Optional: full https URL to thank-you.html after submit. Leave "" to auto from current site. */
   formThankYouUrl: "",
