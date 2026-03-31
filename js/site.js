@@ -51,10 +51,7 @@
     });
   }
 
-  /**
-   * Only block placeholder forms. FormSubmit uses a normal browser POST to
-   * https://formsubmit.co/… (no fetch) so it works on Vercel and avoids CORS/AJAX issues.
-   */
+  /** Only block placeholder forms (action "#"). Real forms POST to Web3Forms (see render.js). */
   function initForms() {
     document.addEventListener(
       "submit",

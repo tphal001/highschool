@@ -21,6 +21,8 @@
     return next;
   }
 
+  var WEB3_FORMS_ACTION = "https://api.web3forms.com/submit";
+
   function web3formsEnabled() {
     var k = (window.SITE_CONFIG && window.SITE_CONFIG.web3formsAccessKey || "").trim();
     if (!k) return false;
@@ -28,47 +30,47 @@
     return true;
   }
 
-  /**
-   * Form action URL. Prefer Web3Forms (works reliably on Vercel); else FormSubmit.co.
-   */
-  function formActionUrl() {
-    var cfg = window.SITE_CONFIG || {};
-    if (web3formsEnabled()) {
-      return "https://api.web3forms.com/submit";
-    }
-    var email = (cfg.formSubmissionEmail || cfg.contactEmail || "").trim();
-    if (!email) return "#";
-    return "https://formsubmit.co/" + email;
-  }
-
-  function formPostExtras(subjectLine) {
+  /** Hidden fields for Web3Forms (replaces FormSubmit.co — that service often errors or is unreachable). */
+  function web3FormHiddenFields(subjectLine) {
+    if (!web3formsEnabled()) return "";
     var cfg = window.SITE_CONFIG || {};
     var next = thankYouRedirectUrl();
-
-    if (web3formsEnabled()) {
-      var out =
-        '<input type="hidden" name="access_key" value="' +
-        esc((cfg.web3formsAccessKey || "").trim()) +
-        '" />' +
-        '<input type="hidden" name="subject" value="' +
-        esc(subjectLine) +
-        '" />';
-      if (next) {
-        out += '<input type="hidden" name="redirect" value="' + esc(next) + '" />';
-      }
-      return out;
-    }
-
     var out =
-      '<input type="hidden" name="_subject" value="' +
+      '<input type="hidden" name="access_key" value="' +
+      esc((cfg.web3formsAccessKey || "").trim()) +
+      '" />' +
+      '<input type="hidden" name="subject" value="' +
       esc(subjectLine) +
       '" />';
     if (next) {
-      out += '<input type="hidden" name="_next" value="' + esc(next) + '" />';
+      out += '<input type="hidden" name="redirect" value="' + esc(next) + '" />';
     }
-    out +=
-      '<input type="text" name="_gotcha" style="display:none" tabindex="-1" autocomplete="off" aria-hidden="true" />';
     return out;
+  }
+
+  function web3FormsSetupNoticeHtml() {
+    var mail = (window.SITE_CONFIG && window.SITE_CONFIG.contactEmail) || "";
+    var mailto = mail ? 'mailto:' + esc(mail) : "#";
+    return (
+      '<div class="rounded-xl border border-amber-400 bg-amber-50 p-6 text-amber-950">' +
+      '<p class="font-display text-lg font-semibold text-school-navy">Set up form delivery (one-time)</p>' +
+      '<p class="mt-2 text-sm leading-relaxed">' +
+      "FormSubmit.co is unreliable (e.g. “web server is down”). This site uses <strong>Web3Forms</strong> so messages go to your Gmail." +
+      "</p>" +
+      '<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm">' +
+      '<li>Open <a href="https://web3forms.com" class="font-semibold underline" target="_blank" rel="noopener">web3forms.com</a> and create a free access key for your inbox.</li>' +
+      '<li>In <code class="rounded bg-white px-1 py-0.5 text-xs">js/site-config.js</code>, paste the key into <code class="rounded bg-white px-1 py-0.5 text-xs">web3formsAccessKey</code>.</li>' +
+      "<li>Push to GitHub and redeploy on Vercel.</li>" +
+      "</ol>" +
+      (mail
+        ? '<p class="mt-4 text-sm">Until then, email <a href="' +
+          mailto +
+          '" class="font-semibold underline">' +
+          esc(mail) +
+          "</a> directly.</p>"
+        : "") +
+      "</div>"
+    );
   }
 
   function cardFromData(a) {
@@ -501,19 +503,22 @@
       '<p class="mt-2 text-slate-600">' +
       esc(a.registrationBlurb) +
       "</p>" +
-      '<form class="alumni-form mt-6 grid gap-4 sm:grid-cols-2" action="' +
-      esc(formActionUrl()) +
-      '" method="POST">' +
-      formPostExtras("Dr. Gadagkar High School — Alumni registration") +
-      '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-name">Full name</label><input id="alumni-name" name="name" type="text" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium text-slate-700" for="alumni-year">Class year</label><input id="alumni-year" name="classYear" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium text-slate-700" for="alumni-city">City</label><input id="alumni-city" name="city" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium text-slate-700" for="alumni-email">Email</label><input id="alumni-email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium text-slate-700" for="alumni-phone">Phone</label><input id="alumni-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-profession">Profession / organisation</label><input id="alumni-profession" name="profession" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-msg">Message</label><textarea id="alumni-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-      '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-school-navy px-8 py-3 font-semibold text-white transition hover:bg-slate-800">Submit registration</button> <span class="ml-2 text-sm text-slate-500">Delivered to the school office email.</span></div>' +
-      "</form></section></div>";
+      (web3formsEnabled()
+        ? '<form class="alumni-form mt-6 grid gap-4 sm:grid-cols-2" action="' +
+          esc(WEB3_FORMS_ACTION) +
+          '" method="POST">' +
+          web3FormHiddenFields("Dr. Gadagkar High School — Alumni registration") +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-name">Full name</label><input id="alumni-name" name="name" type="text" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium text-slate-700" for="alumni-year">Class year</label><input id="alumni-year" name="classYear" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium text-slate-700" for="alumni-city">City</label><input id="alumni-city" name="city" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium text-slate-700" for="alumni-email">Email</label><input id="alumni-email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium text-slate-700" for="alumni-phone">Phone</label><input id="alumni-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-profession">Profession / organisation</label><input id="alumni-profession" name="profession" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-msg">Message</label><textarea id="alumni-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-school-navy px-8 py-3 font-semibold text-white transition hover:bg-slate-800">Submit registration</button> <span class="ml-2 text-sm text-slate-500">Sent via Web3Forms to your configured inbox.</span></div>' +
+          "</form>"
+        : web3FormsSetupNoticeHtml()) +
+      "</section></div>";
   }
 
   function renderAdmissionsPage() {
@@ -543,18 +548,21 @@
       "</ul></section></div>" +
       '<section class="mt-12 rounded-2xl border border-amber-200/80 bg-amber-50/50 p-8" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-school-navy">Inquiry form</h2>' +
-      '<form class="inquiry-form mt-6 grid gap-4 sm:grid-cols-2" action="' +
-      esc(formActionUrl()) +
-      '" method="POST">' +
-      formPostExtras("Dr. Gadagkar High School — Admissions inquiry") +
-      '<div><label class="block text-sm font-medium" for="in-name">Student name</label><input id="in-name" name="studentName" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium" for="in-grade">Grade seeking</label><input id="in-grade" name="grade" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium" for="in-parent">Parent / guardian</label><input id="in-parent" name="parentName" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium" for="in-phone">Phone</label><input id="in-phone" name="phone" type="tel" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-email">Email</label><input id="in-email" name="email" type="email" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-msg">Message</label><textarea id="in-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-      '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-school-gold px-8 py-3 font-semibold text-school-navy hover:bg-amber-400">Submit inquiry</button></div>' +
-      "</form></section>";
+      (web3formsEnabled()
+        ? '<form class="inquiry-form mt-6 grid gap-4 sm:grid-cols-2" action="' +
+          esc(WEB3_FORMS_ACTION) +
+          '" method="POST">' +
+          web3FormHiddenFields("Dr. Gadagkar High School — Admissions inquiry") +
+          '<div><label class="block text-sm font-medium" for="in-name">Student name</label><input id="in-name" name="studentName" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="in-grade">Grade seeking</label><input id="in-grade" name="grade" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="in-parent">Parent / guardian</label><input id="in-parent" name="parentName" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="in-phone">Phone</label><input id="in-phone" name="phone" type="tel" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-email">Email</label><input id="in-email" name="email" type="email" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-msg">Message</label><textarea id="in-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-school-gold px-8 py-3 font-semibold text-school-navy hover:bg-amber-400">Submit inquiry</button></div>' +
+          "</form>"
+        : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
+      "</section>";
   }
 
   function renderContactPage() {
@@ -588,17 +596,20 @@
       '"></iframe></div></div>' +
       '<div data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-school-navy">Send a message</h2>' +
-      '<form id="contact-form" class="contact-form mt-6 grid gap-4" action="' +
-      esc(formActionUrl()) +
-      '" method="POST">' +
-      formPostExtras("Dr. Gadagkar High School — Website contact") +
-      '<div><label class="block text-sm font-medium" for="cf-name">Name</label><input id="cf-name" name="name" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium" for="cf-email">Email</label><input id="cf-email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium" for="cf-phone">Phone</label><input id="cf-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium" for="cf-subject">Subject</label><input id="cf-subject" name="subject" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-      '<div><label class="block text-sm font-medium" for="cf-msg">Message</label><textarea id="cf-msg" name="message" rows="4" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-      '<div><button type="submit" class="rounded-full bg-school-navy px-8 py-3 font-semibold text-white hover:bg-slate-800">Send message</button></div>' +
-      "</form></div></div>";
+      (web3formsEnabled()
+        ? '<form id="contact-form" class="contact-form mt-6 grid gap-4" action="' +
+          esc(WEB3_FORMS_ACTION) +
+          '" method="POST">' +
+          web3FormHiddenFields("Dr. Gadagkar High School — Website contact") +
+          '<div><label class="block text-sm font-medium" for="cf-name">Name</label><input id="cf-name" name="name" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="cf-email">Email</label><input id="cf-email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="cf-phone">Phone</label><input id="cf-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="cf-subject">Subject</label><input id="cf-subject" name="topic" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="cf-msg">Message</label><textarea id="cf-msg" name="message" rows="4" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
+          '<div><button type="submit" class="rounded-full bg-school-navy px-8 py-3 font-semibold text-white hover:bg-slate-800">Send message</button></div>' +
+          "</form>"
+        : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
+      "</div></div>";
   }
 
   function runPageRenderer() {
