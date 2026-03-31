@@ -8,15 +8,7 @@
     return d.innerHTML;
   }
 
-  /** FormSubmit.co — POST to this URL delivers fields to the given email (static sites, no backend). */
-  function formActionUrl() {
-    var cfg = window.SITE_CONFIG || {};
-    var email = (cfg.formSubmissionEmail || cfg.contactEmail || "").trim();
-    if (!email) return "#";
-    return "https://formsubmit.co/" + email;
-  }
-
-  function formPostExtras(subjectLine) {
+  function thankYouRedirectUrl() {
     var cfg = window.SITE_CONFIG || {};
     var next = (cfg.formThankYouUrl || "").trim();
     if (!next && typeof window !== "undefined" && window.location.protocol !== "file:") {
@@ -26,6 +18,47 @@
         next = "";
       }
     }
+    return next;
+  }
+
+  function web3formsEnabled() {
+    var k = (window.SITE_CONFIG && window.SITE_CONFIG.web3formsAccessKey || "").trim();
+    if (!k) return false;
+    if (/YOUR_|PLACEHOLDER|CHANGE_ME|^xxx/i.test(k)) return false;
+    return true;
+  }
+
+  /**
+   * Form action URL. Prefer Web3Forms (works reliably on Vercel); else FormSubmit.co.
+   */
+  function formActionUrl() {
+    var cfg = window.SITE_CONFIG || {};
+    if (web3formsEnabled()) {
+      return "https://api.web3forms.com/submit";
+    }
+    var email = (cfg.formSubmissionEmail || cfg.contactEmail || "").trim();
+    if (!email) return "#";
+    return "https://formsubmit.co/" + email;
+  }
+
+  function formPostExtras(subjectLine) {
+    var cfg = window.SITE_CONFIG || {};
+    var next = thankYouRedirectUrl();
+
+    if (web3formsEnabled()) {
+      var out =
+        '<input type="hidden" name="access_key" value="' +
+        esc((cfg.web3formsAccessKey || "").trim()) +
+        '" />' +
+        '<input type="hidden" name="subject" value="' +
+        esc(subjectLine) +
+        '" />';
+      if (next) {
+        out += '<input type="hidden" name="redirect" value="' + esc(next) + '" />';
+      }
+      return out;
+    }
+
     var out =
       '<input type="hidden" name="_subject" value="' +
       esc(subjectLine) +

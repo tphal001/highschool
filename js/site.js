@@ -1,3 +1,4 @@
+/* site.js — forms use native POST (see render.js). No fetch. Redeploy after edits. */
 (function () {
   function initHeaderScroll() {
     var header = document.getElementById("site-header");
@@ -50,6 +51,10 @@
     });
   }
 
+  /**
+   * Only block placeholder forms. FormSubmit uses a normal browser POST to
+   * https://formsubmit.co/… (no fetch) so it works on Vercel and avoids CORS/AJAX issues.
+   */
   function initForms() {
     document.addEventListener(
       "submit",
@@ -57,68 +62,9 @@
         var form = e.target;
         if (form.tagName !== "FORM") return;
         var action = form.getAttribute("action") || "";
-
         if (action === "#" || action === "" || action == null) {
           e.preventDefault();
-          return;
         }
-
-        if (
-          action.indexOf("https://formsubmit.co/") !== 0 ||
-          action.indexOf("/ajax/") !== -1
-        ) {
-          return;
-        }
-
-        e.preventDefault();
-
-        if (window.location.protocol === "file:") {
-          alert(
-            "Forms cannot send when you open the site as a file (address starts with file://).\n\n" +
-              "Do this instead:\n" +
-              "1. Open a terminal in your project folder.\n" +
-              "2. Run: npx --yes serve .\n" +
-              "3. In the browser, open the http://localhost link it prints.\n\n" +
-              "Then use Submit / Send message again."
-          );
-          return;
-        }
-
-        var cfg = typeof window.SITE_CONFIG !== "undefined" ? window.SITE_CONFIG : {};
-        var email = (cfg.formSubmissionEmail || cfg.contactEmail || "").trim();
-        if (!email) {
-          alert("Form email is not configured in js/site-config.js.");
-          return;
-        }
-
-        var ajaxUrl = "https://formsubmit.co/ajax/" + encodeURIComponent(email);
-        var fd = new FormData(form);
-        fd.delete("_next");
-
-        fetch(ajaxUrl, {
-          method: "POST",
-          body: fd,
-          headers: { Accept: "application/json" },
-        })
-          .then(function (res) {
-            if (res.ok) return res.json().catch(function () {
-              return {};
-            });
-            throw new Error("Bad response");
-          })
-          .then(function (data) {
-            if (data && data.success === false) {
-              throw new Error(data.message || "Submission rejected");
-            }
-            var thanks = (cfg.formThankYouUrl || "").trim();
-            window.location.href = thanks || "thank-you.html";
-          })
-          .catch(function () {
-            alert(
-              "Could not send the form. Check your internet connection, confirm the form email on FormSubmit.co, and try again. " +
-              "If the problem continues, serve the site over http://localhost (npx serve .) or deploy to HTTPS."
-            );
-          });
       },
       true
     );
