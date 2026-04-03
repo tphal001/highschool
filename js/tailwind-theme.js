@@ -18,10 +18,8 @@ tailwind.config = {
           /** Gold — links, buttons, hairlines */
           accent: "#b8860b",
           accentLight: "#d4af37",
-          /** Warm beige page background (not stark white) */
-          light: "#f3ece0",
-          /** Slightly deeper warm band for alternating sections */
-          band: "#e8e0d4",
+          /** Light cream page fill — keeps inner sections (often white) feeling bright */
+          light: "#f5f2eb",
           /** Dark top strip behind contact */
           topbar: "#2c1810",
           /** Main nav background */
@@ -34,7 +32,7 @@ tailwind.config = {
           navy: "#6b1e1e",
           slate: "#334155",
           gold: "#b8860b",
-          cream: "#f3ece0",
+          cream: "#f5f2eb",
         },
       },
       transitionTimingFunction: {

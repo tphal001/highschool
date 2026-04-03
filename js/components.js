@@ -287,9 +287,9 @@
       var infoBoxes = buildHeaderInfoBoxes();
 
       this.innerHTML =
-        '<header id="site-header" class="fixed inset-x-0 top-0 z-50 border-b border-slate-200/80 bg-mes-light shadow-sm transition-shadow duration-500 ease-premium">' +
+        '<header id="site-header" class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 bg-white shadow-sm transition-shadow duration-500 ease-premium">' +
         buildTopBar() +
-        '<div class="relative bg-gradient-to-r from-mes-light via-amber-50/25 to-mes-light">' +
+        '<div class="relative bg-gradient-to-r from-mes-light/70 via-white to-white">' +
         '<div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-8 sm:py-5 lg:px-10">' +
         '<a href="' +
         esc(logoHref) +
