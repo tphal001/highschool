@@ -188,6 +188,7 @@
     var prev = document.getElementById("hero-prev");
     var next = document.getElementById("hero-next");
     var dotsRoot = document.getElementById("hero-dots");
+    var sliderEl = document.getElementById("hero-slider");
     if (!img || !prev || !next || !dotsRoot) return;
     var C = window.SITE_CONTENT || {};
     var h = C.home && C.home.hero;
@@ -202,6 +203,32 @@
       return;
     }
     var i = 0;
+    var INTERVAL_MS = 5000;
+    var timerId = null;
+    var prefersReducedMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function stopAuto() {
+      if (timerId) {
+        clearInterval(timerId);
+        timerId = null;
+      }
+    }
+
+    function startAuto() {
+      if (prefersReducedMotion) return;
+      stopAuto();
+      timerId = setInterval(function () {
+        i = (i + 1) % slides.length;
+        update();
+      }, INTERVAL_MS);
+    }
+
+    function onManualNav() {
+      if (!prefersReducedMotion) startAuto();
+    }
+
     function renderDots() {
       dotsRoot.innerHTML = slides
         .map(function (_, j) {
@@ -220,6 +247,7 @@
         btn.addEventListener("click", function () {
           i = parseInt(btn.getAttribute("data-idx") || "0", 10);
           update();
+          onManualNav();
         });
       });
     }
@@ -230,12 +258,27 @@
     prev.addEventListener("click", function () {
       i = (i - 1 + slides.length) % slides.length;
       update();
+      onManualNav();
     });
     next.addEventListener("click", function () {
       i = (i + 1) % slides.length;
       update();
+      onManualNav();
     });
     renderDots();
+    startAuto();
+
+    if (sliderEl) {
+      sliderEl.addEventListener("mouseenter", stopAuto);
+      sliderEl.addEventListener("mouseleave", startAuto);
+    }
+    document.addEventListener("visibilitychange", function () {
+      if (document.hidden) {
+        stopAuto();
+      } else {
+        startAuto();
+      }
+    });
   }
 
   function initPage() {
