@@ -206,10 +206,10 @@
         "</span>" +
         "<span>" +
         esc(fr.footerLine || "") +
-        '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p></div></a>' +
+        '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
         '<p class="mt-3 text-xs leading-relaxed text-slate-600">' +
         "Every contribution, large or small, helps us move closer to our goal. Thank you for believing in our students and our mission." +
-        "</p></aside></div></div>";
+        "</p></div></a></aside></div></div>";
     }
 
     var leg = document.getElementById("home-legacy");
