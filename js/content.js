@@ -46,9 +46,9 @@ window.SITE_CONTENT = {
       "sectionSubtitle": "Our graduates lead in science, public service, business, and the arts—across India and the world.",
       "story": {
         "quote": "The values I learned here—integrity, discipline, and curiosity—still guide my career every day.",
-        "name": "Priya Deshmukh",
-        "role": "Class of 2012 · Civil services",
-        "initials": "PD"
+        "name": "Tushar Phalke",
+        "role": "Class of 2008 · Software Development Specialist",
+        "initials": "TP"
       },
       "stats": [
         {

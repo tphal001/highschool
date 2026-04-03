@@ -206,7 +206,10 @@
         "</span>" +
         "<span>" +
         esc(fr.footerLine || "") +
-        '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p></div></a></aside></div></div>';
+        '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p></div></a>' +
+        '<p class="mt-3 text-xs leading-relaxed text-slate-600">' +
+        "Every contribution, large or small, helps us move closer to our goal. Thank you for believing in our students and our mission." +
+        "</p></aside></div></div>";
     }
 
     var leg = document.getElementById("home-legacy");
@@ -968,7 +971,7 @@
             return (
               '<li><a href="' +
               esc(l.href) +
-              '" class="text-base font-semibold text-blue-800 hover:underline">' +
+              '" class="text-base font-semibold text-mes-primary transition hover:text-mes-accent hover:underline">' +
               esc(l.label) +
               "</a></li>"
             );
