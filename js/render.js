@@ -185,7 +185,6 @@
         '<h2 class="relative inline-block pb-2 font-display text-lg font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-14 after:bg-mes-red">' +
         esc(fr.sectionTitle || "Fund raising appeal") +
         "</h2>" +
-        '<div class="mt-2 h-px w-full bg-slate-200" aria-hidden="true"></div>' +
         "</div>" +
         '<h3 class="mt-4 text-sm font-bold leading-snug text-mes-primary">' +
         esc(fr.title || "") +
@@ -207,7 +206,7 @@
         "<span>" +
         esc(fr.footerLine || "") +
         '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
-        '<p class="mt-3 text-xs leading-relaxed text-mes-primary">' +
+        '<p class="mt-3 text-sm font-bold leading-snug text-mes-primary">' +
         "Every contribution, large or small, helps us move closer to our goal. Thank you for believing in our students and our mission." +
         "</p></div></a></aside></div></div>";
     }
