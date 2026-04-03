@@ -1,5 +1,14 @@
-/* site.js — forms use native POST (see render.js). No fetch. Redeploy after edits. */
+/* site.js — forms use native POST. No fetch. */
 (function () {
+  /** Merge flash news from SITE_CONTENT into SITE_CONFIG for the Home modal */
+  if (typeof window.SITE_CONTENT !== "undefined" && window.SITE_CONTENT.flashNews) {
+    window.SITE_CONFIG = window.SITE_CONFIG || {};
+    window.SITE_CONFIG.vimpNews = Object.assign(
+      {},
+      window.SITE_CONFIG.vimpNews || {},
+      window.SITE_CONTENT.flashNews
+    );
+  }
   function initHeaderScroll() {
     var header = document.getElementById("site-header");
     function onScroll() {
@@ -51,7 +60,7 @@
     });
   }
 
-  /** Only block placeholder forms (action "#"). Real forms POST to Web3Forms (see render.js). */
+  /** Only block placeholder forms (action "#"). Real forms POST to Web3Forms. */
   function initForms() {
     document.addEventListener(
       "submit",
@@ -67,10 +76,175 @@
     );
   }
 
+  function initCopyPageUrl() {
+    document.querySelectorAll(".js-copy-page-url").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var url = btn.getAttribute("data-url") || "";
+        if (!url && typeof window !== "undefined") url = window.location.href;
+        if (!navigator.clipboard || !navigator.clipboard.writeText) return;
+        navigator.clipboard.writeText(url).then(function () {
+          var prev = btn.getAttribute("aria-label") || "Copy link";
+          btn.setAttribute("aria-label", "Copied");
+          setTimeout(function () {
+            btn.setAttribute("aria-label", prev);
+          }, 2000);
+        });
+      });
+    });
+  }
+
+  function initVimpNewsModal() {
+    var cfg = typeof window.SITE_CONFIG !== "undefined" ? window.SITE_CONFIG : {};
+    var vn = cfg.vimpNews;
+    if (!vn || !vn.enabled) return;
+
+    var homeBase =
+      ((cfg.homePageHref || "index.html").trim().split("#")[0] || "index.html");
+    var flashHash = "#flash-news";
+
+    var modal = document.getElementById("vimp-news-modal");
+    var img = document.getElementById("vimp-news-img");
+
+    var open = false;
+    function setOpen(shouldOpen) {
+      if (!modal) return;
+      open = shouldOpen;
+      if (shouldOpen) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
+        document.documentElement.classList.add("overflow-hidden");
+      } else {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        document.body.classList.remove("overflow-hidden");
+        document.documentElement.classList.remove("overflow-hidden");
+      }
+    }
+
+    /**
+     * Capture phase + always preventDefault: same-page href="index.html" often triggers a full reload
+     * on first click; that prevented the modal from opening until a second click.
+     * From other pages we go to index.html#flash-news and open after load (no modal on plain index load).
+     */
+    document.addEventListener(
+      "click",
+      function (e) {
+        var a = e.target.closest && e.target.closest("a.js-nav-home-vimp");
+        if (!a) return;
+        e.preventDefault();
+        if (document.body.getAttribute("data-page") === "home") {
+          setOpen(true);
+        } else {
+          window.location.href = homeBase + flashHash;
+        }
+      },
+      true
+    );
+
+    if (!modal || !img) return;
+
+    var url = (vn.imageUrl || "").trim();
+    if (url) {
+      img.src = url;
+      img.alt = (vn.imageAlt || "Flash news").trim() || "Flash news";
+    }
+
+    modal.querySelectorAll("[data-vimp-dismiss]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        setOpen(false);
+      });
+    });
+
+    document.addEventListener(
+      "keydown",
+      function (e) {
+        if (e.key !== "Escape" || !open) return;
+        setOpen(false);
+      },
+      true
+    );
+
+    if (location.hash === flashHash) {
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(
+          null,
+          "",
+          window.location.pathname + window.location.search
+        );
+      } else {
+        window.location.hash = "";
+      }
+      window.requestAnimationFrame(function () {
+        window.requestAnimationFrame(function () {
+          setOpen(true);
+        });
+      });
+    }
+  }
+
+  function initHeroSlider() {
+    var img = document.getElementById("hero-slide-img");
+    var prev = document.getElementById("hero-prev");
+    var next = document.getElementById("hero-next");
+    var dotsRoot = document.getElementById("hero-dots");
+    if (!img || !prev || !next || !dotsRoot) return;
+    var C = window.SITE_CONTENT || {};
+    var h = C.home && C.home.hero;
+    var slides = (h && h.slides && h.slides.length && h.slides) || [];
+    if (!slides.length && h && h.image) slides = [h.image];
+    if (slides.length <= 1) {
+      dotsRoot.innerHTML = "";
+      prev.setAttribute("aria-hidden", "true");
+      next.setAttribute("aria-hidden", "true");
+      prev.classList.add("pointer-events-none", "opacity-30");
+      next.classList.add("pointer-events-none", "opacity-30");
+      return;
+    }
+    var i = 0;
+    function renderDots() {
+      dotsRoot.innerHTML = slides
+        .map(function (_, j) {
+          return (
+            '<button type="button" class="h-2 w-2 rounded-full transition ' +
+            (j === i ? "bg-mes-accentLight" : "bg-white/50") +
+            '" data-idx="' +
+            j +
+            '" aria-label="Slide ' +
+            (j + 1) +
+            '"></button>'
+          );
+        })
+        .join("");
+      dotsRoot.querySelectorAll("button").forEach(function (btn) {
+        btn.addEventListener("click", function () {
+          i = parseInt(btn.getAttribute("data-idx") || "0", 10);
+          update();
+        });
+      });
+    }
+    function update() {
+      img.src = slides[i];
+      renderDots();
+    }
+    prev.addEventListener("click", function () {
+      i = (i - 1 + slides.length) % slides.length;
+      update();
+    });
+    next.addEventListener("click", function () {
+      i = (i + 1) % slides.length;
+      update();
+    });
+    renderDots();
+  }
+
   function initPage() {
     if (typeof window.renderPageContent === "function") {
       window.renderPageContent();
     }
+    initHeroSlider();
+    initVimpNewsModal();
+    initCopyPageUrl();
     initHeaderScroll();
     initReveal();
     initForms();
@@ -78,6 +252,7 @@
 
   window.initHeaderScroll = initHeaderScroll;
   window.initReveal = initReveal;
+  window.initHeroSlider = initHeroSlider;
   window.initPage = initPage;
 
   if (document.readyState === "loading") {

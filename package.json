@@ -1,0 +1,9 @@
+{
+  "name": "highschool-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-content.mjs",
+    "seed": "node scripts/seed-cms.mjs"
+  }
+}

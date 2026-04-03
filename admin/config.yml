@@ -1,0 +1,304 @@
+# Decap CMS — edit school content (commits to GitHub). Repo: tphal001/highschool
+# After GitHub OAuth setup, open: https://YOUR-DOMAIN/admin/
+
+backend:
+  name: github
+  repo: tphal001/highschool
+  branch: main
+
+media_folder: media/uploads
+public_folder: /media/uploads
+
+collections:
+  - name: school_content
+    label: School content
+    files:
+      - label: News, events & notices
+        name: news
+        file: content/cms/news.json
+        fields:
+          - { label: Intro, name: intro, widget: string }
+          - label: Events
+            name: events
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Date (YYYY-MM-DD), name: date, widget: string }
+              - { label: Display date, name: displayDate, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Summary, name: summary, widget: text }
+          - label: Circulars
+            name: circulars
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Date (YYYY-MM-DD), name: date, widget: string }
+              - { label: Display date, name: displayDate, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Summary, name: summary, widget: text }
+          - label: Notices
+            name: notices
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Date (YYYY-MM-DD), name: date, widget: string }
+              - { label: Display date, name: displayDate, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Summary, name: summary, widget: text }
+
+      - label: Gallery
+        name: gallery
+        file: content/cms/gallery.json
+        fields:
+          - { label: Intro, name: intro, widget: string }
+          - label: Items
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Category, name: category, widget: string }
+              - { label: Image URL, name: image, widget: string }
+
+      - label: Home page (hero, announcements)
+        name: home
+        file: content/cms/home.json
+        fields:
+          - label: Hero
+            name: hero
+            widget: object
+            collapsed: true
+            fields:
+              - label: Slide image URLs
+                name: slides
+                widget: list
+                field: { label: URL, name: slide, widget: string }
+              - { label: Image alt text, name: imageAlt, widget: string }
+              - { label: Badge, name: badge, widget: string }
+              - { label: Headline, name: headline, widget: string }
+              - { label: Headline accent word, name: headlineAccent, widget: string }
+              - { label: Subtext, name: subtext, widget: text }
+              - { label: Main hero image URL, name: image, widget: string }
+          - label: Fundraising card
+            name: fundraising
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Link (page), name: href, widget: string }
+              - { label: Section title, name: sectionTitle, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Image URL, name: image, widget: string }
+              - { label: Amount / goal line, name: amount, widget: string }
+              - { label: Footer line, name: footerLine, widget: string }
+          - label: Legacy strip
+            name: legacy
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Badge, name: badge, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Line, name: line, widget: text }
+              - { label: Link label, name: linkLabel, widget: string }
+              - { label: Link URL, name: linkHref, widget: string }
+          - label: About preview
+            name: aboutPreview
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Subtitle, name: subtitle, widget: string }
+              - label: Paragraphs
+                name: paragraphs
+                widget: list
+                field: { label: Paragraph, name: p, widget: text }
+              - { label: Link label, name: linkLabel, widget: string }
+              - { label: Link URL, name: linkHref, widget: string }
+          - label: Alumni spotlight
+            name: alumniSpotlight
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Section title, name: sectionTitle, widget: string }
+              - { label: Section subtitle, name: sectionSubtitle, widget: text }
+              - label: Story
+                name: story
+                widget: object
+                fields:
+                  - { label: Quote, name: quote, widget: text }
+                  - { label: Name, name: name, widget: string }
+                  - { label: Role, name: role, widget: string }
+                  - { label: Initials, name: initials, widget: string }
+              - label: Stats
+                name: stats
+                widget: list
+                fields:
+                  - { label: Label, name: label, widget: string }
+                  - { label: Value, name: value, widget: string }
+              - { label: Link label, name: linkLabel, widget: string }
+              - { label: Link URL, name: linkHref, widget: string }
+          - label: Quick announcements (home)
+            name: quickAnnouncements
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Datetime (YYYY-MM-DD), name: datetime, widget: string }
+              - { label: Display date, name: date, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Excerpt, name: excerpt, widget: text }
+              - { label: Link URL, name: href, widget: string }
+
+      - label: Flash news (Home click)
+        name: flash
+        file: content/cms/flash.json
+        fields:
+          - { label: Enabled, name: enabled, widget: boolean, default: true }
+          - { label: Image URL, name: imageUrl, widget: string }
+          - { label: Image alt text, name: imageAlt, widget: string }
+
+      - label: Alumni page
+        name: alumni
+        file: content/cms/alumni.json
+        fields:
+          - { label: Intro, name: intro, widget: text }
+          - { label: Registration blurb, name: registrationBlurb, widget: text }
+          - label: Stories
+            name: stories
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { label: Quote, name: quote, widget: text }
+              - { label: Name, name: name, widget: string }
+              - { label: Class year, name: classYear, widget: string }
+              - { label: Role, name: role, widget: string }
+              - { label: Initials, name: initials, widget: string }
+          - label: Global presence
+            name: globalPresence
+            widget: object
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Subtitle, name: subtitle, widget: string }
+              - label: Locations
+                name: locations
+                widget: list
+                fields:
+                  - { label: City, name: city, widget: string }
+                  - { label: Region, name: region, widget: string }
+          - { label: Map embed URL, name: mapEmbedUrl, widget: string }
+
+      - label: Fund appeal
+        name: fundAppeal
+        file: content/cms/fundAppeal.json
+        fields:
+          - { label: Page title, name: pageTitle, widget: string }
+          - { label: Created by line, name: createdBy, widget: string }
+          - { label: Hero image URL, name: heroImage, widget: string }
+          - label: Paragraphs
+            name: paragraphs
+            widget: list
+            field: { label: Paragraph, name: p, widget: text }
+          - { label: Raised (₹), name: raised, widget: number, value_type: int, min: 0 }
+          - { label: Goal (₹), name: goal, widget: number, value_type: int, min: 1 }
+          - { label: Donation count, name: donationCount, widget: number, value_type: int, min: 0 }
+          - { label: Donate button label, name: donateLabel, widget: string }
+          - { label: Donate link (page or https payment URL), name: donateHref, widget: string }
+          - label: Donors
+            name: donors
+            widget: list
+            summary: "{{fields.name}}"
+            fields:
+              - { label: Name, name: name, widget: string }
+              - { label: Amount (₹), name: amount, widget: number, value_type: int }
+              - { label: Initials, name: initials, widget: string }
+          - label: Payment page options
+            name: paymentOptions
+            widget: object
+            collapsed: true
+            fields:
+              - { label: Intro, name: intro, widget: text }
+              - { label: UPI ID (optional), name: upiId, widget: string }
+              - { label: Gateway URL (Razorpay etc.), name: gatewayUrl, widget: string }
+              - { label: Gateway button label, name: gatewayLabel, widget: string }
+              - label: Net banking lines
+                name: netBankingLines
+                widget: list
+                field: { label: Line, name: line, widget: string }
+          - { label: Footer credit line, name: poweredBy, widget: string }
+
+      - label: About page
+        name: about
+        file: content/cms/about.json
+        fields:
+          - label: History
+            name: history
+            widget: object
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Since year, name: sinceYear, widget: number }
+              - label: Paragraphs
+                name: paragraphs
+                widget: list
+                field: { label: Paragraph, name: p, widget: text }
+          - label: Mission
+            name: mission
+            widget: object
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Text, name: text, widget: text }
+          - label: Vision
+            name: vision
+            widget: object
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Text, name: text, widget: text }
+          - label: Principal
+            name: principal
+            widget: object
+            fields:
+              - { label: Name, name: name, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Photo URL, name: photo, widget: string }
+              - label: Message paragraphs
+                name: message
+                widget: list
+                field: { label: Paragraph, name: p, widget: text }
+
+      - label: Academics page
+        name: academics
+        file: content/cms/academics.json
+        fields:
+          - { label: Intro, name: intro, widget: text }
+          - label: Programs
+            name: programs
+            widget: list
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Text, name: text, widget: text }
+          - label: Curriculum (bullet lines)
+            name: curriculum
+            widget: list
+            field: { label: Line, name: line, widget: string }
+          - label: Facilities
+            name: facilities
+            widget: list
+            field: { label: Facility, name: line, widget: string }
+
+      - label: Admissions page
+        name: admissions
+        file: content/cms/admissions.json
+        fields:
+          - { label: Intro, name: intro, widget: text }
+          - label: Process steps
+            name: process
+            widget: list
+            field: { label: Step, name: step, widget: string }
+          - label: Requirements
+            name: requirements
+            widget: list
+            field: { label: Item, name: item, widget: string }
+
+      - label: Contact page
+        name: contact
+        file: content/cms/contact.json
+        fields:
+          - { label: Office hours, name: hours, widget: string }
+          - { label: Map embed URL, name: mapEmbed, widget: string }

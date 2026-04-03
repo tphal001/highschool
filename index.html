@@ -7,58 +7,11 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Fraunces:opsz,wght@9..144,600;9..144,700&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap"
       rel="stylesheet"
     />
     <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['"DM Sans"', "system-ui", "sans-serif"],
-              display: ['"Fraunces"', "Georgia", "serif"],
-            },
-            colors: {
-              school: {
-                navy: "#0f172a",
-                slate: "#1e293b",
-                gold: "#d4a853",
-                cream: "#faf8f5",
-              },
-            },
-            transitionTimingFunction: {
-              premium: "cubic-bezier(0.16, 1, 0.3, 1)",
-            },
-            transitionDuration: {
-              400: "400ms",
-              600: "600ms",
-              800: "800ms",
-            },
-            keyframes: {
-              "fade-in-up": {
-                "0%": { opacity: "0", transform: "translate3d(0, 32px, 0)" },
-                "100%": { opacity: "1", transform: "translate3d(0, 0, 0)" },
-              },
-              "fade-in": {
-                "0%": { opacity: "0" },
-                "100%": { opacity: "1" },
-              },
-              "gradient-shift": {
-                "0%, 100%": { backgroundPosition: "0% 50%" },
-                "50%": { backgroundPosition: "100% 50%" },
-              },
-            },
-            animation: {
-              "fade-in-up":
-                "fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards",
-              "fade-in": "fade-in 0.8s ease-out forwards",
-              "gradient-shift": "gradient-shift 12s ease-in-out infinite",
-            },
-          },
-        },
-      };
-    </script>
+    <script src="js/tailwind-theme.js"></script>
     <style>
       html {
         scroll-behavior: smooth;
@@ -97,44 +50,48 @@
     <script src="js/components.js"></script>
     <script src="js/render.js"></script>
   </head>
-  <body class="bg-school-cream font-sans text-slate-800 antialiased" data-page="home">
+  <body class="bg-mes-light font-sans text-slate-800 antialiased" data-page="home">
     <site-navbar></site-navbar>
 
     <main>
-      <!-- Hero: image + tagline filled from js/content.js -->
+      <!-- Hero (slider + appeal) -->
       <section
         id="home-hero"
-        class="relative min-h-[90vh] overflow-hidden pt-20 sm:min-h-screen sm:pt-24"
-        aria-label="Hero"
+        class="border-b border-mes-primary/10 bg-white px-4 pb-10 pt-56 sm:px-8 sm:pt-60 lg:px-10 lg:pt-64"
+        aria-label="Welcome"
       ></section>
 
       <!-- 50+ years highlight -->
-      <section class="relative -mt-1 overflow-hidden border-y border-amber-700/30" aria-label="50 year anniversary">
+      <section class="relative -mt-px overflow-hidden border-y border-mes-nav/20" aria-label="Legacy">
         <div id="home-legacy" class="relative"></div>
       </section>
 
       <!-- Quick announcements -->
-      <section id="announcements" class="scroll-mt-28 px-5 py-24 sm:px-8 sm:py-28 lg:px-10 lg:py-36">
+      <section id="announcements" class="scroll-mt-52 bg-white px-5 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-28">
         <div class="mx-auto max-w-7xl">
           <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between" data-reveal>
             <div class="max-w-2xl">
-              <h2 class="font-display text-3xl font-bold tracking-tight text-school-navy sm:text-4xl lg:text-[2.5rem]">
-                Quick announcements
-              </h2>
+              <div class="border-b border-slate-200 pb-2">
+                <h2
+                  class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-24 after:bg-mes-red"
+                >
+                  Quick announcements
+                </h2>
+              </div>
               <p class="mt-4 text-lg leading-relaxed text-slate-600">
-                Stay current with campus news and key dates. Edit lists in <code class="rounded bg-slate-100 px-1.5 py-0.5 text-sm">js/content.js</code>.
+                Stay current with campus news and key dates. Updates are managed in the school content admin.
               </p>
             </div>
             <a
-              href="news.html"
-              class="shrink-0 text-sm font-semibold text-amber-800 transition duration-300 ease-premium hover:text-amber-950"
+              href="news.html?ctx=events"
+              class="shrink-0 text-sm font-semibold text-mes-accent transition hover:underline"
             >
               View all news →
             </a>
           </div>
           <ul
             id="home-quick-announcements"
-            class="mt-16 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-10"
+            class="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
             role="list"
             data-reveal-stagger
           ></ul>
@@ -142,14 +99,14 @@
       </section>
 
       <!-- About preview -->
-      <section class="border-t border-slate-200/80 bg-white px-5 py-24 sm:px-8 sm:py-28 lg:px-10 lg:py-36">
+      <section class="border-t border-slate-200 bg-white px-5 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-28">
         <div class="mx-auto max-w-7xl">
           <div id="home-about-preview"></div>
         </div>
       </section>
 
       <!-- Alumni spotlight -->
-      <section class="border-t border-slate-200/80 bg-school-cream px-5 py-24 sm:px-8 sm:py-28 lg:px-10 lg:py-36">
+      <section class="border-t border-mes-primary/10 bg-mes-light px-5 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-28">
         <div class="mx-auto max-w-7xl">
           <div id="home-alumni-spotlight"></div>
         </div>
@@ -157,6 +114,47 @@
     </main>
 
     <site-footer></site-footer>
+
+    <!-- VIMP notice: image + overlay (shown on Home load; see SITE_CONFIG.vimpNews & site.js) -->
+    <div
+      id="vimp-news-modal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-3 sm:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="vimp-news-title"
+    >
+      <div
+        class="absolute inset-0 bg-slate-900/70 backdrop-blur-[2px] transition-opacity"
+        data-vimp-dismiss
+        aria-hidden="true"
+      ></div>
+      <div
+        class="relative z-10 flex max-h-[min(94vh,920px)] w-full max-w-4xl flex-col overflow-hidden rounded-sm bg-white shadow-2xl ring-1 ring-black/10"
+      >
+        <div class="flex shrink-0 items-center justify-end border-b border-slate-200/80 bg-white px-1 py-1">
+          <button
+            type="button"
+            class="flex h-11 w-11 items-center justify-center rounded text-3xl font-light leading-none text-slate-800 transition hover:bg-slate-100"
+            data-vimp-dismiss
+            aria-label="Close"
+          >
+            ×
+          </button>
+        </div>
+        <div class="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-white">
+          <img
+            id="vimp-news-img"
+            src=""
+            alt=""
+            class="block h-auto w-full object-contain object-top"
+            width="900"
+            height="1200"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </div>
+    <p id="vimp-news-title" class="sr-only">Important notice</p>
 
     <script src="js/site.js"></script>
   </body>

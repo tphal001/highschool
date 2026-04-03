@@ -8,6 +8,35 @@
     return d.innerHTML;
   }
 
+  function formatINR(n) {
+    if (n == null || n === "") return "";
+    var num = typeof n === "number" ? n : parseFloat(String(n).replace(/[^\d.]/g, ""), 10);
+    if (isNaN(num)) return "";
+    return "₹" + Math.round(num).toLocaleString("en-IN");
+  }
+
+  function fundAppealPageUrl() {
+    try {
+      if (typeof window !== "undefined" && window.location && window.location.href) {
+        return new URL("fund-appeal.html", window.location.href).href;
+      }
+    } catch (e) {}
+    return "fund-appeal.html";
+  }
+
+  /** True for absolute http(s) URLs (e.g. payment links); same-tab for relative paths like contact.html */
+  function isExternalHref(href) {
+    var h = (href || "").trim();
+    return /^https?:\/\//i.test(h) || h.indexOf("//") === 0;
+  }
+
+  /** fundAppeal.donateHref: use as-is when set. Empty → donate-payment.html */
+  function resolveFundAppealDonateHref(fa) {
+    var raw = fa && fa.donateHref != null ? String(fa.donateHref).trim() : "";
+    if (raw) return raw;
+    return "donate-payment.html";
+  }
+
   function thankYouRedirectUrl() {
     var cfg = window.SITE_CONFIG || {};
     var next = (cfg.formThankYouUrl || "").trim();
@@ -52,14 +81,14 @@
     var mail = (window.SITE_CONFIG && window.SITE_CONFIG.contactEmail) || "";
     var mailto = mail ? 'mailto:' + esc(mail) : "#";
     return (
-      '<div class="rounded-xl border border-amber-400 bg-amber-50 p-6 text-amber-950">' +
-      '<p class="font-display text-lg font-semibold text-school-navy">Set up form delivery (one-time)</p>' +
+      '<div class="rounded-xl border border-mes-accent/50 bg-mes-light p-6 text-mes-primaryDark">' +
+      '<p class="font-display text-lg font-semibold text-mes-primary">Set up form delivery (one-time)</p>' +
       '<p class="mt-2 text-sm leading-relaxed">' +
-      "FormSubmit.co is unreliable (e.g. “web server is down”). This site uses <strong>Web3Forms</strong> so messages go to your Gmail." +
+      "This site uses <strong>Web3Forms</strong> to deliver messages to your inbox." +
       "</p>" +
       '<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm">' +
       '<li>Open <a href="https://web3forms.com" class="font-semibold underline" target="_blank" rel="noopener">web3forms.com</a> and create a free access key for your inbox.</li>' +
-      '<li>In <code class="rounded bg-white px-1 py-0.5 text-xs">js/site-config.js</code>, paste the key into <code class="rounded bg-white px-1 py-0.5 text-xs">web3formsAccessKey</code>.</li>' +
+      "<li>Paste the access key into the site’s Web3Forms setting (your web administrator can update this in the site configuration).</li>" +
       "<li>Push to GitHub and redeploy on Vercel.</li>" +
       "</ol>" +
       (mail
@@ -89,7 +118,7 @@
       esc(a.excerpt) +
       '" ' +
       'href="' +
-      esc(a.href || "news.html") +
+      esc(a.href || "news.html?ctx=events") +
       '"></announcement-card>'
     );
   }
@@ -108,69 +137,96 @@
         var i = line.indexOf(accent);
         return (
           esc(line.slice(0, i)) +
-          '<span class="text-school-gold">' +
+          '<span class="text-mes-accent">' +
           esc(accent) +
           "</span>" +
           esc(line.slice(i + accent.length))
         );
       }
+      var slides = he.slides && he.slides.length ? he.slides : [he.image];
+      var firstSlide = slides[0] || he.image || "";
+      var fr = h.fundraising || {};
+      var crest = ((window.SITE_CONFIG && window.SITE_CONFIG.logoInitials) || "DG").trim().slice(0, 3);
+      var fundHref = (fr.href || "fund-appeal.html").trim() || "fund-appeal.html";
+
       hero.innerHTML =
-        '<div class="absolute inset-0 bg-gradient-to-br from-school-navy/90 via-school-navy/80 to-school-slate/90"></div>' +
-        '<div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image:url(' +
-        JSON.stringify(he.image) +
-        ')" role="img" aria-label="' +
+        '<div class="mx-auto max-w-7xl">' +
+        '<div class="grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">' +
+        '<div class="lg:col-span-8">' +
+        '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">' +
+        '<img id="hero-slide-img" src="' +
+        esc(firstSlide) +
+        '" alt="' +
         esc(he.imageAlt || "") +
-        '"></div>' +
-        '<div class="absolute inset-0 bg-gradient-to-t from-school-navy via-school-navy/50 to-transparent"></div>' +
-        '<div class="absolute inset-0 opacity-25" style="background-image:url(\'data:image/svg+xml,%3Csvg width=\\\'60\\\' height=\\\'60\\\' viewBox=\\\'0 0 60 60\\\' xmlns=\\\'http://www.w3.org/2000/svg\\\'%3E%3Cg fill=\\\'%23ffffff\\\' fill-opacity=\\\'0.06\\\'%3E%3Cpath d=\\\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\\\'/%3E%3C/g%3E%3C/svg%3E\')"></div>' +
-        '<div class="relative mx-auto flex min-h-[calc(90vh-5rem)] max-w-7xl flex-col justify-center px-5 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-32">' +
-        '<p class="mb-6 inline-flex max-w-fit items-center rounded-full border border-white/20 bg-black/20 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-amber-200/90 opacity-0 animate-fade-in-up motion-reduce:animate-none motion-reduce:opacity-100 sm:text-sm" style="animation-delay:80ms">' +
+        '" class="h-full w-full object-cover transition-opacity duration-500" loading="eager"/>' +
+        '<button type="button" id="hero-prev" class="absolute left-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded border border-white/40 bg-black/35 text-white backdrop-blur-sm transition hover:bg-black/50" aria-label="Previous slide">' +
+        '<span class="text-lg leading-none" aria-hidden="true">&#8249;</span></button>' +
+        '<button type="button" id="hero-next" class="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded border border-white/40 bg-black/35 text-white backdrop-blur-sm transition hover:bg-black/50" aria-label="Next slide">' +
+        '<span class="text-lg leading-none" aria-hidden="true">&#8250;</span></button>' +
+        '<div id="hero-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>' +
+        "</div>" +
+        '<div class="mt-5" data-reveal>' +
+        '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(he.badge) +
         "</p>" +
-        '<h1 class="font-display max-w-4xl text-4xl font-bold leading-[1.08] tracking-tight text-white opacity-0 animate-fade-in-up motion-reduce:animate-none motion-reduce:opacity-100 sm:text-5xl md:text-6xl lg:text-7xl" style="animation-delay:160ms">' +
+        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl">' +
         headlineHtml() +
         "</h1>" +
-        '<p class="mt-8 max-w-2xl text-lg leading-relaxed text-slate-200 opacity-0 animate-fade-in-up motion-reduce:animate-none motion-reduce:opacity-100 sm:text-xl" style="animation-delay:280ms">' +
+        '<p class="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">' +
         esc(he.subtext) +
         "</p>" +
-        '<div class="mt-12 flex flex-col flex-wrap gap-4 sm:flex-row sm:items-center sm:gap-4 opacity-0 animate-fade-in-up motion-reduce:animate-none motion-reduce:opacity-100" style="animation-delay:400ms">' +
+        "</div></div>" +
+        '<aside class="lg:col-span-4">' +
         '<a href="' +
-        esc(he.primaryCta.href) +
-        '" class="inline-flex items-center justify-center rounded-full bg-school-gold px-8 py-4 text-base font-semibold text-school-navy shadow-xl shadow-amber-900/25 transition duration-500 ease-premium hover:-translate-y-1 hover:bg-amber-400">' +
-        esc(he.primaryCta.label) +
-        "</a>" +
-        '<a href="' +
-        esc(he.secondaryCta.href) +
-        '" class="inline-flex items-center justify-center rounded-full border border-white/35 bg-white/10 px-8 py-4 text-base font-semibold text-white backdrop-blur-sm transition duration-500 hover:-translate-y-1 hover:bg-white/20">' +
-        esc(he.secondaryCta.label) +
-        "</a>" +
-        '<a href="' +
-        esc(he.tertiaryCta.href) +
-        '" class="inline-flex items-center justify-center text-sm font-semibold text-amber-200/90 underline decoration-amber-400/50 underline-offset-4 transition hover:text-white sm:ml-2">' +
-        esc(he.tertiaryCta.label) +
-        " →</a>" +
+        esc(fundHref) +
+        '" class="group block rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
+        '<div class="rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition group-hover:border-mes-primary/30 group-hover:shadow-md">' +
+        '<div class="border-b border-slate-200 pb-3">' +
+        '<h2 class="relative inline-block pb-2 font-display text-lg font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-14 after:bg-mes-red">' +
+        esc(fr.sectionTitle || "Fund raising appeal") +
+        "</h2>" +
+        '<div class="mt-2 h-px w-full bg-slate-200" aria-hidden="true"></div>' +
         "</div>" +
+        '<h3 class="mt-4 text-sm font-bold leading-snug text-mes-primary">' +
+        esc(fr.title || "") +
+        "</h3>" +
+        '<div class="relative mt-3 overflow-hidden rounded-md border border-slate-200 bg-white">' +
+        '<img src="' +
+        esc(fr.image || he.image) +
+        '" alt="" class="aspect-[4/3] w-full object-cover" loading="lazy"/>' +
+        (fr.amount
+          ? '<div class="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">' +
+            esc(fr.amount) +
+            "</div>"
+          : "") +
         "</div>" +
-        '<div class="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-school-cream via-school-cream/80 to-transparent sm:h-40" aria-hidden="true"></div>';
+        '<div class="mt-3 flex items-center gap-2 text-xs text-slate-600">' +
+        '<span class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-500">' +
+        esc(crest) +
+        "</span>" +
+        "<span>" +
+        esc(fr.footerLine || "") +
+        '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p></div></a></aside></div></div>';
     }
 
     var leg = document.getElementById("home-legacy");
     if (leg && h.legacy) {
       var l = h.legacy;
       leg.innerHTML =
-        '<div class="absolute inset-0 bg-gradient-to-r from-amber-950 via-amber-800 to-amber-950 bg-[length:200%_100%] animate-gradient-shift motion-reduce:animate-none"></div>' +
+        '<div class="absolute inset-0 bg-gradient-to-r from-mes-nav via-mes-navDeep to-mes-nav bg-[length:200%_100%] animate-gradient-shift motion-reduce:animate-none"></div>' +
+        '<div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>' +
         '<div class="relative mx-auto flex max-w-7xl flex-col items-center justify-center gap-5 px-5 py-8 text-center sm:flex-row sm:gap-10 sm:px-8 sm:py-10 lg:px-10" data-reveal>' +
-        '<span class="font-display shrink-0 rounded-full border border-amber-400/50 bg-amber-950/50 px-5 py-2 text-sm font-bold tracking-wide text-amber-100 shadow-lg shadow-black/20 sm:text-base">' +
+        '<span class="font-display shrink-0 rounded-full border border-mes-goldLine/60 bg-mes-navDeep/80 px-5 py-2 text-sm font-bold tracking-wide text-white shadow-lg sm:text-base">' +
         esc(l.badge) +
         "</span>" +
-        '<p class="max-w-2xl text-sm font-medium leading-relaxed text-amber-50 sm:text-base md:text-lg"><span class="font-semibold text-amber-100">' +
+        '<p class="max-w-2xl text-sm font-medium leading-relaxed text-white/95 sm:text-base md:text-lg"><span class="font-semibold text-mes-goldLine">' +
         esc(l.title) +
         "</span> — " +
         esc(l.line) +
         "</p>" +
         '<a href="' +
         esc(l.linkHref) +
-        '" class="shrink-0 text-sm font-semibold text-amber-100 underline decoration-amber-400/60 underline-offset-[6px] transition duration-300 hover:-translate-y-0.5 hover:text-white">' +
+        '" class="shrink-0 text-sm font-semibold text-white underline decoration-mes-goldLine/80 underline-offset-[6px] transition duration-300 hover:text-mes-goldLine">' +
         esc(l.linkLabel) +
         "</a>" +
         "</div>";
@@ -193,10 +249,11 @@
       ap.innerHTML =
         '<div class="grid gap-12 lg:grid-cols-2 lg:items-center">' +
         '<div data-reveal>' +
-        '<h2 class="font-display text-3xl font-bold tracking-tight text-school-navy sm:text-4xl">' +
+        '<div class="border-b border-slate-200 pb-2">' +
+        '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-20 after:bg-mes-red">' +
         esc(b.title) +
-        "</h2>" +
-        '<p class="mt-2 text-lg font-medium text-amber-800">' +
+        "</h2></div>" +
+        '<p class="mt-4 text-lg font-medium text-mes-accent">' +
         esc(b.subtitle) +
         "</p>" +
         b.paragraphs
@@ -206,7 +263,7 @@
           .join("") +
         '<a href="' +
         esc(b.linkHref) +
-        '" class="mt-8 inline-flex font-semibold text-school-navy underline decoration-amber-400/60 decoration-2 underline-offset-4 hover:text-amber-900">' +
+        '" class="mt-8 inline-flex font-semibold text-mes-accent hover:underline">' +
         esc(b.linkLabel) +
         " →</a>" +
         "</div>" +
@@ -227,7 +284,7 @@
           return (
             "<div><dt class=\"text-sm font-medium uppercase tracking-wider text-slate-400\">" +
             esc(s.label) +
-            '</dt><dd class="mt-2 font-display text-3xl font-bold text-school-gold">' +
+            '</dt><dd class="mt-2 font-display text-3xl font-bold text-mes-accent">' +
             esc(s.value) +
             "</dd></div>"
           );
@@ -235,7 +292,7 @@
         .join("");
       als.innerHTML =
         '<div class="mx-auto max-w-3xl text-center" data-reveal>' +
-        '<h2 class="font-display text-3xl font-bold tracking-tight text-school-navy sm:text-4xl">' +
+        '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-24 after:-translate-x-1/2 after:bg-mes-red">' +
         esc(al.sectionTitle) +
         "</h2>" +
         '<p class="mt-5 text-lg leading-relaxed text-slate-600">' +
@@ -243,16 +300,16 @@
         "</p>" +
         "</div>" +
         '<div class="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-16" data-reveal-stagger>' +
-        '<blockquote data-reveal class="group rounded-2xl border border-slate-200/90 bg-school-cream/80 p-8 sm:p-10">' +
+        '<blockquote data-reveal class="group rounded-2xl border border-slate-200/90 bg-mes-light/80 p-8 sm:p-10">' +
         '<p class="text-lg leading-relaxed text-slate-700 sm:text-xl">“' +
         esc(st.quote) +
         '”</p>' +
         '<footer class="mt-8 flex items-center gap-5">' +
-        '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-school-navy to-slate-700 text-lg font-bold text-school-gold">' +
+        '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-mes-primary to-mes-primaryDark text-lg font-bold text-mes-accent">' +
         esc(st.initials) +
         "</div>" +
         "<div>" +
-        '<cite class="not-italic text-lg font-semibold text-school-navy">' +
+        '<cite class="not-italic text-lg font-semibold text-mes-primary">' +
         esc(st.name) +
         "</cite>" +
         '<p class="mt-1 text-sm text-slate-600">' +
@@ -261,14 +318,14 @@
         "</div>" +
         "</footer>" +
         "</blockquote>" +
-        '<div data-reveal class="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-school-navy via-school-slate to-slate-900 p-10 text-white sm:p-12">' +
+        '<div data-reveal class="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-mes-primary via-mes-primaryDark to-slate-900 p-10 text-white sm:p-12">' +
         '<h3 class="font-display text-xl font-bold text-white">Network at a glance</h3>' +
         '<dl class="mt-8 grid grid-cols-2 gap-8">' +
         statsHtml +
         "</dl>" +
         '<a href="' +
         esc(al.linkHref) +
-        '" class="mt-10 inline-flex w-full items-center justify-center rounded-full bg-school-gold py-4 text-base font-semibold text-school-navy transition hover:bg-amber-400 sm:w-auto sm:px-10">' +
+        '" class="mt-10 inline-flex w-full items-center justify-center rounded-full bg-mes-accent py-4 text-base font-semibold text-mes-primaryDark transition hover:bg-mes-accentLight sm:w-auto sm:px-10">' +
         esc(al.linkLabel) +
         "</a>" +
         "</div>" +
@@ -281,9 +338,9 @@
     if (!el || !C.about) return;
     var a = C.about;
     el.innerHTML =
-      '<section id="history" class="scroll-mt-28" data-reveal>' +
-      '<h2 class="font-display text-3xl font-bold text-school-navy">Our history</h2>' +
-      '<p class="mt-2 text-lg text-amber-800">Since <strong>' +
+      '<section id="history" class="scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-3xl font-bold text-mes-primary">Our history</h2>' +
+      '<p class="mt-2 text-lg text-mes-accent">Since <strong>' +
       esc(String(a.history.sinceYear)) +
       "</strong> — more than 50 years of excellence.</p>" +
       '<div class="mt-8 space-y-4 text-lg leading-relaxed text-slate-700">' +
@@ -291,23 +348,33 @@
         return "<p>" + esc(p) + "</p>";
       }).join("") +
       "</div></section>" +
-      '<section id="mission" class="mt-16 scroll-mt-28 grid gap-10 md:grid-cols-2" data-reveal>' +
+      '<section id="mission" class="mt-16 scroll-mt-52 grid gap-10 md:grid-cols-2" data-reveal>' +
       "<div>" +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
       esc(a.mission.title) +
       "</h2>" +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
       esc(a.mission.text) +
       "</p></div>" +
       "<div>" +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
       esc(a.vision.title) +
       "</h2>" +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
       esc(a.vision.text) +
       "</p></div></section>" +
-      '<section id="principal" class="mt-16 scroll-mt-28" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">Leadership</h2>' +
+      '<section id="board" class="mt-16 scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Board and Governing Body Members</h2>' +
+      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
+      "Governance details can be published here when available." +
+      "</p></section>" +
+      '<section id="commandant" class="mt-16 scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Commandant Desk</h2>' +
+      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
+      "Message from the commandant can be added here when available." +
+      "</p></section>" +
+      '<section id="principal" class="mt-16 scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>' +
       '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-8 md:flex-row md:items-start">' +
       '<img src="' +
       esc(a.principal.photo) +
@@ -315,10 +382,10 @@
       esc(a.principal.name) +
       '" class="mx-auto h-48 w-48 shrink-0 rounded-2xl object-cover md:mx-0" loading="lazy"/>' +
       "<div>" +
-      '<h3 class="font-display text-xl font-bold text-school-navy">' +
+      '<h3 class="font-display text-xl font-bold text-mes-primary">' +
       esc(a.principal.name) +
       "</h3>" +
-      '<p class="text-amber-800">' +
+      '<p class="text-mes-accent">' +
       esc(a.principal.title) +
       "</p>" +
       '<div class="mt-4 space-y-3 text-lg leading-relaxed text-slate-600">' +
@@ -327,7 +394,22 @@
           return "<p>" + esc(p) + "</p>";
         })
         .join("") +
-      "</div></div></div></section>";
+      "</div></div></div></section>" +
+      '<section id="staff" class="mt-16 scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Staff</h2>' +
+      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
+      "Faculty and staff listings can be added when ready." +
+      "</p></section>" +
+      '<section id="pta" class="mt-16 scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">PTA MEMBERS AND MOTHER PARENT ASSOCIATION</h2>' +
+      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
+      "PTA information can be added when ready." +
+      "</p></section>" +
+      '<section id="achievers" class="mt-16 scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Achievers</h2>' +
+      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
+      "Student achievements and honours can be listed here when ready." +
+      "</p></section>";
   }
 
   function renderAcademicsPage() {
@@ -339,11 +421,11 @@
       esc(a.intro) +
       "</p>" +
       '<div class="mt-12 space-y-10" data-reveal-stagger>' +
-      '<section data-reveal><h2 class="font-display text-2xl font-bold text-school-navy">Programs offered</h2><div class="mt-6 grid gap-6 md:grid-cols-3">' +
+      '<section data-reveal><h2 class="font-display text-2xl font-bold text-mes-primary">Programs offered</h2><div class="mt-6 grid gap-6 md:grid-cols-3">' +
       a.programs
         .map(function (p) {
           return (
-            '<div class="rounded-xl border border-slate-200 bg-school-cream/50 p-6"><h3 class="font-semibold text-school-navy">' +
+            '<div class="rounded-xl border border-slate-200 bg-mes-light/50 p-6"><h3 class="font-semibold text-mes-primary">' +
             esc(p.title) +
             '</h3><p class="mt-2 text-slate-600">' +
             esc(p.text) +
@@ -352,18 +434,18 @@
         })
         .join("") +
       "</div></section>" +
-      '<section data-reveal><h2 class="font-display text-2xl font-bold text-school-navy">Curriculum</h2><ul class="mt-4 list-inside list-disc space-y-2 text-lg text-slate-600">' +
+      '<section data-reveal><h2 class="font-display text-2xl font-bold text-mes-primary">Curriculum</h2><ul class="mt-4 list-inside list-disc space-y-2 text-lg text-slate-600">' +
       a.curriculum
         .map(function (c) {
           return "<li>" + esc(c) + "</li>";
         })
         .join("") +
       "</ul></section>" +
-      '<section data-reveal><h2 class="font-display text-2xl font-bold text-school-navy">Facilities</h2><ul class="mt-4 grid gap-3 sm:grid-cols-2">' +
+      '<section data-reveal><h2 class="font-display text-2xl font-bold text-mes-primary">Facilities</h2><ul class="mt-4 grid gap-3 sm:grid-cols-2">' +
       a.facilities
         .map(function (f) {
           return (
-            '<li class="flex items-center gap-2 text-slate-700"><span class="text-school-gold">✓</span> ' +
+            '<li class="flex items-center gap-2 text-slate-700"><span class="text-mes-accent">✓</span> ' +
             esc(f) +
             "</li>"
           );
@@ -379,29 +461,60 @@
     function itemRow(x) {
       return (
         '<li class="border-b border-slate-100 py-4 last:border-0">' +
-        '<time class="text-xs font-semibold uppercase tracking-wide text-amber-800">' +
+        '<time class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
         esc(x.displayDate) +
-        '</time><h3 class="mt-1 font-display text-lg font-semibold text-school-navy">' +
+        '</time><h3 class="mt-1 font-display text-lg font-semibold text-mes-primary">' +
         esc(x.title) +
         '</h3><p class="mt-1 text-slate-600">' +
         esc(x.summary) +
         "</p></li>"
       );
     }
+    function itemRowWithId(x, anchorId) {
+      var idPart = anchorId
+        ? ' id="' + esc(anchorId) + '" class="scroll-mt-32 border-b border-slate-100 py-4 last:border-0"'
+        : ' class="border-b border-slate-100 py-4 last:border-0"';
+      return (
+        "<li" +
+        idPart +
+        ">" +
+        '<time class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
+        esc(x.displayDate) +
+        '</time><h3 class="mt-1 font-display text-lg font-semibold text-mes-primary">' +
+        esc(x.title) +
+        '</h3><p class="mt-1 text-slate-600">' +
+        esc(x.summary) +
+        "</p></li>"
+      );
+    }
+    var evtAnchors = ["evt-silver", "evt-ashwarohan", "evt-virangana"];
     el.innerHTML =
+      '<div id="events" class="scroll-mt-52"></div>' +
       '<p class="text-xl text-slate-600" data-reveal>' +
       esc(n.intro) +
       "</p>" +
       '<div class="mt-12 grid gap-10 lg:grid-cols-3" data-reveal-stagger>' +
-      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-school-navy">Events</h2><ul class="mt-4">' +
-      n.events.map(itemRow).join("") +
+      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Events</h2><ul class="mt-4">' +
+      n.events
+        .map(function (x, i) {
+          return itemRowWithId(x, evtAnchors[i] || "");
+        })
+        .join("") +
       "</ul></div>" +
-      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-school-navy">Circulars</h2><ul class="mt-4">' +
+      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Circulars</h2><ul class="mt-4">' +
       n.circulars.map(itemRow).join("") +
       "</ul></div>" +
-      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-school-navy">Notices</h2><ul class="mt-4">' +
+      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Notices</h2><ul class="mt-4">' +
       n.notices.map(itemRow).join("") +
-      "</ul></div></div>";
+      "</ul></div></div>" +
+      '<div class="mt-12 grid gap-6 sm:grid-cols-2">' +
+      '<div id="res-ssc" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700">' +
+      '<strong class="font-display text-mes-primary">SSC Result – March 2024</strong>' +
+      '<p class="mt-2">Official result links and notices will be published here when available.</p></div>' +
+      '<div id="res-hsc" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700">' +
+      '<strong class="font-display text-mes-primary">HSC Result – March 2024</strong>' +
+      '<p class="mt-2">Official result links and notices will be published here when available.</p></div>' +
+      "</div>";
   }
 
   function renderGalleryPage() {
@@ -409,14 +522,23 @@
     if (!el || !C.gallery) return;
     var g = C.gallery;
     el.innerHTML =
+      '<div id="student-life" class="scroll-mt-40"></div>' +
+      '<div id="activity-2026" class="scroll-mt-40"></div>' +
       '<p class="text-xl text-slate-600" data-reveal>' +
       esc(g.intro) +
       "</p>" +
       '<div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
       g.items
-        .map(function (it) {
+        .map(function (it, idx) {
+          var len = g.items.length;
+          var figId = "";
+          if (idx === 0) figId = ' id="photo"';
+          else if (len >= 3 && idx === len - 2) figId = ' id="marathi-1"';
+          else if (len >= 2 && idx === len - 1 && idx > 0) figId = ' id="marathi-2"';
           return (
-            '<figure data-reveal class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
+            "<figure" +
+            figId +
+            ' data-reveal class="group scroll-mt-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
             '<div class="aspect-[4/3] overflow-hidden">' +
             '<img src="' +
             esc(it.image) +
@@ -424,16 +546,16 @@
             esc(it.title) +
             '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
             "</div>" +
-            '<figcaption class="p-4"><span class="text-xs font-semibold uppercase tracking-wide text-amber-800">' +
+            '<figcaption class="p-4"><span class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
             esc(it.category) +
-            '</span><h3 class="font-display font-semibold text-school-navy">' +
+            '</span><h3 class="font-display font-semibold text-mes-primary">' +
             esc(it.title) +
             "</h3></figcaption></figure>"
           );
         })
         .join("") +
       "</div>" +
-      '<p class="mt-10 text-sm text-slate-500" data-reveal>Add video embeds in <code class="rounded bg-slate-100 px-1">content.js</code> or this page when ready.</p>';
+      '<p id="video" class="mt-10 scroll-mt-40 text-sm text-slate-500" data-reveal>Video gallery can be added here when ready.</p>';
   }
 
   function renderAlumniPage() {
@@ -443,14 +565,14 @@
     var stories = a.stories
       .map(function (s) {
         return (
-          '<blockquote class="rounded-2xl border border-slate-200 bg-school-cream/80 p-8">' +
+          '<blockquote class="rounded-2xl border border-slate-200 bg-mes-light/80 p-8">' +
           '<p class="text-lg text-slate-700">“' +
           esc(s.quote) +
           '”</p><footer class="mt-6 flex items-center gap-4">' +
-          '<div class="flex h-14 w-14 items-center justify-center rounded-full bg-school-navy text-school-gold font-bold">' +
+          '<div class="flex h-14 w-14 items-center justify-center rounded-full bg-mes-primary text-mes-accent font-bold">' +
           esc(s.initials) +
           "</div><div>" +
-          '<cite class="not-italic font-semibold text-school-navy">' +
+          '<cite class="not-italic font-semibold text-mes-primary">' +
           esc(s.name) +
           "</cite>" +
           '<p class="text-sm text-slate-600">' +
@@ -466,7 +588,7 @@
       .map(function (l) {
         return (
           '<li class="flex items-center justify-between border-b border-slate-100 py-3 last:border-0">' +
-          '<span class="font-medium text-school-navy">' +
+          '<span class="font-medium text-mes-primary">' +
           esc(l.city) +
           '</span><span class="text-slate-500">' +
           esc(l.region) +
@@ -480,11 +602,11 @@
       esc(a.intro) +
       "</p>" +
       '<div class="mt-12 space-y-10" data-reveal-stagger>' +
-      '<section data-reveal><h2 class="font-display text-2xl font-bold text-school-navy">Success stories</h2><div class="mt-6 space-y-6">' +
+      '<section data-reveal><h2 class="font-display text-2xl font-bold text-mes-primary">Success stories</h2><div class="mt-6 space-y-6">' +
       stories +
       "</div></section>" +
       '<section data-reveal class="rounded-2xl border border-slate-200 bg-white p-8">' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
       esc(a.globalPresence.title) +
       "</h2>" +
       '<p class="mt-2 text-slate-600">' +
@@ -498,8 +620,8 @@
       "<div><ul>" +
       locs +
       "</ul></div></div></section>" +
-      '<section data-reveal class="rounded-2xl border border-amber-200/80 bg-amber-50/50 p-8">' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">Alumni registration</h2>' +
+      '<section data-reveal class="rounded-2xl border border-mes-accent/30 bg-mes-light p-8">' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Alumni registration</h2>' +
       '<p class="mt-2 text-slate-600">' +
       esc(a.registrationBlurb) +
       "</p>" +
@@ -515,7 +637,7 @@
           '<div><label class="block text-sm font-medium text-slate-700" for="alumni-phone">Phone</label><input id="alumni-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-profession">Profession / organisation</label><input id="alumni-profession" name="profession" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-msg">Message</label><textarea id="alumni-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-school-navy px-8 py-3 font-semibold text-white transition hover:bg-slate-800">Submit registration</button> <span class="ml-2 text-sm text-slate-500">Sent via Web3Forms to your configured inbox.</span></div>' +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white transition hover:bg-mes-primaryDark">Submit registration</button> <span class="ml-2 text-sm text-slate-500">Sent via Web3Forms to your configured inbox.</span></div>' +
           "</form>"
         : web3FormsSetupNoticeHtml()) +
       "</section></div>";
@@ -526,12 +648,13 @@
     if (!el || !C.admissions) return;
     var a = C.admissions;
     el.innerHTML =
-      '<p class="text-xl text-slate-600" data-reveal>' +
+      '<section id="overview" class="scroll-mt-52" data-reveal>' +
+      '<p class="text-xl text-slate-600">' +
       esc(a.intro) +
       "</p>" +
       '<div class="mt-12 grid gap-10 lg:grid-cols-2">' +
       '<section data-reveal class="rounded-2xl border border-slate-200 bg-white p-8">' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">Admission process</h2><ol class="mt-6 list-decimal space-y-3 pl-5 text-lg text-slate-700">' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Admission process</h2><ol class="mt-6 list-decimal space-y-3 pl-5 text-lg text-slate-700">' +
       a.process
         .map(function (p) {
           return "<li>" + esc(p) + "</li>";
@@ -539,15 +662,15 @@
         .join("") +
       "</ol></section>" +
       '<section data-reveal class="rounded-2xl border border-slate-200 bg-white p-8">' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">Requirements</h2><ul class="mt-6 list-inside list-disc space-y-2 text-lg text-slate-700">' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Requirements</h2><ul class="mt-6 list-inside list-disc space-y-2 text-lg text-slate-700">' +
       a.requirements
         .map(function (r) {
           return "<li>" + esc(r) + "</li>";
         })
         .join("") +
-      "</ul></section></div>" +
-      '<section class="mt-12 rounded-2xl border border-amber-200/80 bg-amber-50/50 p-8" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">Inquiry form</h2>' +
+      "</ul></section></div></section>" +
+      '<section id="inquiry" class="mt-12 scroll-mt-52 rounded-2xl border border-mes-accent/30 bg-mes-light p-8" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Inquiry form</h2>' +
       (web3formsEnabled()
         ? '<form class="inquiry-form mt-6 grid gap-4 sm:grid-cols-2" action="' +
           esc(WEB3_FORMS_ACTION) +
@@ -559,7 +682,7 @@
           '<div><label class="block text-sm font-medium" for="in-phone">Phone</label><input id="in-phone" name="phone" type="tel" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-email">Email</label><input id="in-email" name="email" type="email" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-msg">Message</label><textarea id="in-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-school-gold px-8 py-3 font-semibold text-school-navy hover:bg-amber-400">Submit inquiry</button></div>' +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-accent px-8 py-3 font-semibold text-mes-primaryDark hover:bg-mes-accentLight">Submit inquiry</button></div>' +
           "</form>"
         : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
       "</section>";
@@ -573,19 +696,19 @@
     el.innerHTML =
       '<div class="grid gap-12 lg:grid-cols-2">' +
       '<div data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">Visit & reach us</h2>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Visit & reach us</h2>' +
       '<p class="mt-4 text-lg text-slate-600">' +
       esc(cfg.address) +
       "</p>" +
       '<p class="mt-4 text-slate-600"><strong>Hours:</strong> ' +
       esc(co.hours) +
       "</p>" +
-      '<p class="mt-4"><a class="font-semibold text-school-navy hover:underline" href="tel:' +
+      '<p class="mt-4"><a class="font-semibold text-mes-primary hover:underline" href="tel:' +
       esc((cfg.contactPhone || "").replace(/\s/g, "")) +
       '">' +
       esc(cfg.contactPhone) +
       "</a></p>" +
-      '<p class="mt-2"><a class="font-semibold text-school-navy hover:underline" href="mailto:' +
+      '<p class="mt-2"><a class="font-semibold text-mes-primary hover:underline" href="mailto:' +
       esc(cfg.contactEmail) +
       '">' +
       esc(cfg.contactEmail) +
@@ -595,7 +718,7 @@
       esc(co.mapEmbed) +
       '"></iframe></div></div>' +
       '<div data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-school-navy">Send a message</h2>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Send a message</h2>' +
       (web3formsEnabled()
         ? '<form id="contact-form" class="contact-form mt-6 grid gap-4" action="' +
           esc(WEB3_FORMS_ACTION) +
@@ -606,10 +729,369 @@
           '<div><label class="block text-sm font-medium" for="cf-phone">Phone</label><input id="cf-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div><label class="block text-sm font-medium" for="cf-subject">Subject</label><input id="cf-subject" name="topic" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div><label class="block text-sm font-medium" for="cf-msg">Message</label><textarea id="cf-msg" name="message" rows="4" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div><button type="submit" class="rounded-full bg-school-navy px-8 py-3 font-semibold text-white hover:bg-slate-800">Send message</button></div>' +
+          '<div><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white hover:bg-mes-primaryDark">Send message</button></div>' +
           "</form>"
         : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
       "</div></div>";
+  }
+
+  function innerSidebarSectionHeading(title) {
+    return (
+      '<h2 class="font-display text-lg font-bold text-slate-900">' +
+      esc(title) +
+      "</h2>" +
+      '<div class="mt-2 flex h-1 w-full overflow-hidden rounded-full" aria-hidden="true">' +
+      '<span class="w-2/3 bg-mes-red"></span><span class="flex-1 bg-slate-300"></span></div>'
+    );
+  }
+
+  function buildFundraisingTeaserCardHtml() {
+    var fr = C.home && C.home.fundraising;
+    var fa = C.fundAppeal || {};
+    var cfg = window.SITE_CONFIG || {};
+    var href = (fr && fr.href) || "fund-appeal.html";
+    var title = (fa && fa.pageTitle) || (fr && fr.title) || "Fund appeal";
+    var img = (fr && fr.image) || (fa && fa.heroImage) || "";
+    var goalBadge =
+      fa.goal != null && Number(fa.goal) > 0
+        ? formatINR(fa.goal)
+        : (fr && fr.amount) || "";
+    var footer = (fr && fr.footerLine) || cfg.schoolName || "";
+    var sectionTitle = (fr && fr.sectionTitle) || "Fund raising appeal";
+    var crest = ((cfg.logoInitials || "DG").trim() || "DG").slice(0, 3);
+    return (
+      '<div class="mt-10">' +
+      innerSidebarSectionHeading(sectionTitle) +
+      '<a href="' +
+      esc(href) +
+      '" class="group mt-4 block overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:border-mes-primary/30 hover:shadow-md">' +
+      '<div class="p-4">' +
+      '<h3 class="text-sm font-bold leading-snug text-slate-900 group-hover:text-mes-primary">' +
+      esc(title) +
+      "</h3>" +
+      '<div class="relative mt-3 overflow-hidden rounded-md border border-slate-100">' +
+      '<img src="' +
+      esc(img) +
+      '" alt="" class="aspect-[4/3] w-full object-cover" loading="lazy"/>' +
+      (goalBadge
+        ? '<div class="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">' +
+          esc(goalBadge) +
+          "</div>"
+        : "") +
+      "</div>" +
+      '<div class="mt-3 flex items-center gap-2 text-xs text-slate-600">' +
+      '<span class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-500">' +
+      esc(crest) +
+      "</span>" +
+      "<span>" +
+      esc(footer) +
+      "</span></div>" +
+      '<p class="mt-2 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
+      "</div></a></div>"
+    );
+  }
+
+  function buildFundAppealProgressAsideHtml(fa) {
+    var raised = Math.max(0, Number(fa.raised) || 0);
+    var goal = Math.max(1, Number(fa.goal) || 1);
+    var pct = Math.min(100, Math.round((raised / goal) * 100));
+    var shareUrl = fundAppealPageUrl();
+    var enc = encodeURIComponent(shareUrl);
+
+    var donorsHtml = (fa.donors || [])
+      .map(function (d) {
+        return (
+          '<li class="flex gap-3 border-b border-slate-100 py-3 last:border-0">' +
+          '<span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-mes-light text-xs font-bold text-mes-primary">' +
+          esc(d.initials || "") +
+          "</span>" +
+          '<p class="min-w-0 text-sm leading-snug text-slate-700">' +
+          esc(d.name) +
+          ' donated <strong class="text-mes-primary">' +
+          formatINR(d.amount) +
+          "</strong></p></li>"
+        );
+      })
+      .join("");
+
+    var donateRaw = resolveFundAppealDonateHref(fa);
+    var donateLinkAttrs = isExternalHref(donateRaw) ? ' target="_blank" rel="noopener noreferrer"' : "";
+
+    return (
+      '<div class="mt-10 space-y-6">' +
+      '<div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">' +
+      '<p class="text-lg font-bold leading-snug text-slate-900">' +
+      formatINR(raised) +
+      " raised of " +
+      formatINR(goal) +
+      "</p>" +
+      '<div class="mt-4 h-2.5 w-full overflow-hidden rounded-full bg-mes-light">' +
+      '<div class="h-full rounded-full bg-mes-primary transition-[width] duration-500" style="width:' +
+      pct +
+      '%"></div></div>' +
+      '<div class="mt-4 text-sm text-slate-600">' +
+      '<span class="inline-flex items-center gap-1.5"><span aria-hidden="true">👥</span>' +
+      esc(String(fa.donationCount != null ? fa.donationCount : "0")) +
+      " donations</span></div>" +
+      '<div class="mt-5 flex flex-wrap justify-center gap-2">' +
+      '<a href="https://www.facebook.com/sharer/sharer.php?u=' +
+      esc(enc) +
+      '" target="_blank" rel="noopener noreferrer" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-sm font-bold text-slate-600 hover:bg-mes-light" title="Share on Facebook">f</a>' +
+      '<a href="https://twitter.com/intent/tweet?url=' +
+      esc(enc) +
+      '" target="_blank" rel="noopener noreferrer" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-sm font-bold text-slate-600 hover:bg-mes-light" title="Share on X">𝕏</a>' +
+      '<a href="https://wa.me/?text=' +
+      esc(enc) +
+      '" target="_blank" rel="noopener noreferrer" class="flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-sm font-bold text-slate-600 hover:bg-mes-light" title="Share on WhatsApp">W</a>' +
+      '<button type="button" class="js-copy-page-url flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white text-xs font-semibold text-slate-600 hover:bg-mes-light" data-url="' +
+      esc(shareUrl) +
+      '" title="Copy page link" aria-label="Copy page link">⎘</button></div>' +
+      '<a href="' +
+      esc(donateRaw) +
+      '"' +
+      donateLinkAttrs +
+      ' class="mt-5 flex w-full items-center justify-center rounded-lg bg-mes-primary py-3 text-center text-base font-bold text-white transition hover:bg-mes-primaryDark">' +
+      esc(fa.donateLabel || "Donate now") +
+      "</a></div>" +
+      '<div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      '<h2 class="font-display text-lg font-bold text-mes-primary">Recent donors</h2>' +
+      '<ul class="mt-3 max-h-64 overflow-y-auto pr-1">' +
+      (donorsHtml || '<li class="text-sm text-slate-500">No donors listed yet — add them in the CMS under Fund appeal.</li>') +
+      "</ul></div></div>"
+    );
+  }
+
+  function findNavItemById(navLinks, id) {
+    if (!navLinks || !id) return null;
+    for (var i = 0; i < navLinks.length; i++) {
+      if (navLinks[i].id === id) return navLinks[i];
+    }
+    return null;
+  }
+
+  function mergeNavChildrenByIds(cfg, ids) {
+    var navLinks = cfg.navLinks || [];
+    var seen = {};
+    var out = [];
+    for (var j = 0; j < ids.length; j++) {
+      var item = findNavItemById(navLinks, ids[j]);
+      if (!item || !item.children) continue;
+      for (var k = 0; k < item.children.length; k++) {
+        var c = item.children[k];
+        var key = (c.href || "") + "\0" + (c.label || "");
+        if (seen[key]) continue;
+        seen[key] = true;
+        out.push(c);
+      }
+    }
+    return out;
+  }
+
+  function getSidebarLinksForPage(page, cfg) {
+    var fb = cfg.innerSidebarFallback || {};
+    if (fb[page] && fb[page].length) return fb[page].slice();
+    var navLinks = cfg.navLinks || [];
+    if (page === "news") {
+      var nctx = "";
+      try {
+        nctx = (new URLSearchParams(window.location.search || "").get("ctx") || "").toLowerCase();
+      } catch (e) {}
+      var nid = nctx === "results" ? "results" : "events";
+      var nitem = findNavItemById(navLinks, nid);
+      return nitem && nitem.children ? nitem.children.slice() : [];
+    }
+    if (page === "gallery") {
+      var gctx = "";
+      try {
+        gctx = (new URLSearchParams(window.location.search || "").get("ctx") || "").toLowerCase();
+      } catch (e) {}
+      var gid = gctx === "activity" ? "activity" : "gallery";
+      var gitem = findNavItemById(navLinks, gid);
+      return gitem && gitem.children ? gitem.children.slice() : [];
+    }
+    var spec = cfg.sidebarNavParent && cfg.sidebarNavParent[page];
+    if (!spec) return [];
+    if (typeof spec === "string") {
+      var one = findNavItemById(navLinks, spec);
+      return one && one.children ? one.children.slice() : [];
+    }
+    if (Object.prototype.toString.call(spec) === "[object Array]") {
+      return mergeNavChildrenByIds(cfg, spec);
+    }
+    return [];
+  }
+
+  function linkMatchesCurrentLocation(href) {
+    var a = document.createElement("a");
+    a.href = href;
+    var curPath = (window.location.pathname.split("/").pop() || "").toLowerCase();
+    var linkPath = (a.pathname.split("/").pop() || "").toLowerCase();
+    if (curPath !== linkPath) return false;
+    var curParams = new URLSearchParams((window.location.search || "").replace(/^\?/, ""));
+    var linkParams = new URLSearchParams((a.search || "").replace(/^\?/, ""));
+    var curCtx = (curParams.get("ctx") || "").toLowerCase();
+    var linkCtx = (linkParams.get("ctx") || "").toLowerCase();
+    if (curPath === "news.html") {
+      if ((curCtx || "events") !== (linkCtx || "events")) return false;
+    } else if (curPath === "gallery.html") {
+      if ((curCtx || "gallery") !== (linkCtx || "gallery")) return false;
+    } else if (curCtx !== linkCtx) {
+      return false;
+    }
+    var curSub = (curParams.get("sub") || "").toLowerCase();
+    var linkSubFromQuery = (linkParams.get("sub") || "").toLowerCase();
+    var linkHashRaw = (a.hash || "").replace(/^#/, "").toLowerCase();
+    var curHashRaw = (window.location.hash || "").replace(/^#/, "").toLowerCase();
+    var linkTarget = linkHashRaw || linkSubFromQuery;
+    if (linkTarget) {
+      if (curHashRaw && curHashRaw === linkTarget) return true;
+      if (curSub && curSub === linkTarget) return true;
+      return false;
+    }
+    /** Link has no section anchor — current only when URL has no #fragment and no sub. */
+    if (!curHashRaw && !curSub) return true;
+    return false;
+  }
+
+  function filterSidebarLinksExceptCurrent(links) {
+    return links.filter(function (l) {
+      return !linkMatchesCurrentLocation(l.href);
+    });
+  }
+
+  function renderInnerPageSidebar() {
+    var page = document.body.getAttribute("data-page");
+    if (!page || page === "home") return;
+    var aside = document.getElementById("page-sidebar");
+    if (!aside) return;
+    var cfg = window.SITE_CONFIG || {};
+    var links = getSidebarLinksForPage(page, cfg);
+    links = filterSidebarLinksExceptCurrent(links);
+    var navHtml = "";
+    if (links.length) {
+      navHtml =
+        '<nav aria-label="Related information">' +
+        innerSidebarSectionHeading("Related information") +
+        '<ul class="mt-4 space-y-3">' +
+        links
+          .map(function (l) {
+            return (
+              '<li><a href="' +
+              esc(l.href) +
+              '" class="text-base font-semibold text-blue-800 hover:underline">' +
+              esc(l.label) +
+              "</a></li>"
+            );
+          })
+          .join("") +
+        "</ul></nav>";
+    }
+    var teaser = page === "fund-appeal" ? "" : buildFundraisingTeaserCardHtml();
+    var fundExtra =
+      page === "fund-appeal" && C.fundAppeal ? buildFundAppealProgressAsideHtml(C.fundAppeal) : "";
+    aside.innerHTML = navHtml + teaser + fundExtra;
+  }
+
+  function renderDonatePaymentPage() {
+    var el = document.getElementById("page-donate-payment");
+    if (!el || !C.fundAppeal) return;
+    var fa = C.fundAppeal;
+    var po = fa.paymentOptions || {};
+    var cfg = window.SITE_CONFIG || {};
+    var school = (cfg.schoolName || "").trim() || "School";
+    var upiId = (po.upiId || "").trim();
+    var upiPn = encodeURIComponent(school);
+    var upiUri = "";
+    if (upiId) {
+      upiUri = "upi://pay?pa=" + encodeURIComponent(upiId) + "&pn=" + upiPn + "&cu=INR";
+    }
+    var gatewayUrl = (po.gatewayUrl || "").trim();
+    var gatewayLabel = (po.gatewayLabel || "Pay online").trim();
+    var netLines = po.netBankingLines || [];
+    var netHtml = netLines
+      .map(function (line) {
+        return '<p class="text-slate-700">' + esc(line) + "</p>";
+      })
+      .join("");
+
+    var gatewaySection = gatewayUrl
+      ? '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal>' +
+        '<h2 class="font-display text-xl font-bold text-mes-primary">Online payment (all options)</h2>' +
+        '<p class="mt-3 text-slate-700">UPI, cards, net banking, and wallets — choose on the secure payment page.</p>' +
+        '<a href="' +
+        esc(gatewayUrl) +
+        '" target="_blank" rel="noopener noreferrer" class="mt-4 inline-flex rounded-lg bg-mes-primary px-6 py-3 font-semibold text-white transition hover:bg-mes-primaryDark">' +
+        esc(gatewayLabel) +
+        "</a></div>"
+      : "";
+
+    var upiSection =
+      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal>' +
+      '<h2 class="font-display text-xl font-bold text-mes-primary">UPI — Google Pay, PhonePe, Paytm, BHIM</h2>' +
+      '<p class="mt-3 text-slate-700">' +
+      (upiId
+        ? "Use any UPI app and pay to this VPA:"
+        : "Add your school UPI ID in the CMS (Fund appeal → Payment page options) to show the VPA and an “Open UPI app” button.") +
+      "</p>" +
+      (upiId
+        ? '<p class="mt-2 font-mono text-lg font-semibold text-mes-primary">' +
+          esc(upiId) +
+          '</p><a href="' +
+          esc(upiUri) +
+          '" class="mt-4 inline-flex rounded-lg bg-mes-accent px-6 py-3 font-semibold text-mes-primaryDark transition hover:bg-mes-accentLight">Open UPI app to pay</a>'
+        : "") +
+      '<p class="mt-4 text-sm text-slate-600">On mobile, the button opens your default UPI app. You can also enter the VPA manually in Google Pay, PhonePe, or Paytm.</p>' +
+      "</div>";
+
+    var netSection =
+      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal>' +
+      '<h2 class="font-display text-xl font-bold text-mes-primary">Internet banking (NEFT / RTGS / IMPS)</h2>' +
+      '<div class="mt-3 space-y-2 text-sm leading-relaxed">' +
+      (netHtml || '<p class="text-slate-600">Add bank transfer details in the CMS (Fund appeal → Net banking lines).</p>') +
+      "</div></div>";
+
+    el.innerHTML =
+      '<article data-reveal>' +
+      '<h1 class="font-display text-3xl font-bold leading-tight text-mes-primary sm:text-4xl">Donate — payment options</h1>' +
+      '<p class="mt-4 text-lg leading-relaxed text-slate-700">' +
+      esc(po.intro || "") +
+      "</p>" +
+      '<div class="mt-10 grid gap-6">' +
+      gatewaySection +
+      upiSection +
+      netSection +
+      "</div>" +
+      '<p class="mt-10 text-sm text-slate-500"><a href="fund-appeal.html" class="font-semibold text-mes-primary hover:underline">← Back to fund appeal</a></p>' +
+      "</article>";
+  }
+
+  function renderFundAppealPage() {
+    var el = document.getElementById("page-fund-appeal");
+    if (!el || !C.fundAppeal) return;
+    var fa = C.fundAppeal;
+    var paras = (fa.paragraphs || [])
+      .map(function (p) {
+        return '<p class="mt-4 text-lg leading-relaxed text-slate-700">' + esc(p) + "</p>";
+      })
+      .join("");
+    el.innerHTML =
+      '<article data-reveal>' +
+      '<h1 class="font-display text-3xl font-bold leading-tight text-mes-primary sm:text-4xl">' +
+      esc(fa.pageTitle) +
+      "</h1>" +
+      '<p class="mt-2 text-sm text-slate-500">Created by: ' +
+      esc(fa.createdBy) +
+      "</p>" +
+      '<div class="relative mt-8 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 shadow-sm">' +
+      '<img src="' +
+      esc(fa.heroImage) +
+      '" alt="" class="h-auto w-full object-cover" loading="lazy"/>' +
+      "</div>" +
+      paras +
+      "</article>" +
+      (fa.poweredBy
+        ? '<p class="mt-12 text-right text-xs text-slate-400">' + esc(fa.poweredBy) + "</p>"
+        : "");
   }
 
   function runPageRenderer() {
@@ -622,6 +1104,9 @@
     else if (page === "alumni") renderAlumniPage();
     else if (page === "admissions") renderAdmissionsPage();
     else if (page === "contact") renderContactPage();
+    else if (page === "fund-appeal") renderFundAppealPage();
+    else if (page === "donate-payment") renderDonatePaymentPage();
+    renderInnerPageSidebar();
   }
 
   window.renderPageContent = runPageRenderer;
