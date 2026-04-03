@@ -368,11 +368,6 @@
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
       "Governance details can be published here when available." +
       "</p></section>" +
-      '<section id="commandant" class="mt-16 scroll-mt-52" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Commandant Desk</h2>' +
-      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
-      "Message from the commandant can be added here when available." +
-      "</p></section>" +
       '<section id="principal" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>' +
       '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-8 md:flex-row md:items-start">' +
@@ -399,11 +394,6 @@
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Staff</h2>' +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
       "Faculty and staff listings can be added when ready." +
-      "</p></section>" +
-      '<section id="pta" class="mt-16 scroll-mt-52" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">PTA MEMBERS AND MOTHER PARENT ASSOCIATION</h2>' +
-      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
-      "PTA information can be added when ready." +
       "</p></section>" +
       '<section id="achievers" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Achievers</h2>' +
