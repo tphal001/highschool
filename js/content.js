@@ -5,16 +5,16 @@ window.SITE_CONTENT = {
   "home": {
     "hero": {
       "slides": [
-        "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2000&q=80",
-        "https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=2000&q=80",
-        "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=2000&q=80"
+        "images/1.jpg",
+        "images/2.jpg",
+        "images/3.jpg"
       ],
       "imageAlt": "Campus and school life",
       "badge": "50+ years of excellence · Est. 1976",
       "headline": "Where curiosity meets purpose.",
       "headlineAccent": "purpose",
       "subtext": "Dr. Gadagkar High School, Satararoad nurtures scholarship, character, and leadership for every learner.",
-      "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=2000&q=80"
+      "image": "images/1.jpg"
     },
     "fundraising": {
       "href": "fund-appeal.html",
