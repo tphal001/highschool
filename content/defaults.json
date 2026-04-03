@@ -283,38 +283,7 @@
         "role": "Entrepreneur · Bengaluru",
         "initials": "VS"
       }
-    ],
-    "globalPresence": {
-      "title": "Global presence",
-      "subtitle": "Alumni chapters and representatives",
-      "locations": [
-        {
-          "city": "Mumbai",
-          "region": "India"
-        },
-        {
-          "city": "Pune",
-          "region": "India"
-        },
-        {
-          "city": "Bengaluru",
-          "region": "India"
-        },
-        {
-          "city": "Dubai",
-          "region": "UAE"
-        },
-        {
-          "city": "London",
-          "region": "UK"
-        },
-        {
-          "city": "Toronto",
-          "region": "Canada"
-        }
-      ]
-    },
-    "mapEmbedUrl": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d73.85!3d18.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMbjCsDMwJzAwLjAiTiA3M8KwNTEnMDAuMCJF!5e0!3m2!1sen!2sin!4v1"
+    ]
   },
   "admissions": {
     "intro": "We welcome families who share our commitment to learning and values. Follow the steps below to apply.",

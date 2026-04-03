@@ -152,7 +152,7 @@
       hero.innerHTML =
         '<div class="mx-auto max-w-7xl">' +
         '<div class="grid gap-6 lg:grid-cols-12 lg:items-stretch lg:gap-8">' +
-        '<div class="min-w-0 lg:col-span-7">' +
+        '<div class="min-w-0 lg:col-span-7 lg:row-start-1">' +
         '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">' +
         '<img id="hero-slide-img" src="' +
         esc(firstSlide) +
@@ -164,8 +164,8 @@
         '<button type="button" id="hero-next" class="absolute right-2 top-1/2 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded border border-white/40 bg-black/35 text-white backdrop-blur-sm transition hover:bg-black/50" aria-label="Next slide">' +
         '<span class="text-lg leading-none" aria-hidden="true">&#8250;</span></button>' +
         '<div id="hero-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>' +
-        "</div>" +
-        '<div class="mt-5" data-reveal>' +
+        "</div></div>" +
+        '<div class="min-w-0 lg:col-span-7 lg:row-start-2 mt-5" data-reveal>' +
         '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(he.badge) +
         "</p>" +
@@ -175,40 +175,38 @@
         '<p class="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">' +
         esc(he.subtext) +
         "</p>" +
-        "</div></div>" +
-        '<aside class="min-w-0 lg:col-span-5">' +
+        "</div>" +
+        '<aside class="flex min-h-0 min-w-0 flex-col lg:col-span-5 lg:row-start-1 lg:h-full">' +
         '<a href="' +
         esc(fundHref) +
-        '" class="group block h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
-        '<div class="flex h-full min-h-0 flex-col rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition group-hover:border-mes-primary/30 group-hover:shadow-md">' +
-        '<div class="border-b border-slate-200 pb-3">' +
+        '" class="group flex h-full min-h-0 flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
+        '<div class="flex min-h-0 flex-1 flex-col rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition group-hover:border-mes-primary/30 group-hover:shadow-md">' +
+        '<div class="shrink-0 border-b border-slate-200 pb-3">' +
         '<h2 class="relative inline-block pb-2 font-display text-lg font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-14 after:bg-mes-red">' +
         esc(fr.sectionTitle || "Fund raising appeal") +
         "</h2>" +
         "</div>" +
-        '<h3 class="mt-4 text-sm font-bold leading-snug text-mes-primary">' +
+        '<h3 class="mt-4 shrink-0 text-sm font-bold leading-snug text-mes-primary">' +
         esc(fr.title || "") +
         "</h3>" +
-        '<div class="relative mt-3 overflow-hidden rounded-md border border-slate-200 bg-white">' +
+        '<div class="relative mt-3 min-h-[6rem] flex-1 overflow-hidden rounded-md border border-slate-200 bg-white lg:min-h-0">' +
         '<img src="' +
         esc(fr.image || he.image) +
-        '" alt="" class="aspect-[16/10] w-full object-cover" loading="lazy"/>' +
+        '" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy"/>' +
         (fr.amount
           ? '<div class="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">' +
             esc(fr.amount) +
             "</div>"
           : "") +
         "</div>" +
-        '<div class="mt-3 flex items-center gap-2 text-xs text-slate-600">' +
+        '<div class="mt-3 flex shrink-0 items-center gap-2 text-xs text-slate-600">' +
         '<span class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-500">' +
         esc(crest) +
         "</span>" +
         "<span>" +
         esc(fr.footerLine || "") +
-        '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
-        '<p class="mt-3 text-sm font-bold leading-snug text-mes-primary">' +
-        "Every contribution, large or small, helps us move closer to our goal. Thank you for believing in our students and our mission." +
-        "</p></div></a></aside></div></div>";
+        '</span></div><p class="mt-3 shrink-0 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
+        "</div></a></aside></div></div>";
     }
 
     var leg = document.getElementById("home-legacy");
@@ -576,19 +574,6 @@
       })
       .join("");
 
-    var locs = a.globalPresence.locations
-      .map(function (l) {
-        return (
-          '<li class="flex items-center justify-between border-b border-slate-100 py-3 last:border-0">' +
-          '<span class="font-medium text-mes-primary">' +
-          esc(l.city) +
-          '</span><span class="text-slate-500">' +
-          esc(l.region) +
-          "</span></li>"
-        );
-      })
-      .join("");
-
     el.innerHTML =
       '<p class="text-xl text-slate-600" data-reveal>' +
       esc(a.intro) +
@@ -597,21 +582,6 @@
       '<section data-reveal><h2 class="font-display text-2xl font-bold text-mes-primary">Success stories</h2><div class="mt-6 space-y-6">' +
       stories +
       "</div></section>" +
-      '<section data-reveal class="rounded-2xl border border-slate-200 bg-white p-8">' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
-      esc(a.globalPresence.title) +
-      "</h2>" +
-      '<p class="mt-2 text-slate-600">' +
-      esc(a.globalPresence.subtitle) +
-      "</p>" +
-      '<div class="mt-8 grid gap-10 lg:grid-cols-2">' +
-      '<div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-100 aspect-video">' +
-      '<iframe title="Map" class="h-full w-full border-0" loading="lazy" referrerpolicy="no-referrer-when-downgrade" src="' +
-      esc(a.mapEmbedUrl) +
-      '"></iframe></div>' +
-      "<div><ul>" +
-      locs +
-      "</ul></div></div></section>" +
       '<section data-reveal class="rounded-2xl border border-mes-accent/30 bg-mes-light p-8">' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Alumni registration</h2>' +
       '<p class="mt-2 text-slate-600">' +
