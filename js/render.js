@@ -207,7 +207,7 @@
         "<span>" +
         esc(fr.footerLine || "") +
         '</span></div><p class="mt-3 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
-        '<p class="mt-3 text-xs leading-relaxed text-slate-600">' +
+        '<p class="mt-3 text-xs leading-relaxed text-amber-950">' +
         "Every contribution, large or small, helps us move closer to our goal. Thank you for believing in our students and our mission." +
         "</p></div></a></aside></div></div>";
     }
