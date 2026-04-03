@@ -5,9 +5,10 @@ backend:
   name: github
   repo: tphal001/highschool
   branch: main
-  # OAuth is handled by Vercel serverless routes (see /api/auth.js, vercel.json rewrites).
-  # Must match the URL where you open /admin/ (no trailing slash).
-  base_url: https://highschool-gold.vercel.app
+  # If the site is hosted on Vercel (or anywhere except Netlify), GitHub login still uses
+  # Netlify’s OAuth API. Create a Netlify site for this repo, enable GitHub OAuth there, then
+  # set site_domain to that Netlify hostname (see docs/admin-github.md).
+  # site_domain: your-site-name.netlify.app
 
 media_folder: media/uploads
 public_folder: /media/uploads

@@ -1,25 +1,47 @@
 # Decap CMS + GitHub (sign-in for `/admin/`)
 
-The admin UI uses [Decap CMS](https://decapcms.org/) with the **GitHub** backend (see `admin/config.yml`, repo **`tphal001/highschool`**).
+The admin UI uses [Decap CMS](https://decapcms.org/) with the **GitHub** backend (`admin/config.yml`, repo **`tphal001/highschool`**).
 
-## 1. OAuth App on GitHub
+GitHub login needs a **server-side OAuth step**. This project implements that **on Vercel** with two serverless routes (`api/auth.js`, `api/callback.js`) and URL rewrites so Decap still calls `/auth` and `/callback` on the **same** hostname as the site. You do **not** need Netlify.
+
+## 1. GitHub OAuth App
 
 1. GitHub → **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**.
-2. **Application name:** e.g. `School site CMS`
-3. **Homepage URL:** your live site, e.g. `https://highschool-gold.vercel.app`
-4. **Authorization callback URL:** use the URL Decap expects for GitHub backend — see [Decap: GitHub backend](https://decapcms.org/docs/github-backend/) (callback is tied to your deployment URL; often `https://YOUR-DOMAIN/admin/` or the value listed in current Decap docs).
-5. Register the app and note the **Client ID** (and **Client Secret** if your setup requires the full server flow).
+2. **Homepage URL:** your live site, e.g. `https://highschool-gold.vercel.app`
+3. **Authorization callback URL:** **`https://highschool-gold.vercel.app/callback`**  
+   (Must match `base_url` in `admin/config.yml` — same host, path `/callback`.)
 
-## 2. Enable the CMS in the repo
+If you add a custom domain or use Vercel preview URLs, add **additional** callback URLs in the same GitHub OAuth app (GitHub allows several).
 
-- Ensure **`admin/index.html`** and **`admin/config.yml`** are deployed.
-- Open **`https://YOUR-DOMAIN/admin/`** and complete GitHub authorization.
+## 2. Environment variables on Vercel
 
-## 3. Who can edit
+In the Vercel project → **Settings** → **Environment Variables** (Production, and Preview if staff use preview URLs):
 
-Only GitHub users with **write** access to **`tphal001/highschool`** can publish from the CMS. Invite staff as collaborators or use a **team** / **org** repo with appropriate permissions.
+| Name | Value |
+|------|--------|
+| `OAUTH_GITHUB_CLIENT_ID` | From the GitHub OAuth app |
+| `OAUTH_GITHUB_CLIENT_SECRET` | From the GitHub OAuth app |
+
+Redeploy after saving.
+
+## 3. Match `base_url` to where you open `/admin/`
+
+In `admin/config.yml`, **`backend.base_url`** must be the **origin** where the CMS runs (no trailing slash), e.g.:
+
+```yaml
+base_url: https://highschool-gold.vercel.app
+```
+
+If you change the Vercel project name or use a custom domain, update **`base_url`** and the GitHub **callback URL** to match.
+
+## 4. Use the CMS
+
+Open **`https://YOUR-SITE/admin/`** → **Login with GitHub** → editor loads after authorization.
+
+Only GitHub users with **write** access to **`tphal001/highschool`** can publish.
 
 ## References
 
-- [Decap CMS documentation](https://decapcms.org/docs/)
-- [GitHub backend](https://decapcms.org/docs/github-backend/)
+- [Decap: GitHub backend](https://decapcms.org/docs/github-backend/)
+- [Decap: `base_url` / `auth_endpoint`](https://decapcms.org/docs/authentication-backends/)
+- Community pattern similar to [decap-cms-oauth-vercel](https://github.com/GrassBlock1/decap-cms-oauth-vercel) (OAuth on Vercel)

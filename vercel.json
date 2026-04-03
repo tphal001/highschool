@@ -2,6 +2,10 @@
   "installCommand": "npm install",
   "buildCommand": "npm run build",
   "outputDirectory": ".",
+  "rewrites": [
+    { "source": "/auth", "destination": "/api/auth" },
+    { "source": "/callback", "destination": "/api/callback" }
+  ],
   "headers": [
     {
       "source": "/js/(.*)",
