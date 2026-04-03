@@ -1,7 +1,4 @@
-/**
- * AUTO-GENERATED — do not edit. Update content in the CMS at /admin/
- */
-window.SITE_CONTENT = {
+{
   "home": {
     "hero": {
       "slides": [
@@ -343,4 +340,4 @@ window.SITE_CONTENT = {
     "imageUrl": "assets/flash-news-placeholder.svg",
     "imageAlt": "Flash news"
   }
-};
+}
