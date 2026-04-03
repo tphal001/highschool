@@ -225,9 +225,9 @@
       .join("");
     var searchHref = (cfg.navSearchHref || "news.html").trim() || "news.html";
     return (
-      '<div class="site-nav-outer mx-auto flex max-w-7xl items-stretch justify-between gap-1 px-1 sm:px-3 lg:px-6">' +
+      '<div class="site-nav-outer mx-auto flex max-w-7xl items-stretch justify-between gap-1 px-4 sm:px-8 lg:px-10">' +
       '<nav class="min-w-0 flex-1 overflow-visible" aria-label="Primary navigation">' +
-      '<ul class="flex min-w-0 list-none flex-wrap items-stretch justify-center gap-y-1 gap-x-0 md:justify-start">' +
+      '<ul class="flex min-w-0 list-none flex-wrap items-stretch justify-start gap-x-0 gap-y-1">' +
       items +
       "</ul></nav>" +
       '<div class="flex shrink-0 items-center border-l border-white/25 pl-1 sm:pl-2">' +
@@ -401,7 +401,7 @@
         "</div></div>";
 
       this.innerHTML =
-        '<footer id="site-footer" class="border-t border-mes-primary/10 bg-mes-light px-5 py-12 text-slate-700 sm:px-8 lg:px-10">' +
+        '<footer id="site-footer" class="border-t border-mes-primary/10 bg-mes-light px-4 py-12 text-slate-700 sm:px-8 lg:px-10">' +
         '<div class="mx-auto max-w-7xl ' +
         gridClass +
         '">' +

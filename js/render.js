@@ -151,8 +151,8 @@
 
       hero.innerHTML =
         '<div class="mx-auto max-w-7xl">' +
-        '<div class="grid gap-6 lg:grid-cols-12 lg:items-start lg:gap-8">' +
-        '<div class="lg:col-span-8">' +
+        '<div class="grid gap-6 lg:grid-cols-12 lg:items-stretch lg:gap-8">' +
+        '<div class="min-w-0 lg:col-span-7">' +
         '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">' +
         '<img id="hero-slide-img" src="' +
         esc(firstSlide) +
@@ -176,11 +176,11 @@
         esc(he.subtext) +
         "</p>" +
         "</div></div>" +
-        '<aside class="lg:col-span-4">' +
+        '<aside class="min-w-0 lg:col-span-5">' +
         '<a href="' +
         esc(fundHref) +
-        '" class="group block rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
-        '<div class="rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition group-hover:border-mes-primary/30 group-hover:shadow-md">' +
+        '" class="group block h-full rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
+        '<div class="flex h-full min-h-0 flex-col rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition group-hover:border-mes-primary/30 group-hover:shadow-md">' +
         '<div class="border-b border-slate-200 pb-3">' +
         '<h2 class="relative inline-block pb-2 font-display text-lg font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-14 after:bg-mes-red">' +
         esc(fr.sectionTitle || "Fund raising appeal") +
@@ -193,7 +193,7 @@
         '<div class="relative mt-3 overflow-hidden rounded-md border border-slate-200 bg-white">' +
         '<img src="' +
         esc(fr.image || he.image) +
-        '" alt="" class="aspect-[4/3] w-full object-cover" loading="lazy"/>' +
+        '" alt="" class="aspect-[16/10] w-full object-cover" loading="lazy"/>' +
         (fr.amount
           ? '<div class="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">' +
             esc(fr.amount) +
@@ -215,7 +215,7 @@
       leg.innerHTML =
         '<div class="absolute inset-0 bg-gradient-to-r from-mes-nav via-mes-navDeep to-mes-nav bg-[length:200%_100%] animate-gradient-shift motion-reduce:animate-none"></div>' +
         '<div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>' +
-        '<div class="relative mx-auto flex max-w-7xl flex-col items-center justify-center gap-5 px-5 py-8 text-center sm:flex-row sm:gap-10 sm:px-8 sm:py-10 lg:px-10" data-reveal>' +
+        '<div class="relative mx-auto flex max-w-7xl flex-col items-center justify-center gap-5 px-4 py-8 text-center sm:flex-row sm:gap-10 sm:px-8 sm:py-10 lg:px-10" data-reveal>' +
         '<span class="font-display shrink-0 rounded-full border border-mes-goldLine/60 bg-mes-navDeep/80 px-5 py-2 text-sm font-bold tracking-wide text-white shadow-lg sm:text-base">' +
         esc(l.badge) +
         "</span>" +
