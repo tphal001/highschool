@@ -23,6 +23,44 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
+  /**
+   * Home hero: padding-top = fixed header height + same gap as hero grid row-gap
+   * (see render.js: gap-4 / lg:gap-y-5) so the white strip under the menu matches
+   * the strip between the fund appeal card and the news card.
+   */
+  function initHomeHeroTopPadding() {
+    var hero = document.getElementById("home-hero");
+    var header = document.getElementById("site-header");
+    if (!hero || !header) return;
+
+    function rootRem() {
+      return parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    }
+
+    /** Matches Tailwind gap-y: gap-4 → 1rem, lg:gap-y-5 → 1.25rem */
+    function heroStripRem() {
+      return window.matchMedia("(min-width: 1024px)").matches ? 1.25 : 1;
+    }
+
+    function apply() {
+      hero.style.paddingTop = header.offsetHeight + rootRem() * heroStripRem() + "px";
+    }
+
+    apply();
+    window.addEventListener("resize", apply, { passive: true });
+    if (typeof ResizeObserver !== "undefined") {
+      var ro = new ResizeObserver(function () {
+        apply();
+      });
+      ro.observe(header);
+    }
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(function () {
+        apply();
+      });
+    }
+  }
+
   function initReveal() {
     var reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     var nodes = document.querySelectorAll("[data-reveal]");
@@ -285,6 +323,7 @@
     if (typeof window.renderPageContent === "function") {
       window.renderPageContent();
     }
+    initHomeHeroTopPadding();
     initHeroSlider();
     initVimpNewsModal();
     initCopyPageUrl();
@@ -293,6 +332,7 @@
     initForms();
   }
 
+  window.initHomeHeroTopPadding = initHomeHeroTopPadding;
   window.initHeaderScroll = initHeaderScroll;
   window.initReveal = initReveal;
   window.initHeroSlider = initHeroSlider;
