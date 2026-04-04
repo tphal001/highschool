@@ -217,19 +217,34 @@
     var img = document.getElementById("vimp-news-img");
 
     var open = false;
+    var closeTimer = null;
     function setOpen(shouldOpen) {
       if (!modal) return;
       open = shouldOpen;
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
       if (shouldOpen) {
         modal.classList.remove("hidden");
         modal.classList.add("flex");
         document.body.classList.add("overflow-hidden");
         document.documentElement.classList.add("overflow-hidden");
+        modal.classList.remove("vimp-open");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            modal.classList.add("vimp-open");
+          });
+        });
       } else {
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
-        document.body.classList.remove("overflow-hidden");
-        document.documentElement.classList.remove("overflow-hidden");
+        modal.classList.remove("vimp-open");
+        closeTimer = setTimeout(function () {
+          closeTimer = null;
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+          document.body.classList.remove("overflow-hidden");
+          document.documentElement.classList.remove("overflow-hidden");
+        }, 280);
       }
     }
 

@@ -55,6 +55,36 @@
       #home-quick-announcements {
         align-items: stretch;
       }
+      /* Flash / VIMP modal — “movie poster” entrance */
+      #vimp-news-modal .vimp-backdrop {
+        opacity: 0;
+        transition: opacity 0.4s ease;
+      }
+      #vimp-news-modal.vimp-open .vimp-backdrop {
+        opacity: 1;
+      }
+      #vimp-news-modal .vimp-poster-card {
+        transform: scale(0.9) translateY(12px);
+        opacity: 0;
+        transition:
+          transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.45s ease;
+      }
+      #vimp-news-modal.vimp-open .vimp-poster-card {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #vimp-news-modal .vimp-poster-card {
+          transform: none;
+          opacity: 1;
+          transition: none;
+        }
+        #vimp-news-modal .vimp-backdrop {
+          opacity: 1;
+          transition: none;
+        }
+      }
     </style>
     <script src="js/site-config.js"></script>
     <script src="js/content.js"></script>
@@ -129,39 +159,49 @@
     <!-- VIMP notice: image + overlay (shown on Home load; see SITE_CONFIG.vimpNews & site.js) -->
     <div
       id="vimp-news-modal"
-      class="fixed inset-0 z-[100] hidden items-center justify-center p-3 sm:p-6"
+      class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-8"
       role="dialog"
       aria-modal="true"
       aria-labelledby="vimp-news-title"
     >
       <div
-        class="absolute inset-0 bg-slate-900/70 backdrop-blur-[2px] transition-opacity"
+        class="vimp-backdrop absolute inset-0 bg-gradient-to-b from-slate-950/95 via-slate-900/90 to-black/95 backdrop-blur-md"
         data-vimp-dismiss
         aria-hidden="true"
       ></div>
       <div
-        class="relative z-10 flex max-h-[min(94vh,920px)] w-full max-w-4xl flex-col overflow-hidden rounded-sm bg-white shadow-2xl ring-1 ring-black/10"
+        class="relative z-10 flex w-full max-w-4xl items-center justify-center"
+        style="perspective: 1200px"
       >
-        <div class="flex shrink-0 items-center justify-end border-b border-slate-200/80 bg-white px-1 py-1">
-          <button
-            type="button"
-            class="flex h-11 w-11 items-center justify-center rounded text-3xl font-light leading-none text-slate-800 transition hover:bg-slate-100"
-            data-vimp-dismiss
-            aria-label="Close"
+        <div
+          id="vimp-poster-card"
+          class="vimp-poster-card relative w-full max-h-[min(92vh,900px)] overflow-hidden rounded-2xl bg-gradient-to-br from-slate-800 via-slate-900 to-black p-[3px] shadow-[0_32px_80px_-12px_rgba(0,0,0,0.75),0_0_0_1px_rgba(255,255,255,0.08)] ring-1 ring-white/10 sm:rounded-3xl sm:p-1"
+        >
+          <div
+            class="relative overflow-hidden rounded-[0.9rem] bg-slate-950 sm:rounded-[1.35rem]"
           >
-            ×
-          </button>
-        </div>
-        <div class="min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-white">
-          <img
-            id="vimp-news-img"
-            src=""
-            alt=""
-            class="block h-auto w-full object-contain object-top"
-            width="900"
-            height="1200"
-            decoding="async"
-          />
+            <button
+              type="button"
+              class="absolute right-2 top-2 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/20 bg-black/55 text-2xl font-light leading-none text-white shadow-lg backdrop-blur-sm transition hover:bg-black/75 sm:right-3 sm:top-3 sm:h-11 sm:w-11"
+              data-vimp-dismiss
+              aria-label="Close"
+            >
+              ×
+            </button>
+            <div
+              class="pointer-events-none absolute inset-0 z-10 rounded-[inherit] shadow-[inset_0_0_100px_rgba(0,0,0,0.45)]"
+              aria-hidden="true"
+            ></div>
+            <img
+              id="vimp-news-img"
+              src=""
+              alt=""
+              class="relative z-0 block h-auto w-full object-contain object-top"
+              width="900"
+              height="1200"
+              decoding="async"
+            />
+          </div>
         </div>
       </div>
     </div>
