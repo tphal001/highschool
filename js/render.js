@@ -15,6 +15,42 @@
     return "₹" + Math.round(num).toLocaleString("en-IN");
   }
 
+  /** Home hero: scrolling strip from quickAnnouncements (duplicated for seamless marquee). */
+  function buildHomeTickerMarqueeHtml() {
+    var items = (C.quickAnnouncements || []).slice(0, 8);
+    if (!items.length) {
+      return (
+        '<p class="text-xs leading-relaxed text-slate-600">Campus announcements will appear here.</p>'
+      );
+    }
+    var parts = items.map(function (a) {
+      return (
+        '<span class="inline-flex max-w-none items-baseline gap-1.5 px-2">' +
+        '<span class="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-mes-accent">' +
+        esc(a.date || "") +
+        "</span>" +
+        '<a href="' +
+        esc(a.href || "news.html?ctx=events") +
+        '" class="font-semibold text-mes-primary hover:underline">' +
+        esc(a.title) +
+        "</a></span>"
+      );
+    });
+    var inner =
+      parts.join('<span class="select-none px-1 text-mes-accent/40" aria-hidden="true">·</span>');
+    return (
+      '<div class="overflow-hidden rounded-lg border border-mes-primary/15 bg-white/90 py-2.5 shadow-inner">' +
+      '<div class="flex w-max animate-marquee-x motion-reduce:animate-none">' +
+      '<div class="flex w-max shrink-0 items-center whitespace-nowrap">' +
+      inner +
+      "</div>" +
+      '<div class="flex w-max shrink-0 items-center whitespace-nowrap" aria-hidden="true">' +
+      inner +
+      "</div>" +
+      "</div></div>"
+    );
+  }
+
   function fundAppealPageUrl() {
     try {
       if (typeof window !== "undefined" && window.location && window.location.href) {
@@ -176,6 +212,14 @@
         esc(he.subtext) +
         "</p>" +
         "</div>" +
+        '<div class="min-w-0 lg:col-span-5 lg:row-start-2 mt-5 flex flex-col justify-start" data-reveal>' +
+        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-4 shadow-sm">' +
+        '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-accent">Latest updates</p>' +
+        '<div class="mt-2">' +
+        buildHomeTickerMarqueeHtml() +
+        "</div>" +
+        '<a href="news.html?ctx=events" class="mt-3 inline-block text-xs font-semibold text-mes-primary hover:underline">View all news →</a>' +
+        "</div></div>" +
         '<aside class="flex min-h-0 min-w-0 flex-col lg:col-span-5 lg:row-start-1 lg:h-full">' +
         '<a href="' +
         esc(fundHref) +

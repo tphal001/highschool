@@ -56,11 +56,16 @@ tailwind.config = {
           "0%, 100%": { backgroundPosition: "0% 50%" },
           "50%": { backgroundPosition: "100% 50%" },
         },
+        "marquee-x": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "fade-in-up": "fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "fade-in": "fade-in 0.8s ease-out forwards",
         "gradient-shift": "gradient-shift 12s ease-in-out infinite",
+        "marquee-x": "marquee-x 32s linear infinite",
       },
     },
   },
