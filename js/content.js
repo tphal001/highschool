@@ -315,7 +315,7 @@ window.SITE_CONTENT = {
   },
   "flashNews": {
     "enabled": true,
-    "imageUrl": "assets/flash-news-placeholder.svg",
+    "imageUrl": "images/flash.jpg",
     "imageAlt": "Flash news"
   }
 };

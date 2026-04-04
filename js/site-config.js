@@ -36,11 +36,11 @@ window.SITE_CONFIG = {
   /**
    * Flash notice: opens when “Home” is clicked (capture handler avoids same-page reload issues).
    * From other pages, navigation uses index.html#flash-news then opens once; plain index.html visit
-   * does not auto-open. Swap assets/flash-news-placeholder.svg or set imageUrl.
+   * does not auto-open. Set imageUrl in SITE_CONTENT.flashNews or site-config.js.
    */
   vimpNews: {
     enabled: true,
-    imageUrl: "assets/flash-news-placeholder.svg",
+    imageUrl: "images/flash.jpg",
     imageAlt: "Flash news",
   },
   contactPhone: "+91 20 1234 5678",

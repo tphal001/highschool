@@ -230,7 +230,7 @@
         "</div>" +
         '<div class="min-w-0 lg:col-span-5 lg:row-start-2 flex flex-col justify-start lg:self-end" data-reveal>' +
         '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-2.5 shadow-sm">' +
-        '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-accent">Latest updates</p>' +
+        '<p class="text-[10px] font-bold uppercase tracking-wider text-black">Latest updates</p>' +
         '<div class="mt-1.5">' +
         buildQuickNewsCardHtml(h) +
         "</div>" +
