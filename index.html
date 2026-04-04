@@ -44,6 +44,13 @@
       announcement-card {
         display: block;
       }
+      /**
+       * One shared value for block-start + block-end so top/bottom “white strips” match.
+       * (Tailwind py-* is symmetric too; this makes the intent explicit and avoids drift.)
+       */
+      main .home-section-balanced {
+        padding-block: clamp(4.5rem, 5.5vw + 2rem, 7rem);
+      }
     </style>
     <script src="js/site-config.js"></script>
     <script src="js/content.js"></script>
@@ -67,7 +74,7 @@
       </section>
 
       <!-- Quick announcements -->
-      <section id="announcements" class="scroll-mt-52 bg-white px-4 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-28">
+      <section id="announcements" class="home-section-balanced scroll-mt-52 bg-white px-4 sm:px-8 lg:px-10">
         <div class="mx-auto max-w-7xl">
           <div class="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between" data-reveal>
             <div class="max-w-2xl">
@@ -99,14 +106,14 @@
       </section>
 
       <!-- About preview -->
-      <section class="border-t border-slate-200 bg-white px-4 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-28">
+      <section class="home-section-balanced border-t border-slate-200 bg-white px-4 sm:px-8 lg:px-10">
         <div class="mx-auto max-w-7xl">
           <div id="home-about-preview"></div>
         </div>
       </section>
 
       <!-- Alumni spotlight -->
-      <section class="border-t border-mes-primary/10 bg-mes-light px-4 py-20 sm:px-8 sm:py-24 lg:px-10 lg:py-28">
+      <section class="home-section-balanced border-t border-mes-primary/10 bg-mes-light px-4 sm:px-8 lg:px-10">
         <div class="mx-auto max-w-7xl">
           <div id="home-alumni-spotlight"></div>
         </div>
