@@ -13,6 +13,11 @@
       "subtext": "Dr. Gadagkar High School, Satararoad nurtures scholarship, character, and leadership for every learner.",
       "image": "images/1.jpg"
     },
+    "quickNews": [
+      "Spring arts showcase — tickets on sale this week.",
+      "Summer programmes registration is open for STEM and sports camps.",
+      "Parent–teacher conferences — book your slot through the portal."
+    ],
     "fundraising": {
       "href": "fund-appeal.html",
       "sectionTitle": "Fund raising appeal",

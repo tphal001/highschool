@@ -15,38 +15,54 @@
     return "₹" + Math.round(num).toLocaleString("en-IN");
   }
 
-  /** Home hero: scrolling strip from quickAnnouncements (duplicated for seamless marquee). */
-  function buildHomeTickerMarqueeHtml() {
-    var items = (C.quickAnnouncements || []).slice(0, 8);
-    if (!items.length) {
-      return (
-        '<p class="text-xs leading-relaxed text-slate-600">Campus announcements will appear here.</p>'
-      );
+  function shuffleArray(arr) {
+    var a = arr.slice();
+    var i;
+    for (i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i];
+      a[i] = a[j];
+      a[j] = t;
     }
-    var parts = items.map(function (a) {
-      return (
-        '<span class="inline-flex max-w-none items-baseline gap-1.5 px-2">' +
-        '<span class="shrink-0 text-[10px] font-semibold uppercase tracking-wide text-mes-accent">' +
-        esc(a.date || "") +
-        "</span>" +
-        '<a href="' +
-        esc(a.href || "news.html?ctx=events") +
-        '" class="font-semibold text-mes-primary hover:underline">' +
-        esc(a.title) +
-        "</a></span>"
-      );
-    });
-    var inner =
-      parts.join('<span class="select-none px-1 text-mes-accent/40" aria-hidden="true">·</span>');
+    return a;
+  }
+
+  /** Home hero: bulleted quick news, random order, vertical scroll (duplicated block for seamless loop). */
+  function buildQuickNewsCardHtml(h) {
+    var raw = (h && h.quickNews) || [];
+    var lines = [];
+    var i;
+    for (i = 0; i < raw.length; i++) {
+      var x = raw[i];
+      var s = typeof x === "string" ? x : (x && (x.text || x.line)) || "";
+      if (s) lines.push(s);
+    }
+    if (!lines.length) {
+      lines = ["Add quick news lines in the CMS (Home → Quick news)."];
+    } else {
+      lines = shuffleArray(lines);
+    }
+    var liHtml = "";
+    for (i = 0; i < lines.length; i++) {
+      liHtml += '<li class="text-left">' + esc(lines[i]) + "</li>";
+    }
+    var ulClass =
+      "list-disc space-y-1.5 pl-4 text-xs leading-relaxed text-slate-700 marker:text-mes-accent";
+    var twin =
+      '<ul class="' +
+      ulClass +
+      '">' +
+      liHtml +
+      "</ul>" +
+      '<ul class="motion-reduce:hidden ' +
+      ulClass +
+      '" aria-hidden="true">' +
+      liHtml +
+      "</ul>";
     return (
-      '<div class="overflow-hidden rounded-lg border border-mes-primary/15 bg-white/90 py-2.5 shadow-inner">' +
-      '<div class="flex w-max animate-marquee-x motion-reduce:animate-none">' +
-      '<div class="flex w-max shrink-0 items-center whitespace-nowrap">' +
-      inner +
-      "</div>" +
-      '<div class="flex w-max shrink-0 items-center whitespace-nowrap" aria-hidden="true">' +
-      inner +
-      "</div>" +
+      '<div class="h-36 overflow-hidden rounded-lg border border-mes-primary/15 bg-white/90 shadow-inner">' +
+      '<div class="animate-marquee-y motion-reduce:animate-none">' +
+      twin +
       "</div></div>"
     );
   }
@@ -187,7 +203,7 @@
 
       hero.innerHTML =
         '<div class="mx-auto max-w-7xl">' +
-        '<div class="grid gap-6 lg:grid-cols-12 lg:items-stretch lg:gap-8">' +
+        '<div class="grid gap-4 lg:grid-cols-12 lg:items-stretch lg:gap-x-6 lg:gap-y-4">' +
         '<div class="min-w-0 lg:col-span-7 lg:row-start-1">' +
         '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">' +
         '<img id="hero-slide-img" src="' +
@@ -201,7 +217,7 @@
         '<span class="text-lg leading-none" aria-hidden="true">&#8250;</span></button>' +
         '<div id="hero-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>' +
         "</div></div>" +
-        '<div class="min-w-0 lg:col-span-7 lg:row-start-2 mt-5" data-reveal>' +
+        '<div class="min-w-0 lg:col-span-7 lg:row-start-2 mt-3 lg:mt-2" data-reveal>' +
         '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(he.badge) +
         "</p>" +
@@ -212,13 +228,12 @@
         esc(he.subtext) +
         "</p>" +
         "</div>" +
-        '<div class="min-w-0 lg:col-span-5 lg:row-start-2 mt-5 flex flex-col justify-start" data-reveal>' +
-        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-4 shadow-sm">' +
-        '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-accent">Latest updates</p>' +
-        '<div class="mt-2">' +
-        buildHomeTickerMarqueeHtml() +
+        '<div class="min-w-0 lg:col-span-5 lg:row-start-2 mt-3 lg:mt-2 flex flex-col justify-start" data-reveal>' +
+        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-3 shadow-sm">' +
+        '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-accent">Quick news</p>' +
+        '<div class="mt-1.5">' +
+        buildQuickNewsCardHtml(h) +
         "</div>" +
-        '<a href="news.html?ctx=events" class="mt-3 inline-block text-xs font-semibold text-mes-primary hover:underline">View all news →</a>' +
         "</div></div>" +
         '<aside class="flex min-h-0 min-w-0 flex-col lg:col-span-5 lg:row-start-1 lg:h-full">' +
         '<a href="' +

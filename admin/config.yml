@@ -93,6 +93,11 @@ collections:
               - { label: Image URL, name: image, widget: string }
               - { label: Amount / goal line, name: amount, widget: string }
               - { label: Footer line, name: footerLine, widget: string }
+          - label: Quick news (home ticker bullets)
+            name: quickNews
+            widget: list
+            summary: "{{fields.text}}"
+            field: { label: Statement, name: text, widget: text }
           - label: Legacy strip
             name: legacy
             widget: object

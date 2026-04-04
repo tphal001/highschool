@@ -85,6 +85,9 @@ function normalizeSiteForEmit(site) {
       return "";
     });
   }
+  if (site.home && Array.isArray(site.home.quickNews)) {
+    site.home.quickNews = mapStrList(site.home.quickNews, "text").filter(Boolean);
+  }
   if (site.home && site.home.aboutPreview && Array.isArray(site.home.aboutPreview.paragraphs)) {
     site.home.aboutPreview.paragraphs = mapStrList(site.home.aboutPreview.paragraphs, "p");
   }
