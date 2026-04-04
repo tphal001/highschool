@@ -47,7 +47,7 @@
       liHtml += '<li class="text-left">' + esc(lines[i]) + "</li>";
     }
     var ulClass =
-      "list-disc space-y-1.5 pl-4 text-xs leading-relaxed text-slate-700 marker:text-mes-accent";
+      "list-disc space-y-1 pl-4 text-xs leading-snug text-sky-900 marker:text-sky-600";
     var twin =
       '<ul class="' +
       ulClass +
@@ -60,7 +60,7 @@
       liHtml +
       "</ul>";
     return (
-      '<div class="h-36 overflow-hidden rounded-lg border border-mes-primary/15 bg-white/90 shadow-inner">' +
+      '<div class="h-[6rem] overflow-hidden rounded-lg border border-mes-primary/15 bg-white/90 px-1 py-1 shadow-inner sm:h-[6.25rem]">' +
       '<div class="animate-marquee-y motion-reduce:animate-none">' +
       twin +
       "</div></div>"
@@ -203,7 +203,7 @@
 
       hero.innerHTML =
         '<div class="mx-auto max-w-7xl">' +
-        '<div class="grid gap-4 lg:grid-cols-12 lg:items-stretch lg:gap-x-6 lg:gap-y-4">' +
+        '<div class="grid gap-4 lg:grid-cols-12 lg:items-stretch lg:gap-x-6 lg:gap-y-5">' +
         '<div class="min-w-0 lg:col-span-7 lg:row-start-1">' +
         '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">' +
         '<img id="hero-slide-img" src="' +
@@ -217,7 +217,7 @@
         '<span class="text-lg leading-none" aria-hidden="true">&#8250;</span></button>' +
         '<div id="hero-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>' +
         "</div></div>" +
-        '<div class="min-w-0 lg:col-span-7 lg:row-start-2 mt-3 lg:mt-2" data-reveal>' +
+        '<div class="min-w-0 lg:col-span-7 lg:row-start-2" data-reveal>' +
         '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(he.badge) +
         "</p>" +
@@ -228,9 +228,9 @@
         esc(he.subtext) +
         "</p>" +
         "</div>" +
-        '<div class="min-w-0 lg:col-span-5 lg:row-start-2 mt-3 lg:mt-2 flex flex-col justify-start" data-reveal>' +
-        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-3 shadow-sm">' +
-        '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-accent">Quick news</p>' +
+        '<div class="min-w-0 lg:col-span-5 lg:row-start-2 flex flex-col justify-start lg:self-end" data-reveal>' +
+        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-2.5 shadow-sm">' +
+        '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-accent">Latest updates</p>' +
         '<div class="mt-1.5">' +
         buildQuickNewsCardHtml(h) +
         "</div>" +

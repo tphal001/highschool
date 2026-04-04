@@ -1,7 +1,16 @@
 /** Maroon & cream institutional palette — same layout tokens as RLMSS structure (nav, header, slider, etc.). */
 tailwind.config = {
   /** Injected in render.js — ensure Play CDN generates these utilities. */
-  safelist: ["animate-marquee-y", "motion-reduce:animate-none", "motion-reduce:hidden"],
+  safelist: [
+    "animate-marquee-y",
+    "motion-reduce:animate-none",
+    "motion-reduce:hidden",
+    "h-[6rem]",
+    "sm:h-[6.25rem]",
+    "text-sky-900",
+    "marker:text-sky-600",
+    "leading-snug",
+  ],
   theme: {
     extend: {
       fontFamily: {
