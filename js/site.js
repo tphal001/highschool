@@ -23,6 +23,79 @@
     window.addEventListener("scroll", onScroll, { passive: true });
   }
 
+  /** Hamburger drawer + backdrop; desktop nav stays at lg+ (see components.js). */
+  function initMobileNav() {
+    var panel = document.getElementById("site-nav-mobile-panel");
+    var toggle = document.getElementById("site-nav-mobile-toggle");
+    var closeBtn = document.getElementById("site-nav-mobile-close");
+    var backdrop = panel && panel.querySelector("[data-site-nav-backdrop]");
+    if (!panel || !toggle) return;
+
+    var mq = window.matchMedia("(min-width: 1024px)");
+
+    function isVimpModalOpen() {
+      var m = document.getElementById("vimp-news-modal");
+      return m && !m.classList.contains("hidden");
+    }
+
+    function bodyScrollLock(on) {
+      if (on) {
+        document.body.classList.add("overflow-hidden");
+        document.documentElement.classList.add("overflow-hidden");
+      } else if (!isVimpModalOpen()) {
+        document.body.classList.remove("overflow-hidden");
+        document.documentElement.classList.remove("overflow-hidden");
+      }
+    }
+
+    function openNav() {
+      panel.classList.remove("hidden");
+      panel.setAttribute("aria-hidden", "false");
+      toggle.setAttribute("aria-expanded", "true");
+      bodyScrollLock(true);
+    }
+
+    function closeNav() {
+      panel.classList.add("hidden");
+      panel.setAttribute("aria-hidden", "true");
+      toggle.setAttribute("aria-expanded", "false");
+      bodyScrollLock(false);
+    }
+
+    function onToggleClick() {
+      if (panel.classList.contains("hidden")) {
+        openNav();
+      } else {
+        closeNav();
+      }
+    }
+
+    toggle.addEventListener("click", onToggleClick);
+    if (closeBtn) closeBtn.addEventListener("click", closeNav);
+    if (backdrop) backdrop.addEventListener("click", closeNav);
+
+    document.addEventListener(
+      "keydown",
+      function (e) {
+        if (e.key !== "Escape" || panel.classList.contains("hidden")) return;
+        closeNav();
+      },
+      true
+    );
+
+    panel.addEventListener("click", function (e) {
+      var a = e.target.closest && e.target.closest("a[href]");
+      if (!a || !panel.contains(a)) return;
+      if (a.getAttribute("href") === "#" && !a.classList.contains("js-nav-home-vimp")) return;
+      closeNav();
+    });
+
+    function onResize() {
+      if (mq.matches && !panel.classList.contains("hidden")) closeNav();
+    }
+    window.addEventListener("resize", onResize, { passive: true });
+  }
+
   /**
    * Home hero: padding-top = fixed header height + same gap as hero grid row-gap
    * (see render.js: gap-4 / lg:gap-y-5) so the white strip under the menu matches
@@ -326,6 +399,7 @@
     initHomeHeroTopPadding();
     initHeroSlider();
     initVimpNewsModal();
+    initMobileNav();
     initCopyPageUrl();
     initHeaderScroll();
     initReveal();
@@ -333,6 +407,7 @@
   }
 
   window.initHomeHeroTopPadding = initHomeHeroTopPadding;
+  window.initMobileNav = initMobileNav;
   window.initHeaderScroll = initHeaderScroll;
   window.initReveal = initReveal;
   window.initHeroSlider = initHeroSlider;

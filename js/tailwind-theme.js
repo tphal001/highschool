@@ -10,6 +10,11 @@ tailwind.config = {
     "text-sky-900",
     "marker:text-sky-600",
     "leading-snug",
+    "z-[65]",
+    "backdrop-blur-[2px]",
+    "max-w-[min(100vw,20rem)]",
+    "overscroll-y-contain",
+    "[&::-webkit-details-marker]:hidden",
   ],
   theme: {
     extend: {

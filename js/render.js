@@ -296,8 +296,14 @@
       var items = C.quickAnnouncements.slice(0, 3);
       qa.innerHTML = items
         .map(function (a, i) {
-          var liClass = i === 2 ? ' class="sm:col-span-2 lg:col-span-1"' : "";
-          return "<li data-reveal" + liClass + ">" + cardFromData(a) + "</li>";
+          var span = i === 2 ? "sm:col-span-2 lg:col-span-1 " : "";
+          return (
+            '<li class="' +
+            span +
+            'flex h-full min-h-0 flex-col" data-reveal>' +
+            cardFromData(a) +
+            "</li>"
+          );
         })
         .join("");
     }
@@ -349,6 +355,15 @@
           );
         })
         .join("");
+      var photoUrl = st && st.photo != null ? String(st.photo).trim() : "";
+      var avatarBlock =
+        photoUrl !== ""
+          ? '<img src="' +
+            esc(photoUrl) +
+            '" alt="" class="h-16 w-16 shrink-0 rounded-full object-cover ring-2 ring-mes-primary/25 shadow-sm" loading="lazy"/>'
+          : '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-mes-primary to-mes-primaryDark text-lg font-bold text-mes-accent">' +
+            esc(st.initials) +
+            "</div>";
       als.innerHTML =
         '<div class="mx-auto max-w-3xl text-center" data-reveal>' +
         '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-24 after:-translate-x-1/2 after:bg-mes-red">' +
@@ -364,9 +379,7 @@
         esc(st.quote) +
         '”</p>' +
         '<footer class="mt-8 flex items-center gap-5">' +
-        '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-mes-primary to-mes-primaryDark text-lg font-bold text-mes-accent">' +
-        esc(st.initials) +
-        "</div>" +
+        avatarBlock +
         "<div>" +
         '<cite class="not-italic text-lg font-semibold text-mes-primary">' +
         esc(st.name) +

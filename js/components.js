@@ -215,7 +215,87 @@
     );
   }
 
-  function buildNav(links) {
+  /** Touch-friendly stacked links + details for submenus (lg breakpoint hides this panel). */
+  function navMobileItemHtml(item) {
+    var children = item.children;
+    var isGold = item.variant === "gold";
+    if (children && children.length) {
+      var panelBg = isGold ? "bg-mes-accentLight" : "bg-mes-navDeep";
+      var childClass = isGold
+        ? "block border-b border-amber-200/40 py-3 pl-5 pr-4 text-sm font-bold leading-snug text-mes-primaryDark active:bg-amber-200/50"
+        : "block border-b border-white/10 py-3 pl-5 pr-4 text-sm font-semibold leading-snug text-white active:bg-white/10";
+      var childLinks = children
+        .map(function (c) {
+          return (
+            '<a href="' +
+            esc(stripHashAppendSubParam(c.href)) +
+            '" class="' +
+            childClass +
+            '">' +
+            esc(c.label) +
+            "</a>"
+          );
+        })
+        .join("");
+      return (
+        '<details class="border-b border-white/10">' +
+        '<summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3.5 text-base font-bold text-white outline-none [&::-webkit-details-marker]:hidden">' +
+        esc(item.label) +
+        CHEVRON +
+        "</summary>" +
+        '<div class="' +
+        panelBg +
+        '">' +
+        childLinks +
+        "</div>" +
+        "</details>"
+      );
+    }
+    var homeMark = isHomeNavItem(item) ? " js-nav-home-vimp" : "";
+    return (
+      '<a href="' +
+      esc(item.href || "#") +
+      '" class="block border-b border-white/10 px-4 py-3.5 text-base font-bold text-white transition active:bg-white/10' +
+      homeMark +
+      '">' +
+      esc(item.label) +
+      "</a>"
+    );
+  }
+
+  function buildNavMobileBar() {
+    var searchHref = (cfg.navSearchHref || "news.html").trim() || "news.html";
+    return (
+      '<div class="flex items-center justify-between gap-3 border-t border-white/10 px-3 py-2.5 sm:px-4 lg:hidden">' +
+      '<button type="button" id="site-nav-mobile-toggle" class="inline-flex items-center gap-2 rounded-md border border-white/25 bg-white/10 px-3 py-2 text-sm font-bold text-white shadow-sm transition active:bg-white/20" aria-expanded="false" aria-controls="site-nav-mobile-panel">' +
+      '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>' +
+      "<span>Menu</span></button>" +
+      '<a href="' +
+      esc(searchHref) +
+      '" class="flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-white/10 p-2.5 text-white transition active:bg-white/20" aria-label="Search">' +
+      SEARCH_ICON +
+      "</a></div>"
+    );
+  }
+
+  function buildNavMobilePanel(links) {
+    var items = links.map(navMobileItemHtml).join("");
+    return (
+      '<div id="site-nav-mobile-panel" class="fixed inset-0 z-[65] hidden lg:hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Main menu">' +
+      '<div class="absolute inset-0 bg-slate-900/55 backdrop-blur-[2px]" data-site-nav-backdrop tabindex="-1"></div>' +
+      '<div class="absolute bottom-0 right-0 top-0 flex w-full max-w-[min(100vw,20rem)] flex-col border-l border-white/10 bg-mes-nav shadow-2xl">' +
+      '<div class="flex shrink-0 items-center justify-between border-b border-white/15 px-4 py-3">' +
+      '<span class="text-xs font-bold uppercase tracking-wider text-mes-goldLine">Menu</span>' +
+      '<button type="button" id="site-nav-mobile-close" class="rounded p-2 text-white transition hover:bg-white/15" aria-label="Close menu">' +
+      '<svg class="h-6 w-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>' +
+      "</button></div>" +
+      '<nav class="min-h-0 flex-1 overflow-y-auto overscroll-y-contain pb-8" aria-label="Mobile primary navigation">' +
+      items +
+      "</nav></div></div>"
+    );
+  }
+
+  function buildNavDesktop(links) {
     var items = links
       .map(function (item) {
         return (
@@ -316,7 +396,11 @@
         infoBoxes +
         "</div></div>" +
         '<div class="border-b-2 border-mes-goldLine bg-mes-nav overflow-visible">' +
-        buildNav(links) +
+        '<div class="hidden lg:block">' +
+        buildNavDesktop(links) +
+        "</div>" +
+        buildNavMobileBar() +
+        buildNavMobilePanel(links) +
         "</div>" +
         "</header>" +
         floatingSocialRail();
@@ -432,7 +516,7 @@
   }
 
   var CARD_ARTICLE_CLASS =
-    "group flex h-full flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition duration-300 hover:border-mes-accent/30 hover:shadow-md";
+    "group flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition duration-300 hover:border-mes-accent/30 hover:shadow-md";
 
   class AnnouncementCard extends HTMLElement {
     connectedCallback() {
@@ -443,27 +527,30 @@
       var href = this.getAttribute("href") || "#";
       var readLabel = this.getAttribute("read-label") || "Read more →";
 
+      /** Fill grid row height so excerpts share space and “Read more” aligns across cards. */
+      this.classList.add("flex", "h-full", "min-h-0", "w-full", "flex-col");
+
       this.innerHTML =
         '<article class="' +
         CARD_ARTICLE_CLASS +
         '">' +
-        '<div class="border-b border-slate-100 bg-slate-50/90 px-5 py-3">' +
+        '<div class="shrink-0 border-b border-slate-100 bg-slate-50/90 px-5 py-3">' +
         '<time datetime="' +
         esc(datetime) +
         '" class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(dateDisplay) +
         "</time>" +
         "</div>" +
-        '<div class="flex flex-1 flex-col p-5">' +
-        '<h3 class="text-base font-bold text-mes-primary transition group-hover:underline">' +
+        '<div class="flex min-h-0 flex-1 flex-col p-5">' +
+        '<h3 class="shrink-0 text-base font-bold text-mes-primary transition group-hover:underline">' +
         esc(title) +
         "</h3>" +
-        '<p class="mt-2 flex-1 text-sm leading-relaxed text-slate-600">' +
+        '<p class="mt-2 min-h-0 flex-1 text-sm leading-relaxed text-slate-600">' +
         esc(excerpt) +
         "</p>" +
         '<a href="' +
         esc(href) +
-        '" class="mt-4 inline-flex text-sm font-semibold text-slate-500 underline decoration-slate-300">' +
+        '" class="mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300">' +
         esc(readLabel) +
         "</a>" +
         "</div>" +

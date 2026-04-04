@@ -26,7 +26,7 @@ window.SITE_CONTENT = {
       "sectionTitle": "Fund raising appeal",
       "title": "Appeal for development & campus improvement — Dr. Gadagkar High School, Satararoad",
       "image": "https://images.unsplash.com/photo-1580582932707-520aed937b7b?auto=format&fit=crop&w=1200&q=80",
-      "amount": "Goal: community support",
+      "amount": "Goal: School Development and Improvement",
       "footerLine": "Dr. Gadagkar High School"
     },
     "legacy": {
@@ -48,12 +48,13 @@ window.SITE_CONTENT = {
     },
     "alumniSpotlight": {
       "sectionTitle": "Alumni spotlight",
-      "sectionSubtitle": "Our graduates lead in science, public service, business, and the arts—across India and the world.",
+      "sectionSubtitle": "Our graduates lead in IT sector, R&D, Science, Banking & Accounting, Public service, Business, and the Arts - across India and the world.",
       "story": {
         "quote": "The values I learned here—integrity, discipline, and curiosity—still guide my career every day.",
         "name": "Tushar Phalke",
         "role": "Class of 2008 · Software Development Specialist",
-        "initials": "TP"
+        "initials": "TP",
+        "photo": "images/Tushar.jpg"
       },
       "stats": [
         {
@@ -118,9 +119,9 @@ window.SITE_CONTENT = {
       "text": "To be a leading school where every learner is inspired to excel, innovate, and serve with compassion."
     },
     "principal": {
-      "name": "Dr. (Mrs.) Anjali Kulkarni",
+      "name": "Mr. Satish P. Zanjurne",
       "title": "Principal",
-      "photo": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=800&q=80",
+      "photo": "images/Principal.jpg",
       "message": [
         "Welcome to Dr. Gadagkar High School, Satararoad.",
         "Our school community believes that education is a partnership between students, families, and teachers. Together we nurture curiosity, resilience, and respect.",
