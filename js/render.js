@@ -442,20 +442,22 @@
       "</p></section>" +
       '<section id="principal" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>' +
-      '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-8 md:flex-row md:items-start">' +
+      '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
+      '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
       '<img src="' +
       esc(a.principal.photo) +
       '" alt="' +
       esc(a.principal.name) +
-      '" class="mx-auto h-48 w-48 shrink-0 rounded-2xl object-cover md:mx-0" loading="lazy"/>' +
-      "<div>" +
-      '<h3 class="font-display text-xl font-bold text-mes-primary">' +
+      '" class="h-48 w-48 rounded-2xl object-cover shadow-sm" loading="lazy"/>' +
+      '<h3 class="mt-4 w-full text-center font-display text-xl font-bold leading-snug text-mes-primary md:text-left">' +
       esc(a.principal.name) +
       "</h3>" +
-      '<p class="text-mes-accent">' +
+      '<p class="mt-1 w-full text-center text-base font-medium text-mes-accent md:text-left">' +
       esc(a.principal.title) +
       "</p>" +
-      '<div class="mt-4 space-y-3 text-lg leading-relaxed text-slate-600">' +
+      "</div>" +
+      '<div class="min-w-0 flex-1 border-t border-slate-100 pt-6 md:border-l md:border-t-0 md:pl-10 md:pt-0 lg:pl-12">' +
+      '<div class="space-y-3 text-lg leading-relaxed text-slate-600">' +
       a.principal.message
         .map(function (p) {
           return "<p>" + esc(p) + "</p>";
