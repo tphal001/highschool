@@ -257,6 +257,11 @@
 
     var url = (vn.imageUrl || "").trim();
     if (url) {
+      var bust = (vn.cacheBust || "").trim();
+      if (bust) {
+        var sep = url.indexOf("?") >= 0 ? "&" : "?";
+        url = url + sep + "cb=" + encodeURIComponent(bust);
+      }
       img.src = url;
       img.alt = (vn.imageAlt || "Flash news").trim() || "Flash news";
     }

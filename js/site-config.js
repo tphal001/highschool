@@ -42,6 +42,7 @@ window.SITE_CONFIG = {
     enabled: true,
     imageUrl: "images/flash.jpg",
     imageAlt: "Flash news",
+    cacheBust: "v2",
   },
   contactPhone: "+91 20 1234 5678",
   contactEmail: "tphalke9@gmail.com",

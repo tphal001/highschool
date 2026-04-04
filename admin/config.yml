@@ -163,6 +163,12 @@ collections:
           - { label: Enabled, name: enabled, widget: boolean, default: true }
           - { label: Image URL, name: imageUrl, widget: string }
           - { label: Image alt text, name: imageAlt, widget: string }
+          - {
+              label: Cache bust (change when you replace the image file, e.g. v2 → v3),
+              name: cacheBust,
+              widget: string,
+              required: false,
+            }
 
       - label: Alumni page
         name: alumni

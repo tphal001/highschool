@@ -316,6 +316,7 @@ window.SITE_CONTENT = {
   "flashNews": {
     "enabled": true,
     "imageUrl": "images/flash.jpg",
-    "imageAlt": "Flash news"
+    "imageAlt": "Flash news",
+    "cacheBust": "v2"
   }
 };

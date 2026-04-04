@@ -99,8 +99,9 @@ export function ensureFlashNews(obj) {
   if (!obj.flashNews) {
     obj.flashNews = {
       enabled: true,
-      imageUrl: "assets/flash-news-placeholder.svg",
+      imageUrl: "images/flash.jpg",
       imageAlt: "Flash news",
+      cacheBust: "v2",
     };
   }
   return obj;

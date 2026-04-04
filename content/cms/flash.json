@@ -1,5 +1,6 @@
 {
   "enabled": true,
-  "imageUrl": "media/uploads/1.jpg",
-  "imageAlt": "Hurry Up!"
+  "imageUrl": "images/flash.jpg",
+  "imageAlt": "Flash news",
+  "cacheBust": "v2"
 }
