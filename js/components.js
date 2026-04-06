@@ -100,7 +100,7 @@
           b.href && (b.href + "").trim()
             ? '<a href="' +
               esc(b.href) +
-              '" class="relative block h-full border border-slate-200 bg-white p-2.5 shadow-sm transition hover:border-mes-accent/50 hover:shadow md:p-3">' +
+              '" class="relative block h-full border border-slate-200 bg-white p-2.5 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-mes-accent/50 hover:shadow-lg hover:shadow-mes-primary/10 md:p-3">' +
               '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[10px] border-t-[10px] border-l-transparent border-t-amber-600"></span>' +
               inner +
               "</a>"
@@ -163,16 +163,16 @@
 
     if (children && children.length) {
       var triggerHover = isGold
-        ? "border-b-[3px] border-transparent bg-transparent text-white transition-colors group-hover:border-mes-goldLine group-hover:bg-mes-accentLight group-hover:text-mes-primaryDark"
-        : "border-b-[3px] border-transparent bg-transparent text-white transition-colors group-hover:border-mes-goldLine group-hover:bg-white group-hover:text-mes-primary";
+        ? "border-b-[3px] border-transparent bg-transparent text-white transition-all duration-200 ease-out group-hover:border-mes-goldLine group-hover:bg-mes-accentLight group-hover:text-mes-primaryDark group-hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.25)] [&_svg]:transition-transform [&_svg]:duration-300 group-hover:[&_svg]:rotate-180"
+        : "border-b-[3px] border-transparent bg-transparent text-white transition-all duration-200 ease-out group-hover:border-mes-goldLine group-hover:bg-white group-hover:text-mes-primary group-hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.2)] [&_svg]:transition-transform [&_svg]:duration-300 group-hover:[&_svg]:rotate-180";
 
       var panelWrap = isGold
-        ? "invisible absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,20rem)] max-w-[min(100vw-2rem,28rem)] overflow-visible rounded-b-lg border-t-2 border-mes-goldLine bg-mes-accentLight py-2 opacity-0 shadow-xl transition duration-150 group-hover:visible group-hover:opacity-100"
-        : "invisible absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,18rem)] max-w-[min(100vw-2rem,28rem)] overflow-visible border-t-2 border-mes-goldLine bg-white py-2 opacity-0 shadow-xl transition duration-150 group-hover:visible group-hover:opacity-100";
+        ? "pointer-events-none absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,20rem)] max-w-[min(100vw-2rem,28rem)] translate-y-2 overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-mes-accentLight py-2 opacity-0 shadow-2xl shadow-black/20 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100"
+        : "pointer-events-none absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,18rem)] max-w-[min(100vw-2rem,28rem)] translate-y-2 overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-white py-2 opacity-0 shadow-2xl shadow-black/15 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100";
 
       var childClass = isGold
-        ? "block px-4 py-2.5 text-sm font-bold leading-snug text-mes-primaryDark hover:bg-amber-200/40"
-        : "block px-4 py-2.5 text-sm font-bold leading-snug text-mes-primary hover:bg-mes-light";
+        ? "mx-1 block rounded-md px-3 py-2.5 text-sm font-bold leading-snug text-mes-primaryDark transition-all duration-200 ease-out first:mt-0 hover:translate-x-1 hover:bg-amber-200/70 hover:shadow-md"
+        : "mx-1 block rounded-md px-3 py-2.5 text-sm font-bold leading-snug text-mes-primary transition-all duration-200 ease-out hover:translate-x-1 hover:bg-mes-light hover:shadow-sm";
 
       return (
         '<div class="group relative flex h-full min-h-[3rem] items-stretch">' +
@@ -207,7 +207,7 @@
     return (
       '<a href="' +
       esc(item.href || "#") +
-      '" class="flex h-full min-h-[3rem] items-center border-b-[3px] border-transparent px-2.5 py-3 text-xs font-bold text-white transition hover:border-mes-goldLine hover:bg-white hover:text-mes-primary md:px-3 md:text-sm' +
+      '" class="flex h-full min-h-[3rem] items-center border-b-[3px] border-transparent px-2.5 py-3 text-xs font-bold text-white transition-all duration-200 ease-out hover:border-mes-goldLine hover:bg-white hover:text-mes-primary hover:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.2)] md:px-3 md:text-sm' +
       homeMark +
       '">' +
       esc(item.label) +
@@ -222,8 +222,8 @@
     if (children && children.length) {
       var panelBg = isGold ? "bg-mes-accentLight" : "bg-mes-navDeep";
       var childClass = isGold
-        ? "block border-b border-amber-200/40 py-3 pl-5 pr-4 text-sm font-bold leading-snug text-mes-primaryDark active:bg-amber-200/50"
-        : "block border-b border-white/10 py-3 pl-5 pr-4 text-sm font-semibold leading-snug text-white active:bg-white/10";
+        ? "block border-b border-amber-200/40 py-3 pl-4 pr-4 text-sm font-bold leading-snug text-mes-primaryDark transition-colors duration-200 hover:bg-amber-200/40 active:bg-amber-200/50 sm:pl-5 sm:hover:translate-x-1"
+        : "block border-b border-white/10 py-3 pl-4 pr-4 text-sm font-semibold leading-snug text-white transition-colors duration-200 hover:bg-white/10 active:bg-white/15 sm:pl-5 sm:hover:translate-x-1";
       var childLinks = children
         .map(function (c) {
           return (
@@ -239,7 +239,7 @@
         .join("");
       return (
         '<details class="border-b border-white/10">' +
-        '<summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3.5 text-base font-bold text-white outline-none [&::-webkit-details-marker]:hidden">' +
+        '<summary class="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3.5 text-base font-bold text-white outline-none transition-colors duration-200 hover:bg-white/5 [&::-webkit-details-marker]:hidden">' +
         esc(item.label) +
         CHEVRON +
         "</summary>" +
@@ -255,7 +255,7 @@
     return (
       '<a href="' +
       esc(item.href || "#") +
-      '" class="block border-b border-white/10 px-4 py-3.5 text-base font-bold text-white transition active:bg-white/10' +
+      '" class="block border-b border-white/10 px-4 py-3.5 text-base font-bold text-white transition-all duration-200 hover:bg-white/10 hover:pl-5 active:bg-white/15' +
       homeMark +
       '">' +
       esc(item.label) +
@@ -267,12 +267,12 @@
     var searchHref = (cfg.navSearchHref || "news.html").trim() || "news.html";
     return (
       '<div class="flex items-center justify-between gap-3 border-t border-white/10 px-3 py-2.5 sm:px-4 lg:hidden">' +
-      '<button type="button" id="site-nav-mobile-toggle" class="inline-flex items-center gap-2 rounded-md border border-white/25 bg-white/10 px-3 py-2 text-sm font-bold text-white shadow-sm transition active:bg-white/20" aria-expanded="false" aria-controls="site-nav-mobile-panel">' +
+      '<button type="button" id="site-nav-mobile-toggle" class="inline-flex items-center gap-2 rounded-md border border-white/25 bg-white/10 px-3 py-2 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:border-mes-goldLine/50 hover:bg-white/20 active:scale-[0.98] active:bg-white/25" aria-expanded="false" aria-controls="site-nav-mobile-panel">' +
       '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>' +
       "<span>Menu</span></button>" +
       '<a href="' +
       esc(searchHref) +
-      '" class="flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-white/10 p-2.5 text-white transition active:bg-white/20" aria-label="Search">' +
+      '" class="flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-white/10 p-2.5 text-white transition-all duration-200 hover:scale-110 hover:border-mes-goldLine/40 hover:bg-white/20 active:bg-white/25" aria-label="Search">' +
       SEARCH_ICON +
       "</a></div>"
     );
@@ -313,7 +313,7 @@
       '<div class="flex shrink-0 items-center border-l border-white/25 pl-1 sm:pl-2">' +
       '<a href="' +
       esc(searchHref) +
-      '" class="flex items-center justify-center p-2.5 text-white transition hover:bg-white/10 hover:text-mes-goldLine" aria-label="Search">' +
+      '" class="flex items-center justify-center rounded-md p-2.5 text-white transition-all duration-200 hover:scale-110 hover:bg-white/15 hover:text-mes-goldLine hover:shadow-[0_4px_14px_rgba(0,0,0,0.2)]" aria-label="Search">' +
       SEARCH_ICON +
       "</a></div></div>"
     );
@@ -516,7 +516,7 @@
   }
 
   var CARD_ARTICLE_CLASS =
-    "group flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition duration-300 hover:border-mes-accent/30 hover:shadow-md";
+    "group flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/40 hover:shadow-xl hover:shadow-mes-primary/15 hover:ring-1 hover:ring-mes-accent/20";
 
   class AnnouncementCard extends HTMLElement {
     connectedCallback() {
@@ -534,7 +534,7 @@
         '<article class="' +
         CARD_ARTICLE_CLASS +
         '">' +
-        '<div class="shrink-0 border-b border-slate-100 bg-slate-50/90 px-5 py-3">' +
+        '<div class="shrink-0 border-b border-slate-100 bg-slate-50/90 px-5 py-3 transition-colors duration-300 group-hover:bg-amber-50/60">' +
         '<time datetime="' +
         esc(datetime) +
         '" class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">' +
@@ -542,7 +542,7 @@
         "</time>" +
         "</div>" +
         '<div class="flex min-h-0 flex-1 flex-col p-5">' +
-        '<h3 class="shrink-0 text-base font-bold text-mes-primary transition group-hover:underline">' +
+        '<h3 class="shrink-0 text-base font-bold text-mes-primary transition-colors duration-200 group-hover:text-mes-primaryDark group-hover:underline">' +
         esc(title) +
         "</h3>" +
         '<p class="mt-2 min-h-0 flex-1 text-sm leading-relaxed text-slate-600">' +
@@ -550,7 +550,7 @@
         "</p>" +
         '<a href="' +
         esc(href) +
-        '" class="mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300">' +
+        '" class="mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300 transition-colors duration-200 group-hover:text-mes-primary group-hover:decoration-mes-accent">' +
         esc(readLabel) +
         "</a>" +
         "</div>" +

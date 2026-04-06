@@ -15,6 +15,10 @@ tailwind.config = {
     "max-w-[min(100vw,20rem)]",
     "overscroll-y-contain",
     "[&::-webkit-details-marker]:hidden",
+    "hover:shadow-mes-primary/10",
+    "hover:shadow-mes-primary/15",
+    "hover:shadow-mes-primary/20",
+    "group-hover:shadow-mes-primary/20",
   ],
   theme: {
     extend: {

@@ -205,7 +205,7 @@
         '<div class="mx-auto max-w-7xl">' +
         '<div class="grid gap-4 lg:grid-cols-12 lg:items-stretch lg:gap-x-6 lg:gap-y-5">' +
         '<div class="min-w-0 lg:col-span-7 lg:row-start-1">' +
-        '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm">' +
+        '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm transition-all duration-300 ease-out hover:border-slate-300 hover:shadow-lg hover:shadow-slate-300/40">' +
         '<img id="hero-slide-img" src="' +
         esc(firstSlide) +
         '" alt="' +
@@ -229,7 +229,7 @@
         "</p>" +
         "</div>" +
         '<div class="min-w-0 lg:col-span-5 lg:row-start-2 flex flex-col justify-start lg:self-end" data-reveal>' +
-        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-2.5 shadow-sm">' +
+        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35 hover:shadow-md hover:shadow-mes-primary/10">' +
         '<p class="text-[10px] font-bold uppercase tracking-wider text-black">Latest updates</p>' +
         '<div class="mt-1.5">' +
         buildQuickNewsCardHtml(h) +
@@ -239,7 +239,7 @@
         '<a href="' +
         esc(fundHref) +
         '" class="group flex h-full min-h-0 flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
-        '<div class="flex min-h-0 flex-1 flex-col rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition group-hover:border-mes-primary/30 group-hover:shadow-md">' +
+        '<div class="flex min-h-0 flex-1 flex-col rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:border-mes-primary/40 group-hover:shadow-lg group-hover:shadow-mes-primary/20">' +
         '<div class="shrink-0 border-b border-slate-200 pb-3">' +
         '<h2 class="relative inline-block pb-2 font-display text-lg font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-14 after:bg-mes-red">' +
         esc(fr.sectionTitle || "Fund raising appeal") +
@@ -374,7 +374,7 @@
         "</p>" +
         "</div>" +
         '<div class="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-16" data-reveal-stagger>' +
-        '<blockquote data-reveal class="group rounded-2xl border border-slate-200/90 bg-mes-light/80 p-8 sm:p-10">' +
+        '<blockquote data-reveal class="group rounded-2xl border border-slate-200/90 bg-mes-light/80 p-8 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/35 hover:bg-white hover:shadow-xl hover:shadow-mes-primary/10 sm:p-10">' +
         '<p class="text-lg leading-relaxed text-slate-700 sm:text-xl">“' +
         esc(st.quote) +
         '”</p>' +
@@ -390,7 +390,7 @@
         "</div>" +
         "</footer>" +
         "</blockquote>" +
-        '<div data-reveal class="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-mes-primary via-mes-primaryDark to-slate-900 p-10 text-white sm:p-12">' +
+        '<div data-reveal class="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-mes-primary via-mes-primaryDark to-slate-900 p-10 text-white shadow-lg transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-goldLine/40 hover:shadow-2xl hover:shadow-black/30 sm:p-12">' +
         '<h3 class="font-display text-xl font-bold text-white">Network at a glance</h3>' +
         '<dl class="mt-8 grid grid-cols-2 gap-8">' +
         statsHtml +
