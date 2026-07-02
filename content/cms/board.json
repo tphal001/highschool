@@ -1,4 +1,9 @@
 {
   "intro": "Governance details can be published here when available.",
-  "members": []
+  "members": [
+    {
+      "name": "Mr. Ashok Joshi",
+      "role": "Director"
+    }
+  ]
 }
