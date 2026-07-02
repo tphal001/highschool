@@ -93,8 +93,6 @@ window.SITE_CONFIG = {
         { label: "Board and Governing Body Members", href: "about.html#board" },
         { label: "Principal Desk", href: "about.html#principal" },
         { label: "Staff", href: "about.html#staff" },
-        { label: "Achievers", href: "about.html#achievers" },
-        { label: "News", href: "news.html?ctx=events" },
       ],
     },
     {
