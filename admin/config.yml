@@ -7,8 +7,8 @@ backend:
   branch: main
   base_url: https://highschool-gold.vercel.app
 
-media_folder: media/uploads
-public_folder: /media/uploads
+media_folder: images
+public_folder: /images
 
 collections:
   - name: staff_content
@@ -43,7 +43,7 @@ collections:
             fields:
               - { label: Name, name: name, widget: string }
               - { label: Role / designation, name: role, widget: string }
-              - { label: Photo URL (optional), name: photo, widget: string, required: false }
+              - { label: Photo (optional), name: photo, widget: image, required: false }
 
       - label: Principal Desk
         name: principal
@@ -51,7 +51,7 @@ collections:
         fields:
           - { label: Name, name: name, widget: string }
           - { label: Title, name: title, widget: string }
-          - { label: Photo URL, name: photo, widget: string }
+          - { label: Photo, name: photo, widget: image }
           - label: Message paragraphs
             name: message
             widget: list
@@ -70,6 +70,7 @@ collections:
               - { label: Name, name: name, widget: string }
               - { label: Role, name: role, widget: string }
               - { label: Department / subject (optional), name: department, widget: string, required: false }
+              - { label: Photo (optional), name: photo, widget: image, required: false }
 
       - label: Admissions
         name: admissions
@@ -98,6 +99,7 @@ collections:
               - { label: Display date, name: displayDate, widget: string }
               - { label: Title, name: title, widget: string }
               - { label: Summary, name: summary, widget: text }
+              - { label: Photo (optional), name: image, widget: image, required: false }
               - {
                   label: Anchor ID (for menu links, e.g. evt-silver),
                   name: anchorId,
@@ -123,6 +125,7 @@ collections:
                   required: false,
                 }
               - { label: Display date (optional), name: displayDate, widget: string, required: false }
+              - { label: Image (optional), name: image, widget: image, required: false }
 
       - label: Activity
         name: activity
@@ -135,7 +138,7 @@ collections:
             summary: "{{fields.title}}"
             fields:
               - { label: Title, name: title, widget: string }
-              - { label: Image URL, name: image, widget: string }
+              - { label: Photo, name: image, widget: image }
               - { label: Caption (optional), name: caption, widget: text, required: false }
 
       - label: Gallery
@@ -150,5 +153,5 @@ collections:
             fields:
               - { label: Title, name: title, widget: string }
               - { label: Category, name: category, widget: string }
-              - { label: Image URL, name: image, widget: string }
+              - { label: Photo, name: image, widget: image }
           - { label: Video gallery note, name: videoNote, widget: text, required: false }

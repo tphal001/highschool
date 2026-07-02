@@ -1,5 +1,5 @@
 /**
- * AUTO-GENERATED — do not edit. Update content in the CMS at /admin/
+ * AUTO-GENERATED — do not edit. Staff updates: /admin/ (selective sections only)
  */
 window.SITE_CONTENT = {
   "home": {
@@ -127,6 +127,14 @@ window.SITE_CONTENT = {
         "Our school community believes that education is a partnership between students, families, and teachers. Together we nurture curiosity, resilience, and respect.",
         "We invite you to explore our campus, meet our faculty, and discover how we can support your child’s journey."
       ]
+    },
+    "board": {
+      "intro": "Governance details can be published here when available.",
+      "members": []
+    },
+    "staff": {
+      "intro": "Faculty and staff listings can be added when ready.",
+      "members": []
     }
   },
   "academics": {
@@ -207,6 +215,20 @@ window.SITE_CONTENT = {
         "title": "PTM — schedule now",
         "summary": "Book slots via the parent portal."
       }
+    ],
+    "results": [
+      {
+        "anchorId": "res-ssc",
+        "title": "SSC Result – March 2024",
+        "summary": "Official result links and notices will be published here when available.",
+        "displayDate": "Mar 2024"
+      },
+      {
+        "anchorId": "res-hsc",
+        "title": "HSC Result – March 2024",
+        "summary": "Official result links and notices will be published here when available.",
+        "displayDate": "Mar 2024"
+      }
     ]
   },
   "quickAnnouncements": [
@@ -234,6 +256,7 @@ window.SITE_CONTENT = {
   ],
   "gallery": {
     "intro": "Moments from campus life—celebrations, learning, and everyday joy.",
+    "videoNote": "Video gallery can be added here when ready.",
     "items": [
       {
         "title": "Annual day",
@@ -264,6 +287,16 @@ window.SITE_CONTENT = {
         "title": "Assembly",
         "category": "Events",
         "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
+      }
+    ]
+  },
+  "activity": {
+    "intro": "Highlights from school activities for the current academic year.",
+    "items": [
+      {
+        "title": "Art workshop",
+        "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80",
+        "caption": "Creative arts session — 2025–26"
       }
     ]
   },

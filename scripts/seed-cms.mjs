@@ -1,6 +1,7 @@
 /**
- * One-time (or repeat-safe): writes content/cms/*.json from content/defaults.json
- * so Decap CMS has files to edit. Run: npm run seed
+ * Writes content/cms/*.json from content/defaults.json for Decap CMS.
+ * Only the selective staff-editable sections (see admin/config.yml).
+ * Run: npm run seed
  */
 import fs from "fs";
 import path from "path";
@@ -10,16 +11,46 @@ import {
   ensureFlashNews,
 } from "./parse-content.mjs";
 
-const CMS_KEYS = [
-  "news",
-  "gallery",
-  "home",
-  "alumni",
-  "fundAppeal",
-  "about",
-  "academics",
-  "admissions",
-  "contact",
+const CMS_SEEDS = [
+  {
+    file: "management.json",
+    data: (d) => ({
+      mission: d.about.mission,
+      vision: d.about.vision,
+    }),
+  },
+  {
+    file: "board.json",
+    data: (d) => d.about.board || { intro: "", members: [] },
+  },
+  {
+    file: "principal.json",
+    data: (d) => d.about.principal,
+  },
+  {
+    file: "staff.json",
+    data: (d) => d.about.staff || { intro: "", members: [] },
+  },
+  {
+    file: "admissions.json",
+    data: (d) => d.admissions,
+  },
+  {
+    file: "events.json",
+    data: (d) => ({ events: d.news.events }),
+  },
+  {
+    file: "results.json",
+    data: (d) => ({ items: d.news.results || [] }),
+  },
+  {
+    file: "activity.json",
+    data: (d) => d.activity || { intro: "", items: [] },
+  },
+  {
+    file: "gallery.json",
+    data: (d) => d.gallery,
+  },
 ];
 
 function readDefaults() {
@@ -37,20 +68,14 @@ function readDefaults() {
 const d = readDefaults();
 fs.mkdirSync(paths.cmsDir, { recursive: true });
 
-for (const key of CMS_KEYS) {
-  const fp = path.join(paths.cmsDir, key + ".json");
+for (const seed of CMS_SEEDS) {
+  const fp = path.join(paths.cmsDir, seed.file);
   if (!fs.existsSync(fp)) {
-    fs.writeFileSync(fp, JSON.stringify(d[key], null, 2), "utf8");
+    fs.writeFileSync(fp, JSON.stringify(seed.data(d), null, 2), "utf8");
     console.log("Created", path.relative(paths.root, fp));
   } else {
     console.log("Skip (exists):", path.relative(paths.root, fp));
   }
 }
-const flashPath = path.join(paths.cmsDir, "flash.json");
-if (!fs.existsSync(flashPath)) {
-  fs.writeFileSync(flashPath, JSON.stringify(d.flashNews || {}, null, 2), "utf8");
-  console.log("Created", path.relative(paths.root, flashPath));
-} else {
-  console.log("Skip (exists):", path.relative(paths.root, flashPath));
-}
-console.log("Done. Commit content/cms/*.json then edit at /admin/");
+
+console.log("Done. Staff CMS sections are under content/cms/ — edit at /admin/");

@@ -8,6 +8,17 @@
     return d.innerHTML;
   }
 
+  /** CMS /images uploads and legacy paths → usable img src */
+  function mediaSrc(url) {
+    if (url == null || url === "") return "";
+    var u = String(url).trim();
+    if (!u) return "";
+    if (/^https?:\/\//i.test(u) || u.indexOf("//") === 0) return u;
+    if (u.charAt(0) === "/") return u;
+    if (u.indexOf("images/") === 0) return "/" + u;
+    return u;
+  }
+
   function formatINR(n) {
     if (n == null || n === "") return "";
     var num = typeof n === "number" ? n : parseFloat(String(n).replace(/[^\d.]/g, ""), 10);
@@ -205,7 +216,7 @@
         '<div class="mx-auto max-w-7xl">' +
         '<div class="grid gap-4 lg:grid-cols-12 lg:items-stretch lg:gap-x-6 lg:gap-y-5">' +
         '<div class="min-w-0 lg:col-span-7 lg:row-start-1">' +
-        '<div id="hero-slider" class="relative aspect-[16/10] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 shadow-sm transition-all duration-300 ease-out hover:border-slate-300 hover:shadow-lg hover:shadow-slate-300/40">' +
+        '<div id="hero-slider" class="site-card-3d relative aspect-[16/10] overflow-hidden rounded-xl border border-white/60 bg-slate-100 shadow-lg transition-all duration-300 ease-out hover:border-mes-accent/25">' +
         '<img id="hero-slide-img" src="' +
         esc(firstSlide) +
         '" alt="' +
@@ -229,7 +240,7 @@
         "</p>" +
         "</div>" +
         '<div class="min-w-0 lg:col-span-5 lg:row-start-2 flex flex-col justify-start lg:self-end" data-reveal>' +
-        '<div class="rounded-xl border border-mes-primary/15 bg-gradient-to-br from-mes-light to-white p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35 hover:shadow-md hover:shadow-mes-primary/10">' +
+        '<div class="site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35">' +
         '<p class="text-[10px] font-bold uppercase tracking-wider text-black">Latest updates</p>' +
         '<div class="mt-1.5">' +
         buildQuickNewsCardHtml(h) +
@@ -239,7 +250,7 @@
         '<a href="' +
         esc(fundHref) +
         '" class="group flex h-full min-h-0 flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
-        '<div class="flex min-h-0 flex-1 flex-col rounded-lg border border-mes-primary/10 bg-mes-light p-4 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:border-mes-primary/40 group-hover:shadow-lg group-hover:shadow-mes-primary/20">' +
+        '<div class="site-glass site-card-3d flex min-h-0 flex-1 flex-col rounded-xl border border-mes-primary/10 p-4 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:border-mes-primary/40 group-hover:shadow-lg group-hover:shadow-mes-primary/20">' +
         '<div class="shrink-0 border-b border-slate-200 pb-3">' +
         '<h2 class="relative inline-block pb-2 font-display text-lg font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-14 after:bg-mes-red">' +
         esc(fr.sectionTitle || "Fund raising appeal") +
@@ -332,7 +343,7 @@
         esc(b.linkLabel) +
         " →</a>" +
         "</div>" +
-        '<div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-200 shadow-xl" data-reveal>' +
+        '<div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-200 shadow-2xl ring-1 ring-white/60 site-card-3d" data-reveal>' +
         '<img src="' +
         esc(C.home.hero.image) +
         '" alt="" class="h-full w-full object-cover" loading="lazy"/>' +
@@ -355,7 +366,7 @@
           );
         })
         .join("");
-      var photoUrl = st && st.photo != null ? String(st.photo).trim() : "";
+      var photoUrl = st && st.photo != null ? mediaSrc(st.photo) : "";
       var avatarBlock =
         photoUrl !== ""
           ? '<img src="' +
@@ -374,7 +385,7 @@
         "</p>" +
         "</div>" +
         '<div class="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-16" data-reveal-stagger>' +
-        '<blockquote data-reveal class="group rounded-2xl border border-slate-200/90 bg-mes-light/80 p-8 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/35 hover:bg-white hover:shadow-xl hover:shadow-mes-primary/10 sm:p-10">' +
+        '<blockquote data-reveal class="site-auto-glass site-card-3d group rounded-2xl border border-slate-200/90 p-8 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/35 hover:shadow-xl hover:shadow-mes-primary/10 sm:p-10">' +
         '<p class="text-lg leading-relaxed text-slate-700 sm:text-xl">“' +
         esc(st.quote) +
         '”</p>' +
@@ -403,6 +414,48 @@
         "</div>" +
         "</div>";
     }
+  }
+
+  function getPageCtx(defaultCtx) {
+    try {
+      var v = (new URLSearchParams(window.location.search || "").get("ctx") || defaultCtx).toLowerCase();
+      return v;
+    } catch (e) {
+      return defaultCtx;
+    }
+  }
+
+  function renderMemberCards(members, opts) {
+    opts = opts || {};
+    if (!members || !members.length) return "";
+    return (
+      '<ul class="mt-6 grid gap-4 sm:grid-cols-2">' +
+      members
+        .map(function (m) {
+          var photo = (m.photo || "").trim();
+          var photoHtml = photo
+            ? '<img src="' +
+              esc(mediaSrc(photo)) +
+              '" alt="" class="h-16 w-16 shrink-0 rounded-full object-cover" loading="lazy"/>'
+            : '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-mes-primary/10 text-lg font-bold text-mes-primary">' +
+              esc((m.name || "?").charAt(0)) +
+              "</div>";
+          return (
+            '<li class="flex gap-4 rounded-xl border border-slate-200 bg-white p-4">' +
+            photoHtml +
+            '<div class="min-w-0"><p class="font-semibold text-mes-primary">' +
+            esc(m.name) +
+            "</p>" +
+            (m.role ? '<p class="text-sm text-mes-accent">' + esc(m.role) + "</p>" : "") +
+            (opts.department && m.department
+              ? '<p class="mt-1 text-sm text-slate-600">' + esc(m.department) + "</p>"
+              : "") +
+            "</div></li>"
+          );
+        })
+        .join("") +
+      "</ul>"
+    );
   }
 
   function renderAboutPage() {
@@ -438,14 +491,16 @@
       '<section id="board" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Board and Governing Body Members</h2>' +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
-      "Governance details can be published here when available." +
-      "</p></section>" +
+      esc((a.board && a.board.intro) || "Governance details can be published here when available.") +
+      "</p>" +
+      renderMemberCards(a.board && a.board.members) +
+      "</section>" +
       '<section id="principal" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>' +
       '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
       '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
       '<img src="' +
-      esc(a.principal.photo) +
+      esc(mediaSrc(a.principal.photo)) +
       '" alt="' +
       esc(a.principal.name) +
       '" class="h-48 w-48 rounded-2xl object-cover shadow-sm" loading="lazy"/>' +
@@ -467,8 +522,10 @@
       '<section id="staff" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Staff</h2>' +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
-      "Faculty and staff listings can be added when ready." +
-      "</p></section>" +
+      esc((a.staff && a.staff.intro) || "Faculty and staff listings can be added when ready.") +
+      "</p>" +
+      renderMemberCards(a.staff && a.staff.members, { department: true }) +
+      "</section>" +
       '<section id="achievers" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Achievers</h2>' +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
@@ -522,6 +579,18 @@
     var el = document.getElementById("page-news");
     if (!el || !C.news) return;
     var n = C.news;
+    var ctx = getPageCtx("events");
+
+    function eventImageHtml(x) {
+      var src = x && x.image ? mediaSrc(x.image) : "";
+      if (!src) return "";
+      return (
+        '<img src="' +
+        esc(src) +
+        '" alt="" class="mt-3 max-h-40 w-full rounded-lg border border-slate-200 object-cover" loading="lazy"/>'
+      );
+    }
+
     function itemRow(x) {
       return (
         '<li class="border-b border-slate-100 py-4 last:border-0">' +
@@ -531,7 +600,9 @@
         esc(x.title) +
         '</h3><p class="mt-1 text-slate-600">' +
         esc(x.summary) +
-        "</p></li>"
+        "</p>" +
+        eventImageHtml(x) +
+        "</li>"
       );
     }
     function itemRowWithId(x, anchorId) {
@@ -542,15 +613,56 @@
         "<li" +
         idPart +
         ">" +
-        '<time class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
-        esc(x.displayDate) +
-        '</time><h3 class="mt-1 font-display text-lg font-semibold text-mes-primary">' +
+        (x.displayDate
+          ? '<time class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
+            esc(x.displayDate) +
+            "</time>"
+          : "") +
+        '<h3 class="mt-1 font-display text-lg font-semibold text-mes-primary">' +
         esc(x.title) +
         '</h3><p class="mt-1 text-slate-600">' +
         esc(x.summary) +
-        "</p></li>"
+        "</p>" +
+        eventImageHtml(x) +
+        "</li>"
       );
     }
+
+    if (ctx === "results") {
+      var results = n.results || [];
+      el.innerHTML =
+        '<div id="results" class="scroll-mt-52"></div>' +
+        '<p class="text-xl text-slate-600" data-reveal>Examination results and official announcements.</p>' +
+        '<div class="mt-12 grid gap-6 sm:grid-cols-2" data-reveal-stagger>' +
+        results
+          .map(function (x) {
+            var anchor = (x.anchorId || "").trim();
+            var idAttr = anchor ? ' id="' + esc(anchor) + '" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"' : ' class="rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"';
+            var imgSrc = x.image ? mediaSrc(x.image) : "";
+            var imgHtml = imgSrc
+              ? '<img src="' +
+                esc(imgSrc) +
+                '" alt="" class="mt-3 max-h-36 w-full rounded-lg border border-slate-200 object-cover" loading="lazy"/>'
+              : "";
+            return (
+              "<div" +
+              idAttr +
+              ">" +
+              '<strong class="font-display text-mes-primary">' +
+              esc(x.title) +
+              "</strong>" +
+              '<p class="mt-2">' +
+              esc(x.summary) +
+              "</p>" +
+              imgHtml +
+              "</div>"
+            );
+          })
+          .join("") +
+        "</div>";
+      return;
+    }
+
     var evtAnchors = ["evt-silver", "evt-ashwarohan", "evt-virangana"];
     el.innerHTML =
       '<div id="events" class="scroll-mt-52"></div>' +
@@ -559,40 +671,66 @@
       "</p>" +
       '<div class="mt-12 grid gap-10 lg:grid-cols-3" data-reveal-stagger>' +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Events</h2><ul class="mt-4">' +
-      n.events
+      (n.events || [])
         .map(function (x, i) {
-          return itemRowWithId(x, evtAnchors[i] || "");
+          var anchor = (x.anchorId || "").trim() || evtAnchors[i] || "";
+          return itemRowWithId(x, anchor);
         })
         .join("") +
       "</ul></div>" +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Circulars</h2><ul class="mt-4">' +
-      n.circulars.map(itemRow).join("") +
+      (n.circulars || []).map(itemRow).join("") +
       "</ul></div>" +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Notices</h2><ul class="mt-4">' +
-      n.notices.map(itemRow).join("") +
-      "</ul></div></div>" +
-      '<div class="mt-12 grid gap-6 sm:grid-cols-2">' +
-      '<div id="res-ssc" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700">' +
-      '<strong class="font-display text-mes-primary">SSC Result – March 2024</strong>' +
-      '<p class="mt-2">Official result links and notices will be published here when available.</p></div>' +
-      '<div id="res-hsc" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700">' +
-      '<strong class="font-display text-mes-primary">HSC Result – March 2024</strong>' +
-      '<p class="mt-2">Official result links and notices will be published here when available.</p></div>' +
-      "</div>";
+      (n.notices || []).map(itemRow).join("") +
+      "</ul></div></div>";
   }
 
   function renderGalleryPage() {
     var el = document.getElementById("page-gallery");
-    if (!el || !C.gallery) return;
+    if (!el) return;
+    var ctx = getPageCtx("gallery");
+
+    if (ctx === "activity") {
+      var act = C.activity || { intro: "", items: [] };
+      el.innerHTML =
+        '<div id="activity-2026" class="scroll-mt-40"></div>' +
+        '<p class="text-xl text-slate-600" data-reveal>' +
+        esc(act.intro || "School activities and highlights.") +
+        "</p>" +
+        '<div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
+        (act.items || [])
+          .map(function (it) {
+            return (
+              '<figure data-reveal class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
+              '<div class="aspect-[4/3] overflow-hidden">' +
+              '<img src="' +
+              esc(mediaSrc(it.image)) +
+              '" alt="' +
+              esc(it.title) +
+              '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
+              "</div>" +
+              '<figcaption class="p-4"><h3 class="font-display font-semibold text-mes-primary">' +
+              esc(it.title) +
+              "</h3>" +
+              (it.caption ? '<p class="mt-1 text-sm text-slate-600">' + esc(it.caption) + "</p>" : "") +
+              "</figcaption></figure>"
+            );
+          })
+          .join("") +
+        "</div>";
+      return;
+    }
+
+    if (!C.gallery) return;
     var g = C.gallery;
     el.innerHTML =
       '<div id="student-life" class="scroll-mt-40"></div>' +
-      '<div id="activity-2026" class="scroll-mt-40"></div>' +
       '<p class="text-xl text-slate-600" data-reveal>' +
       esc(g.intro) +
       "</p>" +
       '<div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
-      g.items
+      (g.items || [])
         .map(function (it, idx) {
           var len = g.items.length;
           var figId = "";
@@ -605,7 +743,7 @@
             ' data-reveal class="group scroll-mt-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
             '<div class="aspect-[4/3] overflow-hidden">' +
             '<img src="' +
-            esc(it.image) +
+            esc(mediaSrc(it.image)) +
             '" alt="' +
             esc(it.title) +
             '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
@@ -619,7 +757,9 @@
         })
         .join("") +
       "</div>" +
-      '<p id="video" class="mt-10 scroll-mt-40 text-sm text-slate-500" data-reveal>Video gallery can be added here when ready.</p>';
+      '<p id="video" class="mt-10 scroll-mt-40 text-sm text-slate-500" data-reveal>' +
+      esc(g.videoNote || "Video gallery can be added here when ready.") +
+      "</p>";
   }
 
   function renderAlumniPage() {
@@ -771,6 +911,12 @@
       "</div></div>";
   }
 
+  function wrapSidebarPanel(content) {
+    return (
+      '<div class="site-sidebar-panel site-glass site-card-3d">' + content + "</div>"
+    );
+  }
+
   function innerSidebarSectionHeading(title) {
     return (
       '<h2 class="font-display text-lg font-bold text-slate-900">' +
@@ -795,19 +941,18 @@
     var footer = (fr && fr.footerLine) || cfg.schoolName || "";
     var sectionTitle = (fr && fr.sectionTitle) || "Fund raising appeal";
     var crest = ((cfg.logoInitials || "DG").trim() || "DG").slice(0, 3);
-    return (
-      '<div class="mt-10">' +
+    return wrapSidebarPanel(
       innerSidebarSectionHeading(sectionTitle) +
       '<a href="' +
       esc(href) +
-      '" class="group mt-4 block overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition hover:border-mes-primary/30 hover:shadow-md">' +
+      '" class="site-sidebar-panel__card group mt-4 block overflow-hidden rounded-lg border border-slate-200/90 bg-white/95 shadow-sm transition hover:border-mes-primary/30 hover:shadow-md">' +
       '<div class="p-4">' +
       '<h3 class="text-sm font-bold leading-snug text-slate-900 group-hover:text-mes-primary">' +
       esc(title) +
       "</h3>" +
       '<div class="relative mt-3 overflow-hidden rounded-md border border-slate-100">' +
       '<img src="' +
-      esc(img) +
+      esc(mediaSrc(img)) +
       '" alt="" class="aspect-[4/3] w-full object-cover" loading="lazy"/>' +
       (goalBadge
         ? '<div class="absolute bottom-2 left-2 rounded-full bg-white/95 px-3 py-1 text-xs font-bold text-slate-900 shadow">' +
@@ -815,15 +960,15 @@
           "</div>"
         : "") +
       "</div>" +
-      '<div class="mt-3 flex items-center gap-2 text-xs text-slate-600">' +
-      '<span class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-500">' +
+      '<div class="mt-3 flex min-w-0 items-center gap-2 text-xs text-slate-600">' +
+      '<span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-500">' +
       esc(crest) +
       "</span>" +
-      "<span>" +
+      '<span class="min-w-0 break-words">' +
       esc(footer) +
       "</span></div>" +
       '<p class="mt-2 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
-      "</div></a></div>"
+      "</div></a>"
     );
   }
 
@@ -853,9 +998,9 @@
     var donateRaw = resolveFundAppealDonateHref(fa);
     var donateLinkAttrs = isExternalHref(donateRaw) ? ' target="_blank" rel="noopener noreferrer"' : "";
 
-    return (
-      '<div class="mt-10 space-y-6">' +
-      '<div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">' +
+    return wrapSidebarPanel(
+      '<div class="space-y-6">' +
+      '<div class="site-sidebar-panel__card rounded-xl border border-slate-200/90 bg-white/95 p-5 shadow-sm">' +
       '<p class="text-lg font-bold leading-snug text-slate-900">' +
       formatINR(raised) +
       " raised of " +
@@ -889,7 +1034,7 @@
       ' class="mt-5 flex w-full items-center justify-center rounded-lg bg-mes-primary py-3 text-center text-base font-bold text-white transition hover:bg-mes-primaryDark">' +
       esc(fa.donateLabel || "Donate now") +
       "</a></div>" +
-      '<div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">' +
+      '<div class="site-sidebar-panel__card rounded-xl border border-slate-200/90 bg-white/95 p-4 shadow-sm">' +
       '<h2 class="font-display text-lg font-bold text-mes-primary">Recent donors</h2>' +
       '<ul class="mt-3 max-h-64 overflow-y-auto pr-1">' +
       (donorsHtml || '<li class="text-sm text-slate-500">No donors listed yet — add them in the CMS under Fund appeal.</li>') +
@@ -1005,26 +1150,27 @@
     links = filterSidebarLinksExceptCurrent(links);
     var navHtml = "";
     if (links.length) {
-      navHtml =
-        '<nav aria-label="Related information">' +
+      navHtml = wrapSidebarPanel(
         innerSidebarSectionHeading("Related information") +
-        '<ul class="mt-4 space-y-3">' +
-        links
-          .map(function (l) {
-            return (
-              '<li><a href="' +
-              esc(l.href) +
-              '" class="text-base font-semibold text-mes-primary transition hover:text-mes-accent hover:underline">' +
-              esc(l.label) +
-              "</a></li>"
-            );
-          })
-          .join("") +
-        "</ul></nav>";
+          '<ul class="site-sidebar-related-links list-none space-y-3 pl-0">' +
+          links
+            .map(function (l) {
+              return (
+                '<li class="min-w-0"><a href="' +
+                esc(l.href) +
+                '" class="site-sidebar-link block break-words text-sm font-semibold leading-snug text-mes-primary transition hover:text-mes-accent hover:underline">' +
+                esc(l.label) +
+                "</a></li>"
+              );
+            })
+            .join("") +
+          "</ul>"
+      );
     }
     var teaser = page === "fund-appeal" ? "" : buildFundraisingTeaserCardHtml();
     var fundExtra =
       page === "fund-appeal" && C.fundAppeal ? buildFundAppealProgressAsideHtml(C.fundAppeal) : "";
+    aside.classList.add("site-sidebar-stack");
     aside.innerHTML = navHtml + teaser + fundExtra;
   }
 

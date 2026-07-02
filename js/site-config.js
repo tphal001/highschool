@@ -189,13 +189,8 @@ window.SITE_CONFIG = {
   formThankYouUrl: "",
 
   footerLinks: [
-    { label: "About Us", href: "about.html" },
-    { label: "Academics", href: "academics.html" },
     { label: "News", href: "news.html?ctx=events" },
     { label: "Gallery", href: "gallery.html?ctx=gallery" },
-    { label: "Alumni", href: "alumni.html" },
-    { label: "Admissions", href: "admissions.html" },
-    { label: "Fund appeal", href: "fund-appeal.html" },
     { label: "Contact", href: "contact.html" },
   ],
 

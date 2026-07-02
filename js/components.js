@@ -6,6 +6,14 @@
     document.head.appendChild(st);
   }
 
+  if (typeof document !== "undefined" && !document.getElementById("site-atmosphere-css")) {
+    var link = document.createElement("link");
+    link.id = "site-atmosphere-css";
+    link.rel = "stylesheet";
+    link.href = "css/site-atmosphere.css";
+    document.head.appendChild(link);
+  }
+
   var cfg = typeof window.SITE_CONFIG !== "undefined" ? window.SITE_CONFIG : {};
 
   function esc(s) {
@@ -100,11 +108,11 @@
           b.href && (b.href + "").trim()
             ? '<a href="' +
               esc(b.href) +
-              '" class="relative block h-full border border-slate-200 bg-white p-2.5 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-mes-accent/50 hover:shadow-lg hover:shadow-mes-primary/10 md:p-3">' +
+              '" class="site-glass site-card-3d relative block h-full border border-slate-200 p-2.5 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-mes-accent/50 md:p-3">' +
               '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[10px] border-t-[10px] border-l-transparent border-t-amber-600"></span>' +
               inner +
               "</a>"
-            : '<div class="relative h-full border border-slate-200 bg-white p-2.5 shadow-sm md:p-3">' +
+            : '<div class="site-glass relative h-full border border-slate-200 p-2.5 shadow-sm md:p-3">' +
               '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[10px] border-t-[10px] border-l-transparent border-t-amber-600"></span>' +
               inner +
               "</div>";
@@ -337,7 +345,7 @@
       );
     });
     return (
-      '<aside class="pointer-events-none fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 flex-col gap-0.5 md:flex" aria-label="Social links">' +
+      '<aside id="site-social-rail" class="site-social-rail pointer-events-none fixed right-0 top-[38%] hidden -translate-y-1/2 flex-col gap-0.5 md:flex" aria-label="Social links">' +
       '<div class="pointer-events-auto flex flex-col">' +
       items.join("") +
       "</div></aside>"
@@ -367,7 +375,7 @@
       var infoBoxes = buildHeaderInfoBoxes();
 
       this.innerHTML =
-        '<header id="site-header" class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 bg-white shadow-sm transition-shadow duration-500 ease-premium">' +
+        '<header id="site-header" class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 shadow-sm transition-shadow duration-500 ease-premium">' +
         buildTopBar() +
         '<div class="relative bg-gradient-to-r from-mes-light/70 via-white to-white">' +
         '<div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-8 sm:py-5 lg:px-10">' +
@@ -425,7 +433,7 @@
             return (
               '<li><a href="' +
               esc(item.href) +
-              '" class="text-sm text-slate-700 transition hover:text-mes-accent">' +
+              '" class="text-xs text-slate-700 transition hover:text-mes-accent">' +
               esc(item.label) +
               "</a></li>"
             );
@@ -434,47 +442,47 @@
       }
 
       var col2 =
-        '<div><p class="text-sm font-bold text-slate-900">Quick links</p><ul class="mt-3 space-y-2">' +
+        '<div><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Quick links</p><ul class="mt-2 space-y-1.5">' +
         linkList(links) +
         "</ul></div>";
 
       var col3 =
         links2.length > 0
-          ? '<div><p class="text-sm font-bold text-slate-900">Explore</p><ul class="mt-3 space-y-2">' +
+          ? '<div><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Explore</p><ul class="mt-2 space-y-1.5">' +
             linkList(links2) +
             "</ul></div>"
           : "";
 
       var gridClass =
         links2.length > 0
-          ? "grid gap-10 sm:grid-cols-2 lg:grid-cols-4 lg:gap-8"
-          : "grid gap-10 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8";
+          ? "grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6"
+          : "grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6";
 
       var contactBlock =
-        '<div><p class="text-sm font-bold text-slate-900">Contact us</p>' +
-        (address ? '<p class="mt-3 text-sm leading-relaxed text-slate-600">' + esc(address) + "</p>" : "") +
+        '<div><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Contact us</p>' +
+        (address ? '<p class="mt-2 text-xs leading-relaxed text-slate-600">' + esc(address) + "</p>" : "") +
         (phone
-          ? '<p class="mt-2 text-sm"><a href="tel:' +
+          ? '<p class="mt-1.5 text-xs"><a href="tel:' +
             esc(phone.replace(/\s/g, "")) +
             '" class="text-mes-accent hover:underline">' +
             esc(phone) +
             "</a></p>"
           : "") +
         (email
-          ? '<p class="mt-1 text-sm"><a href="mailto:' +
+          ? '<p class="mt-1 text-xs"><a href="mailto:' +
             esc(email) +
             '" class="text-mes-accent hover:underline">' +
             esc(email) +
             "</a></p>"
           : "") +
-        '<div class="mt-4 flex gap-3">' +
+        '<div class="mt-3 flex gap-2">' +
         (cfg.socialLinks || [])
           .slice(0, 3)
           .map(function (s) {
             return (
               '<a href="' +
               esc(s.href) +
-              '" class="flex h-8 w-8 items-center justify-center rounded-full border border-slate-300 bg-white text-xs font-bold text-slate-700 transition hover:border-mes-accent" target="_blank" rel="noopener noreferrer" title="' +
+              '" class="flex h-7 w-7 items-center justify-center rounded-full border border-slate-300 bg-white text-[10px] font-bold text-slate-700 transition hover:border-mes-accent" target="_blank" rel="noopener noreferrer" title="' +
               esc(s.label) +
               '">' +
               esc((s.label || "?").charAt(0)) +
@@ -485,21 +493,21 @@
         "</div></div>";
 
       this.innerHTML =
-        '<footer id="site-footer" class="border-t border-mes-primary/10 bg-mes-light px-4 py-12 text-slate-700 sm:px-8 lg:px-10">' +
+        '<footer id="site-footer" class="site-footer-glass site-footer-compact border-t border-mes-primary/10 px-4 py-5 text-slate-700 sm:px-8 sm:py-6 lg:px-10">' +
         '<div class="mx-auto max-w-7xl ' +
         gridClass +
         '">' +
         '<div class="sm:col-span-2 lg:col-span-1">' +
-        '<p class="font-display text-lg font-bold text-slate-900">' +
+        '<p class="font-display text-base font-bold text-slate-900">' +
         esc(schoolName) +
         "</p>" +
-        (intro ? '<p class="mt-3 text-sm leading-relaxed text-slate-600">' + esc(intro) + "</p>" : "") +
+        (intro ? '<p class="mt-2 line-clamp-3 text-xs leading-relaxed text-slate-600">' + esc(intro) + "</p>" : "") +
         "</div>" +
         col2 +
         col3 +
         contactBlock +
         "</div>" +
-        '<p class="mx-auto mt-10 max-w-7xl border-t border-slate-300/80 pt-6 text-center text-xs text-slate-500">' +
+        '<p class="mx-auto mt-4 max-w-7xl border-t border-slate-300/80 pt-3 text-center text-[11px] text-slate-500">' +
         "© " +
         y +
         " " +
@@ -516,7 +524,7 @@
   }
 
   var CARD_ARTICLE_CLASS =
-    "group flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/40 hover:shadow-xl hover:shadow-mes-primary/15 hover:ring-1 hover:ring-mes-accent/20";
+    "site-auto-glass site-card-3d group flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/40 hover:shadow-xl hover:shadow-mes-primary/15 hover:ring-1 hover:ring-mes-accent/20";
 
   class AnnouncementCard extends HTMLElement {
     connectedCallback() {

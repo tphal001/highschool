@@ -412,7 +412,48 @@
     });
   }
 
+  function initSiteAtmosphere() {
+    document.body.classList.add("site-body");
+
+    if (!document.getElementById("site-atmosphere")) {
+      var wrap = document.createElement("div");
+      wrap.id = "site-atmosphere";
+      wrap.setAttribute("aria-hidden", "true");
+      wrap.innerHTML =
+        '<div class="site-atmosphere__dual"></div>' +
+        '<div class="site-atmosphere__dual-stripe"></div>' +
+        '<div class="site-atmosphere__mesh"></div>' +
+        '<div class="site-atmosphere__grid"></div>' +
+        '<div class="site-atmosphere__orb site-atmosphere__orb--1"></div>' +
+        '<div class="site-atmosphere__orb site-atmosphere__orb--2"></div>' +
+        '<div class="site-atmosphere__orb site-atmosphere__orb--3"></div>';
+      document.body.insertBefore(wrap, document.body.firstChild);
+    }
+
+    var reduceMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (reduceMotion) return;
+
+    var orbs = document.querySelectorAll(".site-atmosphere__orb");
+    if (!orbs.length) return;
+
+    document.addEventListener(
+      "mousemove",
+      function (e) {
+        var x = (e.clientX / window.innerWidth - 0.5) * 24;
+        var y = (e.clientY / window.innerHeight - 0.5) * 24;
+        for (var i = 0; i < orbs.length; i++) {
+          var f = (i + 1) * 0.45;
+          orbs[i].style.transform = "translate(" + x * f + "px," + y * f + "px)";
+        }
+      },
+      { passive: true }
+    );
+  }
+
   function initPage() {
+    initSiteAtmosphere();
     if (typeof window.renderPageContent === "function") {
       window.renderPageContent();
     }

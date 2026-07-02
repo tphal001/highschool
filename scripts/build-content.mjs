@@ -1,6 +1,6 @@
 /**
  * Merges content/defaults.json with content/cms/*.json and writes js/content.js.
- * Bootstraps defaults from js/content.js if content/defaults.json is missing.
+ * Staff CMS may only update selective sections (see admin/config.yml).
  */
 import fs from "fs";
 import path from "path";
@@ -10,17 +10,9 @@ import {
   ensureFlashNews,
 } from "./parse-content.mjs";
 
-const CMS_KEYS = [
-  "news",
-  "gallery",
-  "home",
-  "alumni",
-  "fundAppeal",
-  "about",
-  "academics",
-  "admissions",
-  "contact",
-];
+function readJsonFile(fp) {
+  return JSON.parse(fs.readFileSync(fp, "utf8"));
+}
 
 function readDefaults() {
   if (!fs.existsSync(paths.defaultsJson)) {
@@ -35,24 +27,58 @@ function readDefaults() {
   return ensureFlashNews(JSON.parse(fs.readFileSync(paths.defaultsJson, "utf8")));
 }
 
+/** Apply one CMS file onto the merged site object. */
+function applyCmsFile(site, filename, data) {
+  site.about = site.about || {};
+  site.news = site.news || {};
+
+  switch (filename) {
+    case "management.json":
+      if (data.mission) site.about.mission = data.mission;
+      if (data.vision) site.about.vision = data.vision;
+      break;
+    case "board.json":
+      site.about.board = data;
+      break;
+    case "principal.json":
+      site.about.principal = data;
+      break;
+    case "staff.json":
+      site.about.staff = data;
+      break;
+    case "admissions.json":
+      site.admissions = data;
+      break;
+    case "events.json":
+      if (data.events) site.news.events = data.events;
+      break;
+    case "results.json":
+      if (data.items) site.news.results = data.items;
+      break;
+    case "activity.json":
+      site.activity = data;
+      break;
+    case "gallery.json":
+      site.gallery = data;
+      break;
+    default:
+      break;
+  }
+}
+
 function mergeCms(defaults) {
   const site = JSON.parse(JSON.stringify(defaults));
   const cmsDir = paths.cmsDir;
   if (!fs.existsSync(cmsDir)) return site;
 
-  for (const key of CMS_KEYS) {
-    const fp = path.join(cmsDir, key + ".json");
-    if (fs.existsSync(fp)) {
-      try {
-        site[key] = JSON.parse(fs.readFileSync(fp, "utf8"));
-      } catch (e) {
-        throw new Error("Invalid JSON in " + fp + ": " + e.message);
-      }
+  const files = fs.readdirSync(cmsDir).filter((f) => f.endsWith(".json"));
+  for (const file of files) {
+    const fp = path.join(cmsDir, file);
+    try {
+      applyCmsFile(site, file, readJsonFile(fp));
+    } catch (e) {
+      throw new Error("Invalid JSON in " + fp + ": " + e.message);
     }
-  }
-  const flashPath = path.join(cmsDir, "flash.json");
-  if (fs.existsSync(flashPath)) {
-    site.flashNews = JSON.parse(fs.readFileSync(flashPath, "utf8"));
   }
   return site;
 }
@@ -60,7 +86,7 @@ function mergeCms(defaults) {
 function emitContentJs(obj) {
   const json = JSON.stringify(obj, null, 2);
   const out =
-    "/**\n * AUTO-GENERATED — do not edit. Update content in the CMS at /admin/\n */\n" +
+    "/**\n * AUTO-GENERATED — do not edit. Staff updates: /admin/ (selective sections only)\n */\n" +
     "window.SITE_CONTENT = " +
     json +
     ";\n";
@@ -70,13 +96,6 @@ function emitContentJs(obj) {
 
 /** Decap list widgets often save objects; render expects string arrays. */
 function normalizeSiteForEmit(site) {
-  if (site.home && site.home.hero && Array.isArray(site.home.hero.slides)) {
-    site.home.hero.slides = site.home.hero.slides.map(function (s) {
-      if (typeof s === "string") return s;
-      if (s && typeof s === "object") return s.slide || s.url || "";
-      return "";
-    }).filter(Boolean);
-  }
   function mapStrList(arr, key) {
     if (!Array.isArray(arr)) return arr;
     return arr.map(function (x) {
@@ -84,6 +103,16 @@ function normalizeSiteForEmit(site) {
       if (x && typeof x === "object") return x[key] || x.line || x.item || x.step || x.p || "";
       return "";
     });
+  }
+
+  if (site.home && site.home.hero && Array.isArray(site.home.hero.slides)) {
+    site.home.hero.slides = site.home.hero.slides
+      .map(function (s) {
+        if (typeof s === "string") return s;
+        if (s && typeof s === "object") return s.slide || s.url || "";
+        return "";
+      })
+      .filter(Boolean);
   }
   if (site.home && Array.isArray(site.home.quickNews)) {
     site.home.quickNews = mapStrList(site.home.quickNews, "text").filter(Boolean);
@@ -102,21 +131,8 @@ function normalizeSiteForEmit(site) {
       );
     }
   }
-  if (site.about) {
-    if (site.about.history && Array.isArray(site.about.history.paragraphs)) {
-      site.about.history.paragraphs = mapStrList(site.about.history.paragraphs, "p");
-    }
-    if (site.about.principal && Array.isArray(site.about.principal.message)) {
-      site.about.principal.message = mapStrList(site.about.principal.message, "p");
-    }
-  }
-  if (site.academics) {
-    if (Array.isArray(site.academics.curriculum)) {
-      site.academics.curriculum = mapStrList(site.academics.curriculum, "line");
-    }
-    if (Array.isArray(site.academics.facilities)) {
-      site.academics.facilities = mapStrList(site.academics.facilities, "line");
-    }
+  if (site.about && site.about.principal && Array.isArray(site.about.principal.message)) {
+    site.about.principal.message = mapStrList(site.about.principal.message, "p");
   }
   if (site.admissions) {
     if (Array.isArray(site.admissions.process)) {
