@@ -1,6 +1,6 @@
-# Dr. Gadagkar High School — website
+# Dr. Gadagkar High School - website
 
-Static school site (HTML + JS), deployed on Vercel.
+School site (HTML + JS), deployed on Vercel.
 
 | | |
 |---|---|
