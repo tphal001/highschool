@@ -343,19 +343,34 @@
     "hours": "Mon–Sat · 9:00 AM – 4:00 PM",
     "mapEmbed": "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3000!2d73.85!3d18.5!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMbjCsDMwJzAwLjAiTiA3M8KwNTEnMDAuMCJF!5e0!3m2!1sen!2sin!4v1"
   },
-  "highlightNews": {
-    "enabled": true,
-    "showOnHome": true,
+  "highlights": {
     "showModalOnOpen": true,
     "oncePerSession": true,
-    "badge": "Highlights",
-    "headline": "Gold Medal at State Science Olympiad",
-    "studentName": "Priya Deshmukh",
-    "accomplishment": "Our student secured first place among 200+ schools, bringing pride to Dr. Gadagkar High School and the Satararoad community.",
-    "posterImage": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
-    "linkLabel": "View",
-    "linkHref": "",
-    "cacheBust": "v1"
+    "cacheBust": "v1",
+    "items": [
+      {
+        "enabled": true,
+        "showOnHome": true,
+        "badge": "Highlights",
+        "headline": "Gold Medal at State Science Olympiad",
+        "studentName": "Priya Deshmukh",
+        "accomplishment": "Our student secured first place among 200+ schools, bringing pride to Dr. Gadagkar High School and the Satararoad community.",
+        "posterImage": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+        "linkLabel": "View",
+        "cacheBust": "v1"
+      },
+      {
+        "enabled": true,
+        "showOnHome": true,
+        "badge": "Highlights",
+        "headline": "District sports championship winners",
+        "studentName": "Athletics team",
+        "accomplishment": "Our under-16 relay and long-jump teams brought home gold at the district meet — congratulations to coaches and students.",
+        "posterImage": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+        "linkLabel": "View",
+        "cacheBust": "v1"
+      }
+    ]
   },
   "flashNews": {
     "enabled": false,

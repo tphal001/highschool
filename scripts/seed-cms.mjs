@@ -53,7 +53,31 @@ const CMS_SEEDS = [
   },
   {
     file: "highlight.json",
-    data: (d) => d.highlightNews || {},
+    data: (d) => {
+      if (d.highlights) return d.highlights;
+      if (d.highlightNews) {
+        var hn = d.highlightNews;
+        return {
+          showModalOnOpen: hn.showModalOnOpen !== false,
+          oncePerSession: hn.oncePerSession !== false,
+          cacheBust: hn.cacheBust || "v1",
+          items: [
+            {
+              enabled: hn.enabled !== false,
+              showOnHome: hn.showOnHome !== false,
+              badge: hn.badge || "Highlights",
+              headline: hn.headline || "",
+              studentName: hn.studentName || "",
+              accomplishment: hn.accomplishment || "",
+              posterImage: hn.posterImage || "",
+              linkLabel: hn.linkLabel || "View",
+              cacheBust: hn.cacheBust || "",
+            },
+          ],
+        };
+      }
+      return { showModalOnOpen: true, oncePerSession: true, cacheBust: "v1", items: [] };
+    },
   },
   {
     file: "quickAnnouncements.json",

@@ -166,6 +166,10 @@
   }
 
   function cardFromData(a) {
+    var imgAttr = "";
+    if (a.image) {
+      imgAttr = ' image="' + esc(mediaSrc(a.image)) + '"';
+    }
     return (
       "<announcement-card " +
       'datetime="' +
@@ -182,25 +186,27 @@
       '" ' +
       'href="' +
       esc(a.href || "news.html?ctx=events") +
-      '"></announcement-card>'
+      '"' +
+      imgAttr +
+      "></announcement-card>"
     );
   }
 
-  /** Poster-style accomplishment block on the home page (CMS: Highlight News). */
-  function renderHomeHighlight() {
-    var sec = document.getElementById("home-highlight-section");
-    var el = document.getElementById("home-highlight");
-    var hn = C.highlightNews;
-    if (!sec || !el) return;
-    if (!hn || !hn.enabled || hn.showOnHome === false) {
-      sec.classList.add("hidden");
-      return;
-    }
-    sec.classList.remove("hidden");
+  function getEnabledHighlights() {
+    var hl = C.highlights || {};
+    var items = hl.items || [];
+    return items.filter(function (it) {
+      return it && it.enabled !== false;
+    });
+  }
+
+  function buildHighlightCardHtml(hn, index) {
     var img = mediaSrc(hn.posterImage);
     var viewLabel = (hn.linkLabel || "View").trim() || "View";
     var viewBtn =
-      '<button type="button" class="js-open-highlight-modal mt-6 inline-flex items-center gap-2 rounded-full bg-mes-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-mes-primaryDark hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2">' +
+      '<button type="button" class="js-open-highlight-modal mt-6 inline-flex items-center gap-2 rounded-full bg-mes-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-mes-primaryDark hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" data-highlight-index="' +
+      index +
+      '">' +
       esc(viewLabel) +
       ' <span aria-hidden="true">→</span></button>';
     var student =
@@ -209,14 +215,8 @@
           esc(hn.studentName) +
           "</p>"
         : "";
-    var badge = esc(hn.badge || "Highlights");
-    el.innerHTML =
+    return (
       '<article class="site-highlight-poster site-card-3d overflow-hidden rounded-3xl border border-mes-goldLine/40 bg-gradient-to-br from-mes-nav via-mes-navDeep to-slate-950 shadow-2xl" data-reveal>' +
-      '<div class="border-b border-mes-goldLine/25 px-6 py-4 sm:px-8">' +
-      '<span class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-mes-goldLine">' +
-      '<span class="text-base leading-none" aria-hidden="true">★</span> ' +
-      badge +
-      "</span></div>" +
       '<div class="grid gap-0 lg:grid-cols-2 lg:items-start">' +
       (img
         ? '<div class="site-highlight-poster__media border-b border-mes-goldLine/15 bg-black/25 p-5 sm:p-8 lg:border-b-0 lg:border-r">' +
@@ -226,15 +226,52 @@
           "</div>"
         : "") +
       '<div class="flex flex-col justify-center px-6 py-8 sm:px-10 sm:py-10 lg:py-12">' +
-      '<h2 class="font-display text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-[2.75rem]">' +
+      '<h3 class="font-display text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-[2.75rem]">' +
       esc(hn.headline || "") +
-      "</h2>" +
+      "</h3>" +
       student +
       '<p class="mt-4 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">' +
       esc(hn.accomplishment || "") +
       "</p>" +
       viewBtn +
-      "</div></div></article>";
+      "</div></div></article>"
+    );
+  }
+
+  /** Poster-style accomplishment blocks on the home page (CMS: Highlights). */
+  function renderHomeHighlight() {
+    var sec = document.getElementById("home-highlight-section");
+    var el = document.getElementById("home-highlight");
+    if (!sec || !el) return;
+    var homeItems = getEnabledHighlights().filter(function (it) {
+      return it.showOnHome !== false;
+    });
+    if (!homeItems.length) {
+      sec.classList.add("hidden");
+      return;
+    }
+    sec.classList.remove("hidden");
+    var modalItems = getEnabledHighlights();
+    var cards = homeItems
+      .map(function (hn) {
+        var modalIdx = 0;
+        for (var i = 0; i < modalItems.length; i++) {
+          if (modalItems[i] === hn || modalItems[i].headline === hn.headline) {
+            modalIdx = i;
+            break;
+          }
+        }
+        return buildHighlightCardHtml(hn, modalIdx);
+      })
+      .join("");
+    el.innerHTML =
+      '<div class="mb-8 sm:mb-10" data-reveal>' +
+      '<span class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-mes-primary">' +
+      '<span class="text-base leading-none text-mes-accent" aria-hidden="true">★</span> Highlights' +
+      "</span></div>" +
+      '<div class="site-highlights-stack flex flex-col gap-8 lg:gap-10">' +
+      cards +
+      "</div>";
   }
 
   function galleryLightboxButton(imgSrc, alt, caption) {

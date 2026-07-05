@@ -210,14 +210,21 @@
     });
   }
 
-  function highlightPosterUrl(hn) {
-    if (!hn) return "";
-    var imgUrl = (hn.posterImage || "").trim();
+  function getEnabledHighlightItems(C) {
+    var hl = (C && C.highlights) || {};
+    return (hl.items || []).filter(function (it) {
+      return it && it.enabled !== false;
+    });
+  }
+
+  function highlightPosterUrl(item, globalBust) {
+    if (!item) return "";
+    var imgUrl = (item.posterImage || "").trim();
     if (!imgUrl) return "";
     if (imgUrl.indexOf("http") !== 0 && imgUrl.charAt(0) !== "/") {
       if (imgUrl.indexOf("images/") === 0) imgUrl = "/" + imgUrl;
     }
-    var bust = (hn.cacheBust || "").trim();
+    var bust = (item.cacheBust || globalBust || "").trim();
     if (bust) {
       imgUrl += (imgUrl.indexOf("?") >= 0 ? "&" : "?") + "cb=" + encodeURIComponent(bust);
     }
@@ -226,8 +233,9 @@
 
   function initHighlightNewsModal() {
     var C = typeof window.SITE_CONTENT !== "undefined" ? window.SITE_CONTENT : {};
-    var hn = C.highlightNews;
-    if (!hn || !hn.enabled) return;
+    var hl = C.highlights || {};
+    var items = getEnabledHighlightItems(C);
+    if (!items.length) return;
 
     var modal = document.getElementById("highlight-news-modal");
     if (!modal) {
@@ -244,10 +252,11 @@
         '<div class="highlight-poster-card relative w-full max-h-[min(92vh,880px)] overflow-hidden rounded-2xl bg-gradient-to-br from-mes-nav via-mes-navDeep to-slate-950 p-[3px] shadow-[0_32px_80px_-12px_rgba(0,0,0,0.75)] ring-1 ring-mes-goldLine/30 sm:rounded-3xl">' +
         '<div class="relative max-h-[inherit] overflow-hidden rounded-[0.85rem] sm:rounded-[1.25rem]">' +
         '<button type="button" class="absolute right-2 top-2 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl font-light text-white backdrop-blur-sm transition hover:bg-black/75 sm:right-3 sm:top-3" data-highlight-dismiss aria-label="Close">×</button>' +
-        '<div class="border-b border-mes-goldLine/25 px-6 py-3 sm:px-8">' +
-        '<p id="highlight-modal-badge" class="text-sm font-bold uppercase tracking-[0.18em] text-mes-goldLine"></p></div>' +
+        '<div class="flex items-center justify-between gap-3 border-b border-mes-goldLine/25 px-6 py-3 sm:px-8">' +
+        '<p id="highlight-modal-badge" class="text-sm font-bold uppercase tracking-[0.18em] text-mes-goldLine">Highlights</p>' +
+        '<p id="highlight-modal-counter" class="hidden text-xs font-semibold text-white/70"></p></div>' +
         '<div class="grid max-h-[inherit] overflow-y-auto lg:grid-cols-2 lg:items-start lg:overflow-hidden">' +
-        '<div id="highlight-modal-media" class="flex items-center justify-center border-b border-mes-goldLine/15 bg-black/30 p-4 sm:p-6 lg:border-b-0 lg:border-r"></div>' +
+        '<div id="highlight-modal-media" class="relative flex items-center justify-center border-b border-mes-goldLine/15 bg-black/30 p-4 sm:p-6 lg:border-b-0 lg:border-r"></div>' +
         '<div class="flex flex-col justify-center px-6 py-8 sm:px-8 sm:py-10 lg:py-10">' +
         '<h2 id="highlight-news-title" class="font-display text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl"></h2>' +
         '<p id="highlight-modal-student" class="mt-2 font-display text-lg font-semibold text-mes-goldLine sm:text-xl"></p>' +
@@ -256,38 +265,62 @@
       document.body.appendChild(modal);
     }
 
-    var imgUrl = highlightPosterUrl(hn);
     var mediaEl = document.getElementById("highlight-modal-media");
-    if (mediaEl) {
-      mediaEl.innerHTML = imgUrl
-        ? '<img src="' +
-          imgUrl.replace(/"/g, "&quot;") +
-          '" alt="" class="mx-auto max-h-[min(50vh,22rem)] w-full max-w-md object-contain object-center lg:max-h-[min(72vh,26rem)]"/>'
-        : "";
-    }
-
-    var badgeEl = document.getElementById("highlight-modal-badge");
-    if (badgeEl) badgeEl.textContent = hn.badge || "Highlights";
+    var counterEl = document.getElementById("highlight-modal-counter");
     var titleEl = document.getElementById("highlight-news-title");
-    if (titleEl) titleEl.textContent = hn.headline || "";
     var studentEl = document.getElementById("highlight-modal-student");
-    if (studentEl) {
-      var sn = (hn.studentName || "").trim();
-      studentEl.textContent = sn;
-      studentEl.classList.toggle("hidden", !sn);
-    }
     var bodyEl = document.getElementById("highlight-modal-body");
-    if (bodyEl) bodyEl.textContent = hn.accomplishment || "";
-
+    var globalBust = (hl.cacheBust || "").trim();
+    var currentIdx = 0;
     var open = false;
     var closeTimer = null;
-    function setOpen(shouldOpen) {
+
+    function renderHighlightAt(idx) {
+      if (!items.length) return;
+      if (idx < 0) idx = items.length - 1;
+      if (idx >= items.length) idx = 0;
+      currentIdx = idx;
+      var item = items[idx];
+      var imgUrl = highlightPosterUrl(item, globalBust);
+      if (mediaEl) {
+        var navHtml =
+          items.length > 1
+            ? '<button type="button" data-highlight-nav="prev" class="absolute left-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-xl text-white backdrop-blur-sm transition hover:bg-black/75" aria-label="Previous highlight">‹</button>' +
+              '<button type="button" data-highlight-nav="next" class="absolute right-2 top-1/2 z-20 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full border border-white/25 bg-black/55 text-xl text-white backdrop-blur-sm transition hover:bg-black/75" aria-label="Next highlight">›</button>'
+            : "";
+        mediaEl.innerHTML =
+          navHtml +
+          (imgUrl
+            ? '<img src="' +
+              imgUrl.replace(/"/g, "&quot;") +
+              '" alt="" class="mx-auto max-h-[min(50vh,22rem)] w-full max-w-md object-contain object-center lg:max-h-[min(72vh,26rem)]"/>'
+            : "");
+      }
+      if (counterEl) {
+        if (items.length > 1) {
+          counterEl.textContent = currentIdx + 1 + " / " + items.length;
+          counterEl.classList.remove("hidden");
+        } else {
+          counterEl.classList.add("hidden");
+        }
+      }
+      if (titleEl) titleEl.textContent = item.headline || "";
+      if (studentEl) {
+        var sn = (item.studentName || "").trim();
+        studentEl.textContent = sn;
+        studentEl.classList.toggle("hidden", !sn);
+      }
+      if (bodyEl) bodyEl.textContent = item.accomplishment || "";
+    }
+
+    function setOpen(shouldOpen, startIdx) {
       open = shouldOpen;
       if (closeTimer) {
         clearTimeout(closeTimer);
         closeTimer = null;
       }
       if (shouldOpen) {
+        renderHighlightAt(typeof startIdx === "number" ? startIdx : currentIdx);
         modal.classList.remove("hidden");
         modal.classList.add("flex");
         document.body.classList.add("overflow-hidden");
@@ -310,8 +343,8 @@
       }
     }
 
-    window.openHighlightNewsModal = function () {
-      setOpen(true);
+    window.openHighlightNewsModal = function (idx) {
+      setOpen(true, typeof idx === "number" ? idx : 0);
     };
 
     if (!modal.dataset.highlightBound) {
@@ -324,8 +357,13 @@
       document.addEventListener(
         "keydown",
         function (e) {
-          if (e.key !== "Escape" || !open) return;
-          setOpen(false);
+          if (!open) return;
+          if (e.key === "Escape") {
+            setOpen(false);
+            return;
+          }
+          if (items.length > 1 && e.key === "ArrowLeft") renderHighlightAt(currentIdx - 1);
+          if (items.length > 1 && e.key === "ArrowRight") renderHighlightAt(currentIdx + 1);
         },
         true
       );
@@ -333,28 +371,35 @@
         var btn = e.target.closest && e.target.closest(".js-open-highlight-modal");
         if (!btn) return;
         e.preventDefault();
-        setOpen(true);
+        var raw = btn.getAttribute("data-highlight-index");
+        var idx = raw != null ? parseInt(raw, 10) : 0;
+        if (isNaN(idx)) idx = 0;
+        setOpen(true, idx);
+      });
+      modal.addEventListener("click", function (e) {
+        var nav = e.target.closest && e.target.closest("[data-highlight-nav]");
+        if (!nav) return;
+        e.stopPropagation();
+        var dir = nav.getAttribute("data-highlight-nav");
+        if (dir === "prev") renderHighlightAt(currentIdx - 1);
+        if (dir === "next") renderHighlightAt(currentIdx + 1);
       });
     }
 
-    if (!hn.showModalOnOpen) return;
+    if (!hl.showModalOnOpen) return;
 
     var storageKey =
-      "dg-hs-highlight-" + String(hn.cacheBust || hn.headline || "default").trim();
-    if (hn.oncePerSession !== false) {
+      "dg-hs-highlights-" + String(hl.cacheBust || "default").trim();
+    if (hl.oncePerSession !== false) {
       try {
         if (sessionStorage.getItem(storageKey) === "1") return;
-      } catch (e) {}
-    }
-    if (hn.oncePerSession !== false) {
-      try {
         sessionStorage.setItem(storageKey, "1");
       } catch (e) {}
     }
 
     requestAnimationFrame(function () {
       requestAnimationFrame(function () {
-        setOpen(true);
+        setOpen(true, 0);
       });
     });
   }
@@ -453,7 +498,7 @@
 
   function initVimpNewsModal() {
     var C = typeof window.SITE_CONTENT !== "undefined" ? window.SITE_CONTENT : {};
-    if (C.highlightNews && C.highlightNews.enabled) return;
+    if (getEnabledHighlightItems(C).length) return;
     var cfg = typeof window.SITE_CONFIG !== "undefined" ? window.SITE_CONFIG : {};
     var vn = cfg.vimpNews;
     if (!vn || !vn.enabled) return;

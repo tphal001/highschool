@@ -1,14 +1,29 @@
 {
-  "accomplishment": "*पालकांनी योग्य शाळेची केलेली निवड विद्यार्थ्यांचे भवितव्य ठरवते....*\nसलग दुसऱ्या वर्षी शिष्यवृत्ती परीक्षेत *डॉ. गदगकर हायस्कूल* ने गुणवत्ता यादी स्थान मिळवले आहे. यावर्षी आपल्या विद्यालयाची इयत्ता आठवीची विद्यार्थिनी *कुमारी दिव्या सुरेश फाळके* हिने *कोरेगाव तालुक्यामध्ये प्रथम* येऊन शाळेच्या शिरपेचात मानाचा तुरा खोवला आहे....\n दिव्या फाळके व तिला मार्गदर्शन करणाऱ्या सर्व शिक्षकांचे हार्दिक अभिनंदन.......💐💐💐",
-  "enabled": true,
-  "badge": "Highlights",
-  "linkHref": "",
-  "studentName": "कु. दिव्या सुरेश फाळके",
-  "posterImage": "/images/1000879527.jpg",
-  "headline": "2026 शिष्यवृत्ती - कोरेगाव तालुक्यामध्ये प्रथम",
-  "cacheBust": "v1",
   "showModalOnOpen": true,
   "oncePerSession": true,
-  "linkLabel": "View",
-  "showOnHome": true
+  "cacheBust": "v1",
+  "items": [
+    {
+      "enabled": true,
+      "showOnHome": true,
+      "badge": "Highlights",
+      "headline": "Gold Medal at State Science Olympiad",
+      "studentName": "Priya Deshmukh",
+      "accomplishment": "Our student secured first place among 200+ schools, bringing pride to Dr. Gadagkar High School and the Satararoad community.",
+      "posterImage": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+      "linkLabel": "View",
+      "cacheBust": "v1"
+    },
+    {
+      "enabled": true,
+      "showOnHome": true,
+      "badge": "Highlights",
+      "headline": "District sports championship winners",
+      "studentName": "Athletics team",
+      "accomplishment": "Our under-16 relay and long-jump teams brought home gold at the district meet — congratulations to coaches and students.",
+      "posterImage": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+      "linkLabel": "View",
+      "cacheBust": "v1"
+    }
+  ]
 }

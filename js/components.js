@@ -534,14 +534,24 @@
       var excerpt = this.getAttribute("excerpt") || "";
       var href = this.getAttribute("href") || "#";
       var readLabel = this.getAttribute("read-label") || "Read more →";
+      var image = (this.getAttribute("image") || "").trim();
 
       /** Fill grid row height so excerpts share space and “Read more” aligns across cards. */
       this.classList.add("flex", "h-full", "min-h-0", "w-full", "flex-col");
+
+      var imageBlock = image
+        ? '<div class="announcement-card__media shrink-0 overflow-hidden border-b border-slate-100 bg-slate-100">' +
+          '<img src="' +
+          esc(image) +
+          '" alt="" class="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.02]" loading="lazy"/>' +
+          "</div>"
+        : "";
 
       this.innerHTML =
         '<article class="' +
         CARD_ARTICLE_CLASS +
         '">' +
+        imageBlock +
         '<div class="shrink-0 border-b border-slate-100 bg-slate-50/90 px-5 py-3 transition-colors duration-300 group-hover:bg-amber-50/60">' +
         '<time datetime="' +
         esc(datetime) +

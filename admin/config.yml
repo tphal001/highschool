@@ -156,29 +156,16 @@ collections:
               - { label: Photo, name: image, widget: image }
           - { label: Video gallery note, name: videoNote, widget: text, required: false }
 
-      - label: Highlight News (poster & popup)
+      - label: Highlights (posters & popup)
         name: highlight
         file: content/cms/highlight.json
         fields:
-          - {
-              label: Show this highlight,
-              name: enabled,
-              widget: boolean,
-              default: true,
-              hint: "Turn off when the accomplishment is no longer current.",
-            }
-          - {
-              label: Show on home page,
-              name: showOnHome,
-              widget: boolean,
-              default: true,
-            }
           - {
               label: Popup when site opens,
               name: showModalOnOpen,
               widget: boolean,
               default: true,
-              hint: "Displays a poster-style popup the first time someone visits (per session).",
+              hint: "Shows the highlight popup on first visit each session (cycles through items below).",
             }
           - {
               label: Once per browser session,
@@ -186,25 +173,48 @@ collections:
               widget: boolean,
               default: true,
             }
-          - { label: Badge label, name: badge, widget: string, default: "Highlights" }
-          - { label: Headline, name: headline, widget: string }
-          - { label: Student / achiever name, name: studentName, widget: string, required: false }
-          - { label: Accomplishment text, name: accomplishment, widget: text }
-          - { label: Poster photo, name: posterImage, widget: image }
           - {
-              label: View button label,
-              name: linkLabel,
-              widget: string,
-              default: "View",
-              hint: "Opens the full highlight poster popup — does not navigate away.",
-            }
-          - {
-              label: Cache bust (change when poster changes),
+              label: Cache bust (change when any poster changes),
               name: cacheBust,
               widget: string,
               required: false,
-              hint: "e.g. v2 — forces browsers to show a new poster after upload.",
+              hint: "e.g. v2 — re-shows the opening popup after you publish new highlights.",
             }
+          - label: Highlight items
+            name: items
+            widget: list
+            summary: "{{fields.headline}}"
+            fields:
+              - {
+                  label: Active,
+                  name: enabled,
+                  widget: boolean,
+                  default: true,
+                }
+              - {
+                  label: Show on home page,
+                  name: showOnHome,
+                  widget: boolean,
+                  default: true,
+                }
+              - { label: Badge (optional), name: badge, widget: string, required: false, default: "Highlights" }
+              - { label: Headline, name: headline, widget: string }
+              - { label: Student / achiever name, name: studentName, widget: string, required: false }
+              - { label: Accomplishment text, name: accomplishment, widget: text }
+              - { label: Poster photo, name: posterImage, widget: image }
+              - {
+                  label: View button label,
+                  name: linkLabel,
+                  widget: string,
+                  default: "View",
+                  required: false,
+                }
+              - {
+                  label: Item cache bust,
+                  name: cacheBust,
+                  widget: string,
+                  required: false,
+                }
 
       - label: Quick Announcements
         name: quickAnnouncements
@@ -219,6 +229,7 @@ collections:
               - { label: Display date, name: date, widget: string }
               - { label: Title, name: title, widget: string }
               - { label: Excerpt, name: excerpt, widget: text }
+              - { label: Poster / image (optional), name: image, widget: image, required: false }
               - {
                   label: Link,
                   name: href,

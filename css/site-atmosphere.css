@@ -628,6 +628,17 @@ body.site-body #site-header .site-glass {
   }
 }
 
+announcement-card .announcement-card__media {
+  aspect-ratio: 16 / 10;
+  max-height: 12rem;
+}
+
+@media (min-width: 640px) {
+  announcement-card .announcement-card__media {
+    max-height: 14rem;
+  }
+}
+
 /* ── Gallery lightbox ── */
 #gallery-lightbox {
   z-index: 110;

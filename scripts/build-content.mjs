@@ -62,7 +62,7 @@ function applyCmsFile(site, filename, data) {
       site.gallery = data;
       break;
     case "highlight.json":
-      site.highlightNews = data;
+      site.highlights = data;
       break;
     case "quickAnnouncements.json":
       if (data.items) site.quickAnnouncements = data.items;
@@ -155,6 +155,44 @@ function normalizeSiteForEmit(site) {
   return site;
 }
 
+/** Single highlightNews → highlights.items; drop legacy key. */
+function normalizeHighlights(site) {
+  if (site.highlights && Array.isArray(site.highlights.items)) {
+    delete site.highlightNews;
+    return site;
+  }
+  if (site.highlightNews && typeof site.highlightNews === "object") {
+    var hn = site.highlightNews;
+    site.highlights = {
+      showModalOnOpen: hn.showModalOnOpen !== false,
+      oncePerSession: hn.oncePerSession !== false,
+      cacheBust: hn.cacheBust || "v1",
+      items: [
+        {
+          enabled: hn.enabled !== false,
+          showOnHome: hn.showOnHome !== false,
+          badge: hn.badge || "Highlights",
+          headline: hn.headline || "",
+          studentName: hn.studentName || "",
+          accomplishment: hn.accomplishment || "",
+          posterImage: hn.posterImage || "",
+          linkLabel: hn.linkLabel || "View",
+          cacheBust: hn.cacheBust || "",
+        },
+      ],
+    };
+  } else if (!site.highlights) {
+    site.highlights = {
+      showModalOnOpen: true,
+      oncePerSession: true,
+      cacheBust: "v1",
+      items: [],
+    };
+  }
+  delete site.highlightNews;
+  return site;
+}
+
 const defaults = readDefaults();
-const merged = normalizeSiteForEmit(mergeCms(defaults));
+const merged = normalizeSiteForEmit(normalizeHighlights(mergeCms(defaults)));
 emitContentJs(merged);
