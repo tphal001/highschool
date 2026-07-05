@@ -56,31 +56,37 @@
         align-items: stretch;
       }
       /* Flash / VIMP modal — “movie poster” entrance */
-      #vimp-news-modal .vimp-backdrop {
+      #vimp-news-modal .vimp-backdrop,
+      #highlight-news-modal .highlight-backdrop {
         opacity: 0;
         transition: opacity 0.4s ease;
       }
-      #vimp-news-modal.vimp-open .vimp-backdrop {
+      #vimp-news-modal.vimp-open .vimp-backdrop,
+      #highlight-news-modal.highlight-open .highlight-backdrop {
         opacity: 1;
       }
-      #vimp-news-modal .vimp-poster-card {
+      #vimp-news-modal .vimp-poster-card,
+      #highlight-news-modal .highlight-poster-card {
         transform: scale(0.9) translateY(12px);
         opacity: 0;
         transition:
           transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
           opacity 0.45s ease;
       }
-      #vimp-news-modal.vimp-open .vimp-poster-card {
+      #vimp-news-modal.vimp-open .vimp-poster-card,
+      #highlight-news-modal.highlight-open .highlight-poster-card {
         transform: scale(1) translateY(0);
         opacity: 1;
       }
       @media (prefers-reduced-motion: reduce) {
-        #vimp-news-modal .vimp-poster-card {
+        #vimp-news-modal .vimp-poster-card,
+        #highlight-news-modal .highlight-poster-card {
           transform: none;
           opacity: 1;
           transition: none;
         }
-        #vimp-news-modal .vimp-backdrop {
+        #vimp-news-modal .vimp-backdrop,
+        #highlight-news-modal .highlight-backdrop {
           opacity: 1;
           transition: none;
         }
@@ -101,6 +107,15 @@
         class="site-band site-band--cream site-hero-panel px-4 pb-8 pt-56 sm:px-8 sm:pb-8 lg:px-10 lg:pb-5"
         aria-label="Welcome"
       ></section>
+
+      <!-- Highlight accomplishment (CMS: Highlight News) -->
+      <section
+        id="home-highlight-section"
+        class="site-band site-band--rose home-section-balanced hidden px-4 sm:px-8 lg:px-10"
+        aria-label="Highlight news"
+      >
+        <div id="home-highlight" class="mx-auto max-w-7xl"></div>
+      </section>
 
       <!-- 50+ years highlight -->
       <section class="site-band site-legacy-band relative overflow-hidden" aria-label="Legacy">

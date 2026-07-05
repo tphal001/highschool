@@ -35,7 +35,13 @@
 
     function isVimpModalOpen() {
       var m = document.getElementById("vimp-news-modal");
-      return m && !m.classList.contains("hidden");
+      var h = document.getElementById("highlight-news-modal");
+      var g = document.getElementById("gallery-lightbox");
+      return (
+        (m && !m.classList.contains("hidden")) ||
+        (h && !h.classList.contains("hidden")) ||
+        (g && !g.classList.contains("hidden"))
+      );
     }
 
     function bodyScrollLock(on) {
@@ -204,7 +210,242 @@
     });
   }
 
+  function initHighlightNewsModal() {
+    var C = typeof window.SITE_CONTENT !== "undefined" ? window.SITE_CONTENT : {};
+    var hn = C.highlightNews;
+    if (!hn || !hn.enabled || !hn.showModalOnOpen) return;
+
+    var storageKey =
+      "dg-hs-highlight-" + String(hn.cacheBust || hn.headline || "default").trim();
+    if (hn.oncePerSession !== false) {
+      try {
+        if (sessionStorage.getItem(storageKey) === "1") return;
+      } catch (e) {}
+    }
+
+    var modal = document.getElementById("highlight-news-modal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "highlight-news-modal";
+      modal.className =
+        "fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 lg:p-10";
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+      modal.setAttribute("aria-labelledby", "highlight-news-title");
+      modal.innerHTML =
+        '<div class="highlight-backdrop absolute inset-0 bg-gradient-to-b from-slate-950/95 via-slate-900/92 to-black/95 backdrop-blur-md" data-highlight-dismiss aria-hidden="true"></div>' +
+        '<div class="relative z-10 flex w-full max-w-5xl items-center justify-center" style="perspective:1200px">' +
+        '<div class="highlight-poster-card relative w-full max-h-[min(92vh,880px)] overflow-hidden rounded-2xl bg-gradient-to-br from-mes-nav via-mes-navDeep to-slate-950 p-[3px] shadow-[0_32px_80px_-12px_rgba(0,0,0,0.75)] ring-1 ring-mes-goldLine/30 sm:rounded-3xl">' +
+        '<div class="relative max-h-[inherit] overflow-hidden rounded-[0.85rem] sm:rounded-[1.25rem]">' +
+        '<button type="button" class="absolute right-2 top-2 z-30 flex h-10 w-10 items-center justify-center rounded-full border border-white/25 bg-black/55 text-2xl font-light text-white backdrop-blur-sm transition hover:bg-black/75 sm:right-3 sm:top-3" data-highlight-dismiss aria-label="Close">×</button>' +
+        '<div class="grid max-h-[inherit] overflow-y-auto lg:grid-cols-12 lg:overflow-hidden">' +
+        '<div id="highlight-modal-media" class="relative lg:col-span-5"></div>' +
+        '<div class="flex flex-col justify-center px-6 py-8 sm:px-8 sm:py-10 lg:col-span-7 lg:py-12">' +
+        '<p id="highlight-modal-badge" class="text-xs font-bold uppercase tracking-[0.2em] text-mes-goldLine"></p>' +
+        '<h2 id="highlight-news-title" class="mt-3 font-display text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl"></h2>' +
+        '<p id="highlight-modal-student" class="mt-2 font-display text-lg font-semibold text-mes-goldLine sm:text-xl"></p>' +
+        '<p id="highlight-modal-body" class="mt-4 text-sm leading-relaxed text-white/90 sm:text-base"></p>' +
+        '<a id="highlight-modal-link" class="mt-6 hidden inline-flex w-fit items-center gap-2 rounded-full bg-mes-accent px-5 py-2.5 text-sm font-semibold text-mes-primary shadow-lg transition hover:bg-mes-accentLight"></a>' +
+        "</div></div></div></div></div>";
+      document.body.appendChild(modal);
+    }
+
+    var imgUrl = (hn.posterImage || "").trim();
+    if (imgUrl && imgUrl.indexOf("http") !== 0 && imgUrl.charAt(0) !== "/") {
+      if (imgUrl.indexOf("images/") === 0) imgUrl = "/" + imgUrl;
+    }
+    var bust = (hn.cacheBust || "").trim();
+    if (imgUrl && bust) {
+      imgUrl += (imgUrl.indexOf("?") >= 0 ? "&" : "?") + "cb=" + encodeURIComponent(bust);
+    }
+
+    var mediaEl = document.getElementById("highlight-modal-media");
+    if (mediaEl) {
+      mediaEl.innerHTML = imgUrl
+        ? '<img src="' +
+          imgUrl.replace(/"/g, "&quot;") +
+          '" alt="" class="h-full min-h-[12rem] w-full object-cover object-top lg:min-h-full lg:max-h-[min(92vh,880px)]"/>'
+        : "";
+    }
+
+    var badgeEl = document.getElementById("highlight-modal-badge");
+    if (badgeEl) badgeEl.textContent = hn.badge || "Highlight";
+    var titleEl = document.getElementById("highlight-news-title");
+    if (titleEl) titleEl.textContent = hn.headline || "School highlight";
+    var studentEl = document.getElementById("highlight-modal-student");
+    if (studentEl) {
+      var sn = (hn.studentName || "").trim();
+      studentEl.textContent = sn;
+      studentEl.classList.toggle("hidden", !sn);
+    }
+    var bodyEl = document.getElementById("highlight-modal-body");
+    if (bodyEl) bodyEl.textContent = hn.accomplishment || "";
+    var linkEl = document.getElementById("highlight-modal-link");
+    if (linkEl) {
+      var lh = (hn.linkHref || "").trim();
+      var ll = (hn.linkLabel || "").trim();
+      if (lh && ll) {
+        linkEl.href = lh;
+        linkEl.textContent = ll + " →";
+        linkEl.classList.remove("hidden");
+      } else {
+        linkEl.classList.add("hidden");
+      }
+    }
+
+    var open = false;
+    var closeTimer = null;
+    function setOpen(shouldOpen) {
+      open = shouldOpen;
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      if (shouldOpen) {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
+        document.documentElement.classList.add("overflow-hidden");
+        modal.classList.remove("highlight-open");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            modal.classList.add("highlight-open");
+          });
+        });
+        if (hn.oncePerSession !== false) {
+          try {
+            sessionStorage.setItem(storageKey, "1");
+          } catch (e) {}
+        }
+      } else {
+        modal.classList.remove("highlight-open");
+        closeTimer = setTimeout(function () {
+          closeTimer = null;
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+          document.body.classList.remove("overflow-hidden");
+          document.documentElement.classList.remove("overflow-hidden");
+        }, 280);
+      }
+    }
+
+    modal.querySelectorAll("[data-highlight-dismiss]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        setOpen(false);
+      });
+    });
+
+    document.addEventListener(
+      "keydown",
+      function (e) {
+        if (e.key !== "Escape" || !open) return;
+        setOpen(false);
+      },
+      true
+    );
+
+    requestAnimationFrame(function () {
+      requestAnimationFrame(function () {
+        setOpen(true);
+      });
+    });
+  }
+
+  function initGalleryLightbox() {
+    var modal = document.getElementById("gallery-lightbox");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "gallery-lightbox";
+      modal.className =
+        "fixed inset-0 hidden items-center justify-center p-4 sm:p-8";
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+      modal.setAttribute("aria-label", "Photo viewer");
+      modal.innerHTML =
+        '<div class="gallery-lightbox-backdrop absolute inset-0 bg-black/90 backdrop-blur-sm" data-lightbox-dismiss aria-hidden="true"></div>' +
+        '<div class="gallery-lightbox-panel relative z-10 flex max-h-[min(92vh,900px)] w-full max-w-6xl flex-col">' +
+        '<button type="button" class="absolute -top-2 right-0 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-white/30 bg-black/60 text-2xl font-light text-white transition hover:bg-black/80 sm:-right-2 sm:top-0" data-lightbox-dismiss aria-label="Close">×</button>' +
+        '<figure class="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl bg-black/40 shadow-2xl ring-1 ring-white/10">' +
+        '<div class="flex min-h-0 flex-1 items-center justify-center p-2 sm:p-4">' +
+        '<img id="gallery-lightbox-img" src="" alt="" class="max-h-[min(78vh,820px)] w-auto max-w-full object-contain"/>' +
+        "</div>" +
+        '<figcaption id="gallery-lightbox-caption" class="shrink-0 border-t border-white/10 px-4 py-3 text-center text-sm text-white/90"></figcaption>' +
+        "</figure></div>";
+      document.body.appendChild(modal);
+    }
+
+    var imgEl = document.getElementById("gallery-lightbox-img");
+    var capEl = document.getElementById("gallery-lightbox-caption");
+    var lbOpen = false;
+    var lbTimer = null;
+
+    function setLightboxOpen(on, src, alt, caption) {
+      lbOpen = on;
+      if (lbTimer) {
+        clearTimeout(lbTimer);
+        lbTimer = null;
+      }
+      if (on) {
+        if (imgEl) {
+          imgEl.src = src || "";
+          imgEl.alt = alt || "";
+        }
+        if (capEl) {
+          capEl.textContent = caption || alt || "";
+          capEl.classList.toggle("hidden", !(caption || alt));
+        }
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
+        document.documentElement.classList.add("overflow-hidden");
+        modal.classList.remove("gallery-lightbox-open");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            modal.classList.add("gallery-lightbox-open");
+          });
+        });
+      } else {
+        modal.classList.remove("gallery-lightbox-open");
+        lbTimer = setTimeout(function () {
+          lbTimer = null;
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+          document.body.classList.remove("overflow-hidden");
+          document.documentElement.classList.remove("overflow-hidden");
+          if (imgEl) imgEl.src = "";
+        }, 250);
+      }
+    }
+
+    document.addEventListener("click", function (e) {
+      var btn = e.target.closest && e.target.closest(".js-gallery-lightbox");
+      if (!btn) return;
+      e.preventDefault();
+      var src = btn.getAttribute("data-lightbox-src") || "";
+      var alt = btn.getAttribute("data-lightbox-alt") || "";
+      var caption = btn.getAttribute("data-lightbox-caption") || "";
+      if (src) setLightboxOpen(true, src, alt, caption);
+    });
+
+    modal.querySelectorAll("[data-lightbox-dismiss]").forEach(function (el) {
+      el.addEventListener("click", function () {
+        setLightboxOpen(false);
+      });
+    });
+
+    document.addEventListener(
+      "keydown",
+      function (e) {
+        if (e.key !== "Escape" || !lbOpen) return;
+        setLightboxOpen(false);
+      },
+      true
+    );
+  }
+
   function initVimpNewsModal() {
+    var C = typeof window.SITE_CONTENT !== "undefined" ? window.SITE_CONTENT : {};
+    if (C.highlightNews && C.highlightNews.enabled && C.highlightNews.showModalOnOpen) return;
     var cfg = typeof window.SITE_CONFIG !== "undefined" ? window.SITE_CONFIG : {};
     var vn = cfg.vimpNews;
     if (!vn || !vn.enabled) return;
@@ -459,7 +700,9 @@
     }
     initHomeHeroTopPadding();
     initHeroSlider();
+    initHighlightNewsModal();
     initVimpNewsModal();
+    initGalleryLightbox();
     initMobileNav();
     initCopyPageUrl();
     initHeaderScroll();

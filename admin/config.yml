@@ -155,3 +155,77 @@ collections:
               - { label: Category, name: category, widget: string }
               - { label: Photo, name: image, widget: image }
           - { label: Video gallery note, name: videoNote, widget: text, required: false }
+
+      - label: Highlight News (poster & popup)
+        name: highlight
+        file: content/cms/highlight.json
+        fields:
+          - {
+              label: Show this highlight,
+              name: enabled,
+              widget: boolean,
+              default: true,
+              hint: "Turn off when the accomplishment is no longer current.",
+            }
+          - {
+              label: Show on home page,
+              name: showOnHome,
+              widget: boolean,
+              default: true,
+            }
+          - {
+              label: Popup when site opens,
+              name: showModalOnOpen,
+              widget: boolean,
+              default: true,
+              hint: "Displays a poster-style popup the first time someone visits (per session).",
+            }
+          - {
+              label: Once per browser session,
+              name: oncePerSession,
+              widget: boolean,
+              default: true,
+            }
+          - { label: Badge (e.g. Medal Winner), name: badge, widget: string }
+          - { label: Headline, name: headline, widget: string }
+          - { label: Student / achiever name, name: studentName, widget: string, required: false }
+          - { label: Accomplishment text, name: accomplishment, widget: text }
+          - { label: Poster photo, name: posterImage, widget: image }
+          - { label: Link label (optional), name: linkLabel, widget: string, required: false }
+          - { label: Link URL (optional), name: linkHref, widget: string, required: false }
+          - {
+              label: Cache bust (change when poster changes),
+              name: cacheBust,
+              widget: string,
+              required: false,
+              hint: "e.g. v2 — forces browsers to show a new poster after upload.",
+            }
+
+      - label: Quick Announcements
+        name: quickAnnouncements
+        file: content/cms/quickAnnouncements.json
+        fields:
+          - label: Announcement cards (home page)
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            fields:
+              - { label: Sort date (YYYY-MM-DD), name: datetime, widget: string }
+              - { label: Display date, name: date, widget: string }
+              - { label: Title, name: title, widget: string }
+              - { label: Excerpt, name: excerpt, widget: text }
+              - {
+                  label: Link,
+                  name: href,
+                  widget: string,
+                  default: "news.html?ctx=events",
+                }
+
+      - label: Latest Updates (home ticker)
+        name: latestUpdates
+        file: content/cms/latestUpdates.json
+        fields:
+          - label: Update lines (scroll on home hero)
+            name: items
+            widget: list
+            field: { label: Update line, name: text, widget: string }

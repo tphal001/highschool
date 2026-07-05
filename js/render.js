@@ -186,6 +186,81 @@
     );
   }
 
+  /** Poster-style accomplishment block on the home page (CMS: Highlight News). */
+  function renderHomeHighlight() {
+    var sec = document.getElementById("home-highlight-section");
+    var el = document.getElementById("home-highlight");
+    var hn = C.highlightNews;
+    if (!sec || !el) return;
+    if (!hn || !hn.enabled || hn.showOnHome === false) {
+      sec.classList.add("hidden");
+      return;
+    }
+    sec.classList.remove("hidden");
+    var img = mediaSrc(hn.posterImage);
+    var link =
+      hn.linkHref && hn.linkLabel
+        ? '<a href="' +
+          esc(hn.linkHref) +
+          '" class="mt-6 inline-flex items-center gap-2 rounded-full bg-mes-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-mes-primaryDark hover:shadow-xl">' +
+          esc(hn.linkLabel) +
+          ' <span aria-hidden="true">→</span></a>'
+        : "";
+    var student =
+      hn.studentName && hn.studentName.trim()
+        ? '<p class="mt-2 font-display text-xl font-bold text-mes-accent sm:text-2xl">' +
+          esc(hn.studentName) +
+          "</p>"
+        : "";
+    el.innerHTML =
+      '<article class="site-highlight-poster site-card-3d overflow-hidden rounded-3xl border border-mes-goldLine/40 bg-gradient-to-br from-mes-nav via-mes-navDeep to-slate-950 shadow-2xl" data-reveal>' +
+      '<div class="grid lg:grid-cols-12 lg:items-stretch">' +
+      '<div class="relative lg:col-span-5 xl:col-span-4">' +
+      '<div class="absolute left-0 top-0 z-10 m-4">' +
+      '<span class="inline-flex items-center gap-2 rounded-full border border-mes-goldLine/60 bg-black/50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-mes-goldLine backdrop-blur-sm">' +
+      '<span class="text-base" aria-hidden="true">★</span> ' +
+      esc(hn.badge || "Highlight") +
+      "</span></div>" +
+      (img
+        ? '<div class="relative aspect-[4/5] h-full min-h-[16rem] overflow-hidden lg:min-h-full">' +
+          '<img src="' +
+          esc(img) +
+          '" alt="" class="h-full w-full object-cover object-top" loading="lazy"/>' +
+          '<div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-mes-navDeep/90 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-mes-navDeep/80"></div></div>'
+        : "") +
+      "</div>" +
+      '<div class="flex flex-col justify-center px-6 py-8 sm:px-10 sm:py-10 lg:col-span-7 xl:col-span-8 lg:py-12">' +
+      '<p class="text-xs font-bold uppercase tracking-[0.2em] text-mes-goldLine/90">School highlight</p>' +
+      '<h2 class="mt-3 font-display text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-[2.75rem]">' +
+      esc(hn.headline || "") +
+      "</h2>" +
+      student +
+      '<p class="mt-4 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">' +
+      esc(hn.accomplishment || "") +
+      "</p>" +
+      link +
+      "</div></div></article>";
+  }
+
+  function galleryLightboxButton(imgSrc, alt, caption) {
+    return (
+      '<button type="button" class="js-gallery-lightbox group block w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" data-lightbox-src="' +
+      esc(imgSrc) +
+      '" data-lightbox-alt="' +
+      esc(alt) +
+      '" data-lightbox-caption="' +
+      esc(caption || alt) +
+      '" aria-label="View full size: ' +
+      esc(alt) +
+      '">' +
+      '<span class="sr-only">View full size</span>'
+    );
+  }
+
+  function galleryLightboxClose() {
+    return "</button>";
+  }
+
   function renderHomePage() {
     var h = C.home;
     if (!h) return;
@@ -278,6 +353,8 @@
         '</span></div><p class="mt-3 shrink-0 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
         "</div></a></aside></div></div>";
     }
+
+    renderHomeHighlight();
 
     var leg = document.getElementById("home-legacy");
     if (leg && h.legacy) {
@@ -701,14 +778,17 @@
         '<div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
         (act.items || [])
           .map(function (it) {
+            var src = mediaSrc(it.image);
             return (
               '<figure data-reveal class="group overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
               '<div class="aspect-[4/3] overflow-hidden">' +
+              galleryLightboxButton(src, it.title, it.caption || it.title) +
               '<img src="' +
-              esc(mediaSrc(it.image)) +
+              esc(src) +
               '" alt="' +
               esc(it.title) +
               '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
+              galleryLightboxClose() +
               "</div>" +
               '<figcaption class="p-4"><h3 class="font-display font-semibold text-mes-primary">' +
               esc(it.title) +
@@ -737,16 +817,19 @@
           if (idx === 0) figId = ' id="photo"';
           else if (len >= 3 && idx === len - 2) figId = ' id="marathi-1"';
           else if (len >= 2 && idx === len - 1 && idx > 0) figId = ' id="marathi-2"';
+          var src = mediaSrc(it.image);
           return (
             "<figure" +
             figId +
             ' data-reveal class="group scroll-mt-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
             '<div class="aspect-[4/3] overflow-hidden">' +
+            galleryLightboxButton(src, it.title, it.title + " — " + it.category) +
             '<img src="' +
-            esc(mediaSrc(it.image)) +
+            esc(src) +
             '" alt="' +
             esc(it.title) +
             '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
+            galleryLightboxClose() +
             "</div>" +
             '<figcaption class="p-4"><span class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
             esc(it.category) +

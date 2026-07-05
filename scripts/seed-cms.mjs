@@ -51,6 +51,20 @@ const CMS_SEEDS = [
     file: "gallery.json",
     data: (d) => d.gallery,
   },
+  {
+    file: "highlight.json",
+    data: (d) => d.highlightNews || {},
+  },
+  {
+    file: "quickAnnouncements.json",
+    data: (d) => ({ items: d.quickAnnouncements || [] }),
+  },
+  {
+    file: "latestUpdates.json",
+    data: (d) => ({
+      items: (d.home && d.home.quickNews) || [],
+    }),
+  },
 ];
 
 function readDefaults() {

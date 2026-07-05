@@ -61,6 +61,16 @@ function applyCmsFile(site, filename, data) {
     case "gallery.json":
       site.gallery = data;
       break;
+    case "highlight.json":
+      site.highlightNews = data;
+      break;
+    case "quickAnnouncements.json":
+      if (data.items) site.quickAnnouncements = data.items;
+      break;
+    case "latestUpdates.json":
+      site.home = site.home || {};
+      if (data.items) site.home.quickNews = data.items;
+      break;
     default:
       break;
   }
