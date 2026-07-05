@@ -186,13 +186,18 @@ collections:
               widget: boolean,
               default: true,
             }
-          - { label: Badge (e.g. Medal Winner), name: badge, widget: string }
+          - { label: Badge label, name: badge, widget: string, default: "Highlights" }
           - { label: Headline, name: headline, widget: string }
           - { label: Student / achiever name, name: studentName, widget: string, required: false }
           - { label: Accomplishment text, name: accomplishment, widget: text }
           - { label: Poster photo, name: posterImage, widget: image }
-          - { label: Link label (optional), name: linkLabel, widget: string, required: false }
-          - { label: Link URL (optional), name: linkHref, widget: string, required: false }
+          - {
+              label: View button label,
+              name: linkLabel,
+              widget: string,
+              default: "View",
+              hint: "Opens the full highlight poster popup — does not navigate away.",
+            }
           - {
               label: Cache bust (change when poster changes),
               name: cacheBust,

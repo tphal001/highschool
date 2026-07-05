@@ -198,47 +198,42 @@
     }
     sec.classList.remove("hidden");
     var img = mediaSrc(hn.posterImage);
-    var link =
-      hn.linkHref && hn.linkLabel
-        ? '<a href="' +
-          esc(hn.linkHref) +
-          '" class="mt-6 inline-flex items-center gap-2 rounded-full bg-mes-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-mes-primaryDark hover:shadow-xl">' +
-          esc(hn.linkLabel) +
-          ' <span aria-hidden="true">→</span></a>'
-        : "";
+    var viewLabel = (hn.linkLabel || "View").trim() || "View";
+    var viewBtn =
+      '<button type="button" class="js-open-highlight-modal mt-6 inline-flex items-center gap-2 rounded-full bg-mes-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-mes-primaryDark hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2">' +
+      esc(viewLabel) +
+      ' <span aria-hidden="true">→</span></button>';
     var student =
       hn.studentName && hn.studentName.trim()
-        ? '<p class="mt-2 font-display text-xl font-bold text-mes-accent sm:text-2xl">' +
+        ? '<p class="mt-2 font-display text-xl font-bold text-mes-goldLine sm:text-2xl">' +
           esc(hn.studentName) +
           "</p>"
         : "";
+    var badge = esc(hn.badge || "Highlights");
     el.innerHTML =
       '<article class="site-highlight-poster site-card-3d overflow-hidden rounded-3xl border border-mes-goldLine/40 bg-gradient-to-br from-mes-nav via-mes-navDeep to-slate-950 shadow-2xl" data-reveal>' +
-      '<div class="grid lg:grid-cols-12 lg:items-stretch">' +
-      '<div class="relative lg:col-span-5 xl:col-span-4">' +
-      '<div class="absolute left-0 top-0 z-10 m-4">' +
-      '<span class="inline-flex items-center gap-2 rounded-full border border-mes-goldLine/60 bg-black/50 px-4 py-1.5 text-xs font-bold uppercase tracking-widest text-mes-goldLine backdrop-blur-sm">' +
-      '<span class="text-base" aria-hidden="true">★</span> ' +
-      esc(hn.badge || "Highlight") +
+      '<div class="border-b border-mes-goldLine/25 px-6 py-4 sm:px-8">' +
+      '<span class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-mes-goldLine">' +
+      '<span class="text-base leading-none" aria-hidden="true">★</span> ' +
+      badge +
       "</span></div>" +
+      '<div class="grid gap-0 lg:grid-cols-2 lg:items-start">' +
       (img
-        ? '<div class="relative aspect-[4/5] h-full min-h-[16rem] overflow-hidden lg:min-h-full">' +
+        ? '<div class="site-highlight-poster__media border-b border-mes-goldLine/15 bg-black/25 p-5 sm:p-8 lg:border-b-0 lg:border-r">' +
           '<img src="' +
           esc(img) +
-          '" alt="" class="h-full w-full object-cover object-top" loading="lazy"/>' +
-          '<div class="pointer-events-none absolute inset-0 bg-gradient-to-t from-mes-navDeep/90 via-transparent to-transparent lg:bg-gradient-to-r lg:from-transparent lg:via-transparent lg:to-mes-navDeep/80"></div></div>'
+          '" alt="" class="mx-auto w-full max-w-md object-contain object-center lg:max-w-none" loading="lazy"/>' +
+          "</div>"
         : "") +
-      "</div>" +
-      '<div class="flex flex-col justify-center px-6 py-8 sm:px-10 sm:py-10 lg:col-span-7 xl:col-span-8 lg:py-12">' +
-      '<p class="text-xs font-bold uppercase tracking-[0.2em] text-mes-goldLine/90">School highlight</p>' +
-      '<h2 class="mt-3 font-display text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-[2.75rem]">' +
+      '<div class="flex flex-col justify-center px-6 py-8 sm:px-10 sm:py-10 lg:py-12">' +
+      '<h2 class="font-display text-3xl font-bold leading-tight text-white sm:text-4xl lg:text-[2.75rem]">' +
       esc(hn.headline || "") +
       "</h2>" +
       student +
       '<p class="mt-4 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">' +
       esc(hn.accomplishment || "") +
       "</p>" +
-      link +
+      viewBtn +
       "</div></div></article>";
   }
 

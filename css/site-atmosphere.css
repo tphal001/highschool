@@ -611,18 +611,21 @@ body.site-body #site-header .site-glass {
     0 24px 60px -16px rgba(0, 0, 0, 0.45);
 }
 
-.site-highlight-poster::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, 0.08) 0%,
-    transparent 40%,
-    rgba(184, 134, 11, 0.06) 100%
-  );
-  z-index: 1;
+.site-highlight-poster__media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 14rem;
+}
+
+.site-highlight-poster__media img {
+  max-height: min(52vw, 20rem);
+}
+
+@media (min-width: 1024px) {
+  .site-highlight-poster__media img {
+    max-height: 26rem;
+  }
 }
 
 /* ── Gallery lightbox ── */
