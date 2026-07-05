@@ -5,7 +5,8 @@
       "date": "Mar 28, 2026",
       "title": "Spring arts showcase — tickets",
       "excerpt": "Music, theater, and visual arts. Early-bird pricing ends April 5.",
-      "href": "news.html?ctx=events"
+      "href": "news.html?ctx=events",
+      "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
     },
     {
       "datetime": "2026-03-22",
@@ -20,14 +21,6 @@
       "title": "Parent–teacher conferences",
       "excerpt": "Book your slot through the portal.",
       "href": "news.html?ctx=events"
-    },
-    {
-      "href": "news.html?ctx=events",
-      "title": "माजी विद्यार्थी संघ",
-      "excerpt": "Join WhatsApp Group by using QR Code",
-      "image": "/images/img-20260630-wa0004.jpg",
-      "datetime": "2026-07-04",
-      "date": "2026-07-04"
     }
   ]
 }

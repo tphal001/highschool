@@ -237,7 +237,8 @@ window.SITE_CONTENT = {
       "date": "Mar 28, 2026",
       "title": "Spring arts showcase — tickets",
       "excerpt": "Music, theater, and visual arts. Early-bird pricing ends April 5.",
-      "href": "news.html?ctx=events"
+      "href": "news.html?ctx=events",
+      "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
     },
     {
       "datetime": "2026-03-22",
@@ -360,6 +361,8 @@ window.SITE_CONTENT = {
         "accomplishment": "Our student secured first place among 200+ schools, bringing pride to Dr. Gadagkar High School and the Satararoad community.",
         "posterImage": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
         "linkLabel": "View",
+        "linkUrl": "",
+        "linkUrlLabel": "Open link",
         "cacheBust": "v1"
       },
       {
@@ -371,6 +374,8 @@ window.SITE_CONTENT = {
         "accomplishment": "Our under-16 relay and long-jump teams brought home gold at the district meet — congratulations to coaches and students.",
         "posterImage": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
         "linkLabel": "View",
+        "linkUrl": "",
+        "linkUrlLabel": "Open link",
         "cacheBust": "v1"
       }
     ]

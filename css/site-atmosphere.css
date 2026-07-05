@@ -393,7 +393,8 @@ body.site-body:not([data-page]) main > .mx-auto.max-w-lg {
 
 /* ── Auto-glass content cards ── */
 body.site-body .site-auto-glass,
-body.site-body announcement-card article {
+body.site-body announcement-card article,
+body.site-body #home-quick-announcements > li > article {
   background: linear-gradient(
     145deg,
     rgba(255, 255, 255, 0.88) 0%,
@@ -628,13 +629,16 @@ body.site-body #site-header .site-glass {
   }
 }
 
-announcement-card .announcement-card__media {
+announcement-card .announcement-card__media,
+#home-quick-announcements .announcement-card__media {
   aspect-ratio: 16 / 10;
+  min-height: 8rem;
   max-height: 12rem;
 }
 
 @media (min-width: 640px) {
-  announcement-card .announcement-card__media {
+  announcement-card .announcement-card__media,
+  #home-quick-announcements .announcement-card__media {
     max-height: 14rem;
   }
 }

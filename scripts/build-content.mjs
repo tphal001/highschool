@@ -152,6 +152,18 @@ function normalizeSiteForEmit(site) {
       site.admissions.requirements = mapStrList(site.admissions.requirements, "item");
     }
   }
+  if (Array.isArray(site.quickAnnouncements)) {
+    site.quickAnnouncements = site.quickAnnouncements.map(function (a) {
+      if (!a || typeof a !== "object") return a;
+      var img = a.image;
+      if (img != null && typeof img === "object") {
+        img = img.url || img.path || img.src || "";
+      }
+      if (typeof img === "string") img = img.trim();
+      else img = "";
+      return Object.assign({}, a, { image: img || a.image || "" });
+    });
+  }
   return site;
 }
 

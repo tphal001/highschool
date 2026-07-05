@@ -208,6 +208,21 @@ collections:
                   widget: string,
                   default: "View",
                   required: false,
+                  hint: "Opens the full-size highlight poster popup.",
+                }
+              - {
+                  label: Link URL (optional),
+                  name: linkUrl,
+                  widget: string,
+                  required: false,
+                  hint: "Paste a form link, Google Form, payment page, or any URL. Opens in a new tab when external.",
+                }
+              - {
+                  label: Link button label,
+                  name: linkUrlLabel,
+                  widget: string,
+                  default: "Open link",
+                  required: false,
                 }
               - {
                   label: Item cache bust,

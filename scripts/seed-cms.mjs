@@ -71,6 +71,8 @@ const CMS_SEEDS = [
               accomplishment: hn.accomplishment || "",
               posterImage: hn.posterImage || "",
               linkLabel: hn.linkLabel || "View",
+              linkUrl: hn.linkUrl || hn.linkHref || "",
+              linkUrlLabel: hn.linkUrlLabel || "Open link",
               cacheBust: hn.cacheBust || "",
             },
           ],

@@ -261,6 +261,7 @@
         '<h2 id="highlight-news-title" class="font-display text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl"></h2>' +
         '<p id="highlight-modal-student" class="mt-2 font-display text-lg font-semibold text-mes-goldLine sm:text-xl"></p>' +
         '<p id="highlight-modal-body" class="mt-4 text-sm leading-relaxed text-white/90 sm:text-base"></p>' +
+        '<div id="highlight-modal-actions" class="mt-6 flex flex-wrap gap-3"></div>' +
         "</div></div></div></div></div>";
       document.body.appendChild(modal);
     }
@@ -270,6 +271,7 @@
     var titleEl = document.getElementById("highlight-news-title");
     var studentEl = document.getElementById("highlight-modal-student");
     var bodyEl = document.getElementById("highlight-modal-body");
+    var actionsEl = document.getElementById("highlight-modal-actions");
     var globalBust = (hl.cacheBust || "").trim();
     var currentIdx = 0;
     var open = false;
@@ -311,6 +313,24 @@
         studentEl.classList.toggle("hidden", !sn);
       }
       if (bodyEl) bodyEl.textContent = item.accomplishment || "";
+      if (actionsEl) {
+        var url = (item.linkUrl || item.linkHref || "").trim();
+        var urlHtml = "";
+        if (url) {
+          var ext = /^https?:\/\//i.test(url) || url.indexOf("//") === 0;
+          var urlLabel = (item.linkUrlLabel || "Open link").trim() || "Open link";
+          urlHtml =
+            '<a href="' +
+            url.replace(/"/g, "&quot;") +
+            '"' +
+            (ext ? ' target="_blank" rel="noopener noreferrer"' : "") +
+            ' class="inline-flex items-center gap-2 rounded-full border border-mes-goldLine/50 bg-transparent px-5 py-2.5 text-sm font-semibold text-mes-goldLine transition hover:border-mes-goldLine hover:bg-white/10">' +
+            urlLabel +
+            ' <span aria-hidden="true">↗</span></a>';
+        }
+        actionsEl.innerHTML = urlHtml;
+        actionsEl.classList.toggle("hidden", !url);
+      }
     }
 
     function setOpen(shouldOpen, startIdx) {

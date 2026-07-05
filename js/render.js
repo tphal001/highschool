@@ -165,50 +165,93 @@
     );
   }
 
-  function cardFromData(a) {
-    var imgAttr = "";
-    if (a.image) {
-      imgAttr = ' image="' + esc(mediaSrc(a.image)) + '"';
+  /** CMS image fields may be a string path or nested object. */
+  function resolveMediaField(val) {
+    if (val == null || val === "") return "";
+    if (typeof val === "string") return val.trim();
+    if (typeof val === "object") {
+      return String(val.url || val.path || val.src || val.image || "").trim();
     }
+    return "";
+  }
+
+  var ANNOUNCEMENT_CARD_CLASS =
+    "site-auto-glass site-card-3d group flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/40 hover:shadow-xl hover:shadow-mes-primary/15 hover:ring-1 hover:ring-mes-accent/20";
+
+  function cardFromData(a) {
+    var img = mediaSrc(resolveMediaField(a.image));
+    var href = (a.href || "news.html?ctx=events").trim() || "news.html?ctx=events";
+    var readLabel = "Read more →";
+    var ext = isExternalHref(href);
+    var linkTarget = ext ? ' target="_blank" rel="noopener noreferrer"' : "";
+    var imageBlock = img
+      ? '<a href="' +
+        esc(href) +
+        '"' +
+        linkTarget +
+        ' class="announcement-card__media-link block shrink-0 overflow-hidden border-b border-slate-100 bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-inset">' +
+        '<div class="announcement-card__media">' +
+        '<img src="' +
+        esc(img) +
+        '" alt="" class="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.02]" loading="lazy"/>' +
+        "</div></a>"
+      : "";
     return (
-      "<announcement-card " +
-      'datetime="' +
+      '<article class="' +
+      ANNOUNCEMENT_CARD_CLASS +
+      '">' +
+      imageBlock +
+      '<div class="shrink-0 border-b border-slate-100 bg-slate-50/90 px-5 py-3 transition-colors duration-300 group-hover:bg-amber-50/60">' +
+      '<time datetime="' +
       esc(a.datetime) +
-      '" ' +
-      'date="' +
+      '" class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">' +
       esc(a.date) +
-      '" ' +
-      'title="' +
+      "</time></div>" +
+      '<div class="flex min-h-0 flex-1 flex-col p-5">' +
+      '<h3 class="shrink-0 text-base font-bold text-mes-primary transition-colors duration-200 group-hover:text-mes-primaryDark group-hover:underline">' +
       esc(a.title) +
-      '" ' +
-      'excerpt="' +
+      "</h3>" +
+      '<p class="mt-2 min-h-0 flex-1 text-sm leading-relaxed text-slate-600">' +
       esc(a.excerpt) +
-      '" ' +
-      'href="' +
-      esc(a.href || "news.html?ctx=events") +
+      "</p>" +
+      '<a href="' +
+      esc(href) +
       '"' +
-      imgAttr +
-      "></announcement-card>"
+      linkTarget +
+      ' class="mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300 transition-colors duration-200 group-hover:text-mes-primary group-hover:decoration-mes-accent">' +
+      esc(readLabel) +
+      "</a></div></article>"
     );
   }
 
-  function getEnabledHighlights() {
-    var hl = C.highlights || {};
-    var items = hl.items || [];
-    return items.filter(function (it) {
-      return it && it.enabled !== false;
-    });
-  }
-
-  function buildHighlightCardHtml(hn, index) {
-    var img = mediaSrc(hn.posterImage);
+  function highlightLinkButtons(hn, index) {
     var viewLabel = (hn.linkLabel || "View").trim() || "View";
     var viewBtn =
-      '<button type="button" class="js-open-highlight-modal mt-6 inline-flex items-center gap-2 rounded-full bg-mes-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-mes-primaryDark hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" data-highlight-index="' +
+      '<button type="button" class="js-open-highlight-modal inline-flex items-center gap-2 rounded-full bg-mes-primary px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition hover:bg-mes-primaryDark hover:shadow-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" data-highlight-index="' +
       index +
       '">' +
       esc(viewLabel) +
       ' <span aria-hidden="true">→</span></button>';
+    var url = (hn.linkUrl || hn.linkHref || "").trim();
+    var parts = [viewBtn];
+    if (url) {
+      var ext = isExternalHref(url);
+      var urlLabel = (hn.linkUrlLabel || "Open link").trim() || "Open link";
+      parts.push(
+        '<a href="' +
+          esc(url) +
+          '"' +
+          (ext ? ' target="_blank" rel="noopener noreferrer"' : "") +
+          ' class="inline-flex items-center gap-2 rounded-full border border-mes-goldLine/50 bg-transparent px-6 py-2.5 text-sm font-semibold text-mes-goldLine shadow-sm transition hover:border-mes-goldLine hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2">' +
+          esc(urlLabel) +
+          ' <span aria-hidden="true">↗</span></a>'
+      );
+    }
+    return '<div class="mt-6 flex flex-wrap gap-3">' + parts.join("") + "</div>";
+  }
+
+  function buildHighlightCardHtml(hn, index) {
+    var img = mediaSrc(resolveMediaField(hn.posterImage));
     var student =
       hn.studentName && hn.studentName.trim()
         ? '<p class="mt-2 font-display text-xl font-bold text-mes-goldLine sm:text-2xl">' +
@@ -233,9 +276,17 @@
       '<p class="mt-4 max-w-2xl text-base leading-relaxed text-white/90 sm:text-lg">' +
       esc(hn.accomplishment || "") +
       "</p>" +
-      viewBtn +
+      highlightLinkButtons(hn, index) +
       "</div></div></article>"
     );
+  }
+
+  function getEnabledHighlights() {
+    var hl = C.highlights || {};
+    var items = hl.items || [];
+    return items.filter(function (it) {
+      return it && it.enabled !== false;
+    });
   }
 
   /** Poster-style accomplishment blocks on the home page (CMS: Highlights). */
