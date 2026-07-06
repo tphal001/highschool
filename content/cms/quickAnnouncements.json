@@ -16,6 +16,12 @@
       "title": "Parent–teacher conferences",
       "excerpt": "Book your slot through the portal.",
       "href": "news.html?ctx=events"
+    },
+    {
+      "href": "news.html?ctx=events",
+      "title": "माजी विद्यार्थी संघ",
+      "excerpt": "Scan the QR Code to join our WhatsApp Group.",
+      "image": "/images/img-20260630-wa0004.jpg"
     }
   ]
 }
