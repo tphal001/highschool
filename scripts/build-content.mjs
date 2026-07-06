@@ -15,13 +15,14 @@ function todayIsoDate() {
 }
 
 /** Sort-only timestamp; strips CMS date fields from public content. */
-function stampListForSort(items, previousItems) {
+function stampListForSort(items, previousItems, keyField) {
   if (!Array.isArray(items)) return items;
+  keyField = keyField || "title";
   var prevDates = {};
   (previousItems || []).forEach(function (p) {
-    if (p && p.title && p.datetime) {
-      prevDates[String(p.title).trim()] = p.datetime;
-    }
+    if (!p || typeof p !== "object") return;
+    var key = String(p[keyField] || p.title || "").trim();
+    if (key && p.datetime) prevDates[key] = p.datetime;
   });
   var today = todayIsoDate();
   return items
@@ -30,9 +31,9 @@ function stampListForSort(items, previousItems) {
       var out = Object.assign({}, item);
       delete out.date;
       delete out.displayDate;
-      var title = String(out.title || "").trim();
+      var key = String(out[keyField] || out.title || "").trim();
       var datetime = String(out.datetime || "").trim();
-      if (!datetime) datetime = prevDates[title] || today;
+      if (!datetime) datetime = prevDates[key] || today;
       out.datetime = datetime;
       out._cmsIdx = idx;
       return out;
@@ -117,6 +118,16 @@ function applyCmsFile(site, filename, data) {
     case "latestUpdates.json":
       site.home = site.home || {};
       if (data.items) site.home.quickNews = data.items;
+      break;
+    case "circulars.json":
+      if (data.items) site.news.circulars = data.items;
+      break;
+    case "notices.json":
+      if (data.items) site.news.notices = data.items;
+      break;
+    case "alumniSpotlight.json":
+      site.home = site.home || {};
+      site.home.alumniSpotlight = data;
       break;
     default:
       break;
@@ -229,6 +240,57 @@ function normalizeSiteForEmit(site, previous) {
         return Object.assign({}, r, { image: normalizeImageField(r.image) || r.image || "" });
       });
     }
+  }
+  var prevAbout = (previous && previous.about) || {};
+  if (site.about && site.about.board && Array.isArray(site.about.board.members)) {
+    site.about.board.members = stampListForSort(
+      site.about.board.members.map(function (m) {
+        return Object.assign({}, m, { title: m.name || "" });
+      }),
+      (prevAbout.board && prevAbout.board.members) || [],
+      "title"
+    );
+  }
+  if (site.about && site.about.staff && Array.isArray(site.about.staff.members)) {
+    site.about.staff.members = stampListForSort(
+      site.about.staff.members.map(function (m) {
+        return Object.assign({}, m, { title: m.name || "" });
+      }),
+      (prevAbout.staff && prevAbout.staff.members) || [],
+      "title"
+    );
+  }
+  if (site.activity && Array.isArray(site.activity.items)) {
+    var prevAct = (previous && previous.activity && previous.activity.items) || [];
+    site.activity.items = stampListForSort(site.activity.items, prevAct);
+  }
+  if (site.gallery && Array.isArray(site.gallery.items)) {
+    var prevGal = (previous && previous.gallery && previous.gallery.items) || [];
+    site.gallery.items = stampListForSort(site.gallery.items, prevGal);
+  }
+  if (site.highlights && Array.isArray(site.highlights.items)) {
+    var prevHi = (previous && previous.highlights && previous.highlights.items) || [];
+    site.highlights.items = stampListForSort(
+      site.highlights.items.map(function (it) {
+        return Object.assign({}, it, { title: it.headline || it.studentName || "highlight" });
+      }),
+      prevHi.map(function (it) {
+        return Object.assign({}, it, { title: it.headline || it.studentName || "highlight" });
+      }),
+      "title"
+    );
+  }
+  if (site.alumni && Array.isArray(site.alumni.stories)) {
+    var prevStories = (previous && previous.alumni && previous.alumni.stories) || [];
+    site.alumni.stories = stampListForSort(
+      site.alumni.stories.map(function (s) {
+        return Object.assign({}, s, { title: s.name || "story" });
+      }),
+      prevStories.map(function (s) {
+        return Object.assign({}, s, { title: s.name || "story" });
+      }),
+      "title"
+    );
   }
   return site;
 }

@@ -282,9 +282,13 @@
 
   function getEnabledHighlightItems(C) {
     var hl = (C && C.highlights) || {};
-    return (hl.items || []).filter(function (it) {
+    var items = (hl.items || []).filter(function (it) {
       return it && it.enabled !== false;
     });
+    if (typeof window.sortCmsList === "function") {
+      return window.sortCmsList(items);
+    }
+    return items.slice().reverse();
   }
 
   function highlightPosterUrl(item, globalBust) {

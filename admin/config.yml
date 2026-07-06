@@ -14,7 +14,7 @@ collections:
   - name: staff_content
     label: School content (staff)
     files:
-      - label: Management
+      - label: Mission and Vision
         name: management
         file: content/cms/management.json
         fields:
@@ -147,6 +147,58 @@ collections:
                   hint: "Uncheck when this result should drop off the Results submenu.",
                 }
 
+      - label: Circulars
+        name: circulars
+        file: content/cms/circulars.json
+        fields:
+          - label: Circular items
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            hint: "Newest circulars appear first after you publish."
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Summary, name: summary, widget: text }
+
+      - label: Notices
+        name: notices
+        file: content/cms/notices.json
+        fields:
+          - label: Notice items
+            name: items
+            widget: list
+            summary: "{{fields.title}}"
+            hint: "Newest notices appear first after you publish."
+            fields:
+              - { label: Title, name: title, widget: string }
+              - { label: Summary, name: summary, widget: text }
+
+      - label: Alumni spotlight (home page)
+        name: alumniSpotlight
+        file: content/cms/alumniSpotlight.json
+        fields:
+          - { label: Section title, name: sectionTitle, widget: string, default: "Alumni spotlight" }
+          - { label: Section subtitle, name: sectionSubtitle, widget: text }
+          - label: Featured story
+            name: story
+            widget: object
+            fields:
+              - { label: Quote, name: quote, widget: text }
+              - { label: Name, name: name, widget: string }
+              - { label: Role / class line, name: role, widget: string }
+              - { label: Initials (optional), name: initials, widget: string, required: false }
+              - { label: Photo (optional), name: photo, widget: image, required: false }
+          - label: Stats (optional)
+            name: stats
+            widget: list
+            summary: "{{fields.label}}"
+            required: false
+            fields:
+              - { label: Label, name: label, widget: string }
+              - { label: Value, name: value, widget: string }
+          - { label: Link label, name: linkLabel, widget: string, default: "Explore alumni & register" }
+          - { label: Link URL, name: linkHref, widget: string, default: "alumni.html" }
+
       - label: Activity
         name: activity
         file: content/cms/activity.json
@@ -156,6 +208,7 @@ collections:
             name: items
             widget: list
             summary: "{{fields.title}}"
+            hint: "Newest activities appear first after you publish."
             fields:
               - { label: Title, name: title, widget: string }
               - { label: Photo, name: image, widget: image }
@@ -170,6 +223,7 @@ collections:
             name: items
             widget: list
             summary: "{{fields.title}}"
+            hint: "Newest photos appear first after you publish."
             fields:
               - { label: Title, name: title, widget: string }
               - { label: Category, name: category, widget: string }
@@ -204,6 +258,7 @@ collections:
             name: items
             widget: list
             summary: "{{fields.headline}}"
+            hint: "Newest highlights appear first after you publish."
             fields:
               - {
                   label: Active,

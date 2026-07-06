@@ -91,6 +91,18 @@ const CMS_SEEDS = [
       items: (d.home && d.home.quickNews) || [],
     }),
   },
+  {
+    file: "circulars.json",
+    data: (d) => ({ items: (d.news && d.news.circulars) || [] }),
+  },
+  {
+    file: "notices.json",
+    data: (d) => ({ items: (d.news && d.news.notices) || [] }),
+  },
+  {
+    file: "alumniSpotlight.json",
+    data: (d) => (d.home && d.home.alumniSpotlight) || {},
+  },
 ];
 
 function readDefaults() {

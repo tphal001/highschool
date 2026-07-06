@@ -401,7 +401,7 @@
 
   function getEnabledHighlights() {
     var hl = C.highlights || {};
-    var items = hl.items || [];
+    var items = sortCmsList(hl.items || []);
     return items.filter(function (it) {
       return it && it.enabled !== false;
     });
@@ -706,6 +706,42 @@
     }
   }
 
+  function setInnerPageHeader(page, opts) {
+    opts = opts || {};
+    var pageTitle = document.querySelector("body[data-page='" + page + "'] main h1");
+    var pageLead = pageTitle && pageTitle.nextElementSibling;
+    if (pageTitle) {
+      if (opts.title != null) pageTitle.textContent = opts.title;
+      pageTitle.classList.toggle("hidden", !!opts.hideTitle);
+    }
+    if (pageLead && pageLead.tagName === "P") {
+      if (opts.lead != null) pageLead.textContent = opts.lead;
+      pageLead.classList.toggle("hidden", !!opts.hideLead);
+    }
+  }
+
+  /** Show one submenu section only (excludes full-page menus listed in site-config behaviour). */
+  function isSectionOnlySub(page, sub, ctx) {
+    if (!sub) return false;
+    sub = String(sub).toLowerCase();
+    if (page === "about" && sub === "history") return false;
+    if (page === "admissions") return false;
+    if (page === "academics") return false;
+    if (page === "gallery" && ctx === "activity") return false;
+    if (page === "gallery" && sub === "student-life") return false;
+    if (page === "news" && sub === "events") return false;
+    return true;
+  }
+
+  function sortCmsList(list) {
+    var sorted = sortedQuickAnnouncements(list || []);
+    if (!sorted.length) return sorted;
+    var hasSortMeta = sorted.some(function (x) {
+      return x && (x.datetime || x._cmsIdx != null);
+    });
+    return hasSortMeta ? sorted : newestFirstList(sorted);
+  }
+
   function setAdmissionsLayoutMode(inquiryOnly) {
     if (document.body.getAttribute("data-page") !== "admissions") return;
     var pageTitle = document.querySelector("body[data-page='admissions'] main h1");
@@ -782,6 +818,7 @@
 
   function renderMemberCards(members, opts) {
     opts = opts || {};
+    members = sortCmsList(members || []);
     if (!members || !members.length) return "";
     return (
       '<ul class="mt-6 grid gap-4 sm:grid-cols-2">' +
@@ -813,22 +850,31 @@
     );
   }
 
-  function renderAboutPage() {
-    var el = document.getElementById("page-about");
-    if (!el || !C.about) return;
-    var a = C.about;
-    el.innerHTML =
+  function newestFirstList(list) {
+    if (!list || !list.length) return list || [];
+    return list.slice().reverse();
+  }
+
+  function buildAboutHistorySection(a) {
+    return (
       '<section id="history" class="scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-3xl font-bold text-mes-primary">Our history</h2>' +
       '<p class="mt-2 text-lg text-mes-accent">Since <strong>' +
       esc(String(a.history.sinceYear)) +
       "</strong> — more than 50 years of excellence.</p>" +
       '<div class="mt-8 space-y-4 text-lg leading-relaxed text-slate-700">' +
-      a.history.paragraphs.map(function (p) {
-        return "<p>" + esc(p) + "</p>";
-      }).join("") +
-      "</div></section>" +
-      '<section id="mission" class="mt-16 scroll-mt-52 grid gap-10 md:grid-cols-2" data-reveal>' +
+      a.history.paragraphs
+        .map(function (p) {
+          return "<p>" + esc(p) + "</p>";
+        })
+        .join("") +
+      "</div></section>"
+    );
+  }
+
+  function buildAboutMissionSection(a) {
+    return (
+      '<section id="mission" class="scroll-mt-52 grid gap-10 md:grid-cols-2" data-reveal>' +
       "<div>" +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
       esc(a.mission.title) +
@@ -842,15 +888,25 @@
       "</h2>" +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
       esc(a.vision.text) +
-      "</p></div></section>" +
-      '<section id="board" class="mt-16 scroll-mt-52" data-reveal>' +
+      "</p></div></section>"
+    );
+  }
+
+  function buildAboutBoardSection(a) {
+    return (
+      '<section id="board" class="scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Board and Governing Body Members</h2>' +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
       esc((a.board && a.board.intro) || "Governance details can be published here when available.") +
       "</p>" +
       renderMemberCards(a.board && a.board.members) +
-      "</section>" +
-      '<section id="principal" class="mt-16 scroll-mt-52" data-reveal>' +
+      "</section>"
+    );
+  }
+
+  function buildAboutPrincipalSection(a) {
+    return (
+      '<section id="principal" class="scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>' +
       '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
       '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
@@ -873,14 +929,57 @@
           return "<p>" + esc(p) + "</p>";
         })
         .join("") +
-      "</div></div></div></section>" +
-      '<section id="staff" class="mt-16 scroll-mt-52" data-reveal>' +
+      "</div></div></div></section>"
+    );
+  }
+
+  function buildAboutStaffSection(a) {
+    return (
+      '<section id="staff" class="scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Staff</h2>' +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
       esc((a.staff && a.staff.intro) || "Faculty and staff listings can be added when ready.") +
       "</p>" +
       renderMemberCards(a.staff && a.staff.members, { department: true }) +
-      "</section>" +
+      "</section>"
+    );
+  }
+
+  var ABOUT_SECTION_HEADERS = {
+    mission: "Mission and Vision",
+    board: "Board and Governing Body Members",
+    principal: "Principal Desk",
+    staff: "Staff",
+  };
+
+  function renderAboutPage() {
+    var el = document.getElementById("page-about");
+    if (!el || !C.about) return;
+    var a = C.about;
+    var sub = getPageSub("");
+    var sectionBuilders = {
+      mission: buildAboutMissionSection,
+      board: buildAboutBoardSection,
+      principal: buildAboutPrincipalSection,
+      staff: buildAboutStaffSection,
+    };
+
+    if (sub && isSectionOnlySub("about", sub, "") && sectionBuilders[sub]) {
+      setInnerPageHeader("about", {
+        title: ABOUT_SECTION_HEADERS[sub] || "About",
+        hideLead: true,
+      });
+      el.innerHTML = sectionBuilders[sub](a);
+      return;
+    }
+
+    setInnerPageHeader("about", { title: "About", hideLead: false });
+    el.innerHTML =
+      buildAboutHistorySection(a) +
+      buildAboutMissionSection(a).replace('class="scroll-mt-52 grid', 'class="mt-16 scroll-mt-52 grid') +
+      buildAboutBoardSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
+      buildAboutPrincipalSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
+      buildAboutStaffSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
       '<section id="achievers" class="mt-16 scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Achievers</h2>' +
       '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
@@ -992,10 +1091,48 @@
     }
 
     if (ctx === "results") {
-      setNewsPageLayoutMode(true);
-      var results = sortNewsList(n.results || []);
+      var sub = getPageSub("");
+      var results = sortCmsList(n.results || []);
       var resultCardClass =
         "result-card site-card-3d scroll-mt-52 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/45 hover:shadow-lg hover:shadow-mes-primary/10";
+
+      if (isSectionOnlySub("news", sub, ctx)) {
+        var singleResult = null;
+        results.forEach(function (x, i) {
+          if (resultAnchorAt(x, i) === sub) singleResult = x;
+        });
+        if (singleResult) {
+          setInnerPageHeader("news", {
+            title: singleResult.title || "Results",
+            hideLead: true,
+          });
+          var imgSrc = singleResult.image ? mediaSrc(singleResult.image) : "";
+          var imgHtml = imgSrc
+            ? buildLightboxImageButton(
+                imgSrc,
+                singleResult.title || "",
+                "mt-3 max-h-36 w-full rounded-lg border border-slate-200 object-cover",
+                "mt-3 block w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2"
+              )
+            : "";
+          el.innerHTML =
+            '<div class="mt-2" data-reveal>' +
+            '<div class="' +
+            resultCardClass +
+            '">' +
+            '<strong class="font-display text-lg text-mes-primary">' +
+            esc(singleResult.title) +
+            "</strong>" +
+            '<p class="mt-2">' +
+            esc(singleResult.summary) +
+            "</p>" +
+            imgHtml +
+            "</div></div>";
+          return;
+        }
+      }
+
+      setNewsPageLayoutMode(true);
       el.innerHTML =
         '<div id="results" class="scroll-mt-52"></div>' +
         '<div class="mt-2 grid gap-6 sm:grid-cols-2" data-reveal-stagger>' +
@@ -1033,6 +1170,32 @@
       return;
     }
 
+    var subEvents = getPageSub("");
+    if (isSectionOnlySub("news", subEvents, ctx)) {
+      var events = sortCmsList(n.events || []);
+      var singleEvent = null;
+      events.forEach(function (x, i) {
+        if (eventAnchorAt(x, i) === subEvents) singleEvent = x;
+      });
+      if (singleEvent) {
+        setInnerPageHeader("news", {
+          title: singleEvent.title || "Events",
+          hideLead: true,
+        });
+        el.innerHTML =
+          '<div class="mt-2 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal>' +
+          '<h2 class="font-display text-xl font-bold text-mes-primary">' +
+          esc(singleEvent.title) +
+          "</h2>" +
+          '<p class="mt-3 text-slate-600">' +
+          esc(singleEvent.summary) +
+          "</p>" +
+          eventImageHtml(singleEvent) +
+          "</div>";
+        return;
+      }
+    }
+
     setNewsPageLayoutMode(false);
     el.innerHTML =
       '<div id="events" class="scroll-mt-52"></div>' +
@@ -1041,7 +1204,7 @@
       "</p>" +
       '<div class="mt-12 grid gap-10 lg:grid-cols-3" data-reveal-stagger>' +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Events</h2><ul class="mt-4">' +
-      sortNewsList(n.events || [])
+      sortCmsList(n.events || [])
         .map(function (x, i) {
           var anchor = eventAnchorAt(x, i);
           return itemRowWithId(x, anchor);
@@ -1049,10 +1212,10 @@
         .join("") +
       "</ul></div>" +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Circulars</h2><ul class="mt-4">' +
-      sortNewsList(n.circulars || []).map(itemRow).join("") +
+      sortCmsList(n.circulars || []).map(itemRow).join("") +
       "</ul></div>" +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Notices</h2><ul class="mt-4">' +
-      sortNewsList(n.notices || []).map(itemRow).join("") +
+      sortCmsList(n.notices || []).map(itemRow).join("") +
       "</ul></div></div>";
   }
 
@@ -1061,13 +1224,50 @@
     if (!el) return;
     var ctx = getPageCtx("gallery");
 
+    function buildGalleryPhotoGrid(items) {
+      var sortedItems = sortCmsList(items || []);
+      var len = sortedItems.length;
+      return (
+        '<div class="mt-2 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
+        sortedItems
+          .map(function (it, idx) {
+            var figId = "";
+            if (idx === 0) figId = ' id="photo"';
+            else if (len >= 3 && idx === len - 2) figId = ' id="marathi-1"';
+            else if (len >= 2 && idx === len - 1 && idx > 0) figId = ' id="marathi-2"';
+            var src = mediaSrc(it.image);
+            return (
+              "<figure" +
+              figId +
+              ' data-reveal class="group scroll-mt-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
+              '<div class="aspect-[4/3] overflow-hidden">' +
+              galleryLightboxButton(src, it.title, it.title + " — " + it.category) +
+              '<img src="' +
+              esc(src) +
+              '" alt="' +
+              esc(it.title) +
+              '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
+              galleryLightboxClose() +
+              "</div>" +
+              '<figcaption class="p-4"><span class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
+              esc(it.category) +
+              '</span><h3 class="font-display font-semibold text-mes-primary">' +
+              esc(it.title) +
+              "</h3></figcaption></figure>"
+            );
+          })
+          .join("") +
+        "</div>"
+      );
+    }
+
     if (ctx === "activity") {
       var act = C.activity || { intro: "", items: [] };
       setGalleryPageLayoutMode(true, act.intro);
       el.innerHTML =
         '<div id="activity-2026" class="scroll-mt-40"></div>' +
         '<div class="mt-2 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
-        (act.items || [])
+        sortCmsList(act.items || [])
           .map(function (it) {
             var src = mediaSrc(it.image);
             return (
@@ -1094,44 +1294,32 @@
     }
 
     if (!C.gallery) return;
-    setGalleryPageLayoutMode(false);
     var g = C.gallery;
+    var sub = getPageSub("");
+
+    if (isSectionOnlySub("gallery", sub, ctx)) {
+      if (sub === "photo") {
+        setInnerPageHeader("gallery", { title: "Photo Gallery", hideLead: true });
+        el.innerHTML = buildGalleryPhotoGrid(g.items || []);
+        return;
+      }
+      if (sub === "video") {
+        setInnerPageHeader("gallery", { title: "Video Gallery", hideLead: true });
+        el.innerHTML =
+          '<p id="video" class="mt-2 scroll-mt-40 text-lg text-slate-600" data-reveal>' +
+          esc(g.videoNote || "Video gallery can be added here when ready.") +
+          "</p>";
+        return;
+      }
+    }
+
+    setGalleryPageLayoutMode(false);
     el.innerHTML =
       '<div id="student-life" class="scroll-mt-40"></div>' +
       '<p class="text-xl text-slate-600" data-reveal>' +
       esc(g.intro) +
       "</p>" +
-      '<div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
-      (g.items || [])
-        .map(function (it, idx) {
-          var len = g.items.length;
-          var figId = "";
-          if (idx === 0) figId = ' id="photo"';
-          else if (len >= 3 && idx === len - 2) figId = ' id="marathi-1"';
-          else if (len >= 2 && idx === len - 1 && idx > 0) figId = ' id="marathi-2"';
-          var src = mediaSrc(it.image);
-          return (
-            "<figure" +
-            figId +
-            ' data-reveal class="group scroll-mt-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
-            '<div class="aspect-[4/3] overflow-hidden">' +
-            galleryLightboxButton(src, it.title, it.title + " — " + it.category) +
-            '<img src="' +
-            esc(src) +
-            '" alt="' +
-            esc(it.title) +
-            '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
-            galleryLightboxClose() +
-            "</div>" +
-            '<figcaption class="p-4"><span class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
-            esc(it.category) +
-            '</span><h3 class="font-display font-semibold text-mes-primary">' +
-            esc(it.title) +
-            "</h3></figcaption></figure>"
-          );
-        })
-        .join("") +
-      "</div>" +
+      buildGalleryPhotoGrid(g.items || []).replace('class="mt-2 grid', 'class="mt-10 grid') +
       '<p id="video" class="mt-10 scroll-mt-40 text-sm text-slate-500" data-reveal>' +
       esc(g.videoNote || "Video gallery can be added here when ready.") +
       "</p>";
@@ -1141,7 +1329,7 @@
     var el = document.getElementById("page-alumni");
     if (!el || !C.alumni) return;
     var a = C.alumni;
-    var stories = a.stories
+    var stories = sortCmsList(a.stories || [])
       .map(function (s) {
         return (
           '<blockquote class="rounded-2xl border border-slate-200 bg-mes-light/80 p-8">' +
@@ -1673,6 +1861,7 @@
   window.getSortedQuickAnnouncements = function () {
     return sortedQuickAnnouncements((C && C.quickAnnouncements) || []);
   };
+  window.sortCmsList = sortCmsList;
   window.announcementCustomHref = announcementCustomHref;
   window.announcementBodyText = announcementBodyText;
 })();

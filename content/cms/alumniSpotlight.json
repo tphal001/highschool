@@ -1,0 +1,27 @@
+{
+  "sectionTitle": "Alumni spotlight",
+  "sectionSubtitle": "Our graduates lead in IT sector, R&D, Science, Banking & Accounting, Public service, Business, and the Arts - across India and the world.",
+  "story": {
+    "quote": "The values I learned here—integrity, discipline, and curiosity—still guide my career every day.",
+    "name": "Tushar Phalke",
+    "role": "Class of 2008 · Software Development Specialist",
+    "initials": "TP",
+    "photo": "images/Tushar.jpg"
+  },
+  "stats": [
+    {
+      "label": "Alumni worldwide",
+      "value": "12k+"
+    },
+    {
+      "label": "Cities represented",
+      "value": "40+"
+    },
+    {
+      "label": "Next reunion",
+      "value": "Oct 2026"
+    }
+  ],
+  "linkLabel": "Explore alumni & register",
+  "linkHref": "alumni.html"
+}

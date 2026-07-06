@@ -89,7 +89,7 @@ window.SITE_CONFIG = {
       href: "about.html",
       children: [
         { label: "About our school", href: "about.html#history" },
-        { label: "Management", href: "about.html#mission" },
+        { label: "Mission and Vision", href: "about.html#mission" },
         { label: "Board and Governing Body Members", href: "about.html#board" },
         { label: "Principal Desk", href: "about.html#principal" },
         { label: "Staff", href: "about.html#staff" },
