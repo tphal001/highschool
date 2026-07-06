@@ -622,7 +622,11 @@
     var als = document.getElementById("home-alumni-spotlight");
     if (als && h.alumniSpotlight) {
       var al = h.alumniSpotlight;
-      var st = al.story;
+      var alumniStories = Array.isArray(al.stories)
+        ? al.stories
+        : al.story
+          ? [al.story]
+          : [];
       var statsHtml = (al.stats || [])
         .map(function (s) {
           return (
@@ -634,15 +638,38 @@
           );
         })
         .join("");
-      var photoUrl = st && st.photo != null ? mediaSrc(st.photo) : "";
-      var avatarBlock =
-        photoUrl !== ""
-          ? '<img src="' +
-            esc(photoUrl) +
-            '" alt="" class="h-16 w-16 shrink-0 rounded-full object-cover ring-2 ring-mes-primary/25 shadow-sm" loading="lazy"/>'
-          : '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-mes-primary to-mes-primaryDark text-lg font-bold text-mes-accent">' +
-            esc(st.initials) +
-            "</div>";
+      var storiesHtml = alumniStories
+        .map(function (st) {
+          if (!st) return "";
+          var photoUrl = st.photo != null ? mediaSrc(st.photo) : "";
+          var avatarBlock =
+            photoUrl !== ""
+              ? '<img src="' +
+                esc(photoUrl) +
+                '" alt="" class="h-16 w-16 shrink-0 rounded-full object-cover ring-2 ring-mes-primary/25 shadow-sm" loading="lazy"/>'
+              : '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-mes-primary to-mes-primaryDark text-lg font-bold text-mes-accent">' +
+                esc(st.initials || (st.name || "?").charAt(0)) +
+                "</div>";
+          return (
+            '<blockquote data-reveal class="site-auto-glass site-card-3d group rounded-2xl border border-slate-200/90 p-8 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/35 hover:shadow-xl hover:shadow-mes-primary/10 sm:p-10">' +
+            '<p class="text-lg leading-relaxed text-slate-700 sm:text-xl">“' +
+            esc(st.quote) +
+            '”</p>' +
+            '<footer class="mt-8 flex items-center gap-5">' +
+            avatarBlock +
+            "<div>" +
+            '<cite class="not-italic text-lg font-semibold text-mes-primary">' +
+            esc(st.name) +
+            "</cite>" +
+            '<p class="mt-1 text-sm text-slate-600">' +
+            esc(st.role) +
+            "</p>" +
+            "</div>" +
+            "</footer>" +
+            "</blockquote>"
+          );
+        })
+        .join("");
       als.innerHTML =
         '<div class="mx-auto max-w-3xl text-center" data-reveal>' +
         '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-24 after:-translate-x-1/2 after:bg-mes-red">' +
@@ -653,22 +680,9 @@
         "</p>" +
         "</div>" +
         '<div class="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-16" data-reveal-stagger>' +
-        '<blockquote data-reveal class="site-auto-glass site-card-3d group rounded-2xl border border-slate-200/90 p-8 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/35 hover:shadow-xl hover:shadow-mes-primary/10 sm:p-10">' +
-        '<p class="text-lg leading-relaxed text-slate-700 sm:text-xl">“' +
-        esc(st.quote) +
-        '”</p>' +
-        '<footer class="mt-8 flex items-center gap-5">' +
-        avatarBlock +
-        "<div>" +
-        '<cite class="not-italic text-lg font-semibold text-mes-primary">' +
-        esc(st.name) +
-        "</cite>" +
-        '<p class="mt-1 text-sm text-slate-600">' +
-        esc(st.role) +
-        "</p>" +
+        '<div class="space-y-8">' +
+        storiesHtml +
         "</div>" +
-        "</footer>" +
-        "</blockquote>" +
         '<div data-reveal class="rounded-3xl border border-slate-200/80 bg-gradient-to-br from-mes-primary via-mes-primaryDark to-slate-900 p-10 text-white shadow-lg transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-goldLine/40 hover:shadow-2xl hover:shadow-black/30 sm:p-12">' +
         '<h3 class="font-display text-xl font-bold text-white">Network at a glance</h3>' +
         '<dl class="mt-8 grid grid-cols-2 gap-8">' +
@@ -733,13 +747,26 @@
     return true;
   }
 
+  /** Newest first — respects build datetime; otherwise last CMS entry is treated as newest. */
   function sortCmsList(list) {
-    var sorted = sortedQuickAnnouncements(list || []);
-    if (!sorted.length) return sorted;
-    var hasSortMeta = sorted.some(function (x) {
-      return x && (x.datetime || x._cmsIdx != null);
+    if (!list || !list.length) return [];
+    var items = list.slice();
+    var anyDatetime = items.some(function (x) {
+      return x && x.datetime;
     });
-    return hasSortMeta ? sorted : newestFirstList(sorted);
+    if (anyDatetime) {
+      return items.sort(function (a, b) {
+        var da = String((a && a.datetime) || "");
+        var db = String((b && b.datetime) || "");
+        if (da && db) {
+          var cmp = db.localeCompare(da);
+          if (cmp !== 0) return cmp;
+        } else if (da && !db) return -1;
+        else if (!da && db) return 1;
+        return 0;
+      });
+    }
+    return newestFirstList(items);
   }
 
   function setAdmissionsLayoutMode(inquiryOnly) {
@@ -1077,17 +1104,42 @@
     }
 
     var evtAnchors = ["evt-silver", "evt-ashwarohan", "evt-virangana"];
-    function eventAnchorAt(x, i) {
-      if (typeof window.newsItemAnchorId === "function") {
-        return window.newsItemAnchorId(x, "evt-", i);
+    var allEvents = n.events || [];
+    var allResults = n.results || [];
+
+    function eventAnchorAt(x) {
+      if (typeof window.findNewsItemBySub === "function" && typeof window.newsItemAnchorId === "function") {
+        for (var ei = 0; ei < allEvents.length; ei++) {
+          if (allEvents[ei] === x) return window.newsItemAnchorId(x, "evt-", ei);
+        }
       }
-      return (x.anchorId || "").trim() || evtAnchors[i] || "evt-" + i;
+      var i = allEvents.indexOf(x);
+      if (typeof window.newsItemAnchorId === "function") {
+        return window.newsItemAnchorId(x, "evt-", i >= 0 ? i : 0);
+      }
+      return (x.anchorId || "").trim().toLowerCase() || evtAnchors[i] || "evt-" + i;
     }
-    function resultAnchorAt(x, i) {
+    function resultAnchorAt(x) {
       if (typeof window.newsItemAnchorId === "function") {
-        return window.newsItemAnchorId(x, "res-", i);
+        for (var ri = 0; ri < allResults.length; ri++) {
+          if (allResults[ri] === x) return window.newsItemAnchorId(x, "res-", ri);
+        }
+        return window.newsItemAnchorId(x, "res-", 0);
       }
-      return (x.anchorId || "").trim() || "res-" + i;
+      var j = allResults.indexOf(x);
+      return (x.anchorId || "").trim().toLowerCase() || "res-" + j;
+    }
+    function findEventBySub(sub) {
+      if (typeof window.findNewsItemBySub === "function") {
+        return window.findNewsItemBySub(allEvents, sub, "evt-");
+      }
+      return null;
+    }
+    function findResultBySub(sub) {
+      if (typeof window.findNewsItemBySub === "function") {
+        return window.findNewsItemBySub(allResults, sub, "res-");
+      }
+      return null;
     }
 
     if (ctx === "results") {
@@ -1097,10 +1149,7 @@
         "result-card site-card-3d scroll-mt-52 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/45 hover:shadow-lg hover:shadow-mes-primary/10";
 
       if (isSectionOnlySub("news", sub, ctx)) {
-        var singleResult = null;
-        results.forEach(function (x, i) {
-          if (resultAnchorAt(x, i) === sub) singleResult = x;
-        });
+        var singleResult = findResultBySub(sub);
         if (singleResult) {
           setInnerPageHeader("news", {
             title: singleResult.title || "Results",
@@ -1137,8 +1186,8 @@
         '<div id="results" class="scroll-mt-52"></div>' +
         '<div class="mt-2 grid gap-6 sm:grid-cols-2" data-reveal-stagger>' +
         results
-          .map(function (x, i) {
-            var anchor = resultAnchorAt(x, i);
+          .map(function (x) {
+            var anchor = resultAnchorAt(x);
             var idAttr = anchor
               ? ' id="' + esc(anchor) + '" class="' + resultCardClass + '"'
               : ' class="' + resultCardClass + '"';
@@ -1172,11 +1221,7 @@
 
     var subEvents = getPageSub("");
     if (isSectionOnlySub("news", subEvents, ctx)) {
-      var events = sortCmsList(n.events || []);
-      var singleEvent = null;
-      events.forEach(function (x, i) {
-        if (eventAnchorAt(x, i) === subEvents) singleEvent = x;
-      });
+      var singleEvent = findEventBySub(subEvents);
       if (singleEvent) {
         setInnerPageHeader("news", {
           title: singleEvent.title || "Events",
@@ -1205,8 +1250,8 @@
       '<div class="mt-12 grid gap-10 lg:grid-cols-3" data-reveal-stagger>' +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Events</h2><ul class="mt-4">' +
       sortCmsList(n.events || [])
-        .map(function (x, i) {
-          var anchor = eventAnchorAt(x, i);
+        .map(function (x) {
+          var anchor = eventAnchorAt(x);
           return itemRowWithId(x, anchor);
         })
         .join("") +

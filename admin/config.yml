@@ -179,9 +179,11 @@ collections:
         fields:
           - { label: Section title, name: sectionTitle, widget: string, default: "Alumni spotlight" }
           - { label: Section subtitle, name: sectionSubtitle, widget: text }
-          - label: Featured story
-            name: story
-            widget: object
+          - label: Alumni stories
+            name: stories
+            widget: list
+            summary: "{{fields.name}}"
+            hint: "Add one entry per alumnus. New entries appear at the end on the home page."
             fields:
               - { label: Quote, name: quote, widget: text }
               - { label: Name, name: name, widget: string }

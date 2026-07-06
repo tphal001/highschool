@@ -127,7 +127,7 @@ function applyCmsFile(site, filename, data) {
       break;
     case "alumniSpotlight.json":
       site.home = site.home || {};
-      site.home.alumniSpotlight = data;
+      site.home.alumniSpotlight = normalizeAlumniSpotlight(data);
       break;
     default:
       break;
@@ -295,6 +295,25 @@ function normalizeSiteForEmit(site, previous) {
   return site;
 }
 
+/** Alumni spotlight: list of stories in CMS order (new entries append at end). */
+function normalizeAlumniSpotlight(spot) {
+  if (!spot || typeof spot !== "object") {
+    return { sectionTitle: "Alumni spotlight", sectionSubtitle: "", stories: [], stats: [], linkLabel: "", linkHref: "alumni.html" };
+  }
+  var out = Object.assign({}, spot);
+  if (Array.isArray(out.stories) && out.stories.length) {
+    delete out.story;
+    return out;
+  }
+  if (out.story && typeof out.story === "object") {
+    out.stories = [out.story];
+  } else if (!Array.isArray(out.stories)) {
+    out.stories = [];
+  }
+  delete out.story;
+  return out;
+}
+
 /** Single highlightNews → highlights.items; drop legacy key. */
 function normalizeHighlights(site) {
   if (site.highlights && Array.isArray(site.highlights.items)) {
@@ -340,5 +359,11 @@ try {
     previousContent = parseSiteContentFromContentJs();
   }
 } catch (e) {}
-const merged = normalizeSiteForEmit(normalizeHighlights(mergeCms(defaults)), previousContent);
+const merged = normalizeSiteForEmit(
+  normalizeHighlights(mergeCms(defaults)),
+  previousContent
+);
+if (merged.home && merged.home.alumniSpotlight) {
+  merged.home.alumniSpotlight = normalizeAlumniSpotlight(merged.home.alumniSpotlight);
+}
 emitContentJs(merged);

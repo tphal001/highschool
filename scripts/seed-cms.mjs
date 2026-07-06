@@ -101,7 +101,18 @@ const CMS_SEEDS = [
   },
   {
     file: "alumniSpotlight.json",
-    data: (d) => (d.home && d.home.alumniSpotlight) || {},
+    data: (d) => {
+      var spot = (d.home && d.home.alumniSpotlight) || {};
+      if (Array.isArray(spot.stories) && spot.stories.length) {
+        var out = Object.assign({}, spot);
+        delete out.story;
+        return out;
+      }
+      if (spot.story) {
+        return Object.assign({}, spot, { stories: [spot.story], story: undefined });
+      }
+      return Object.assign({}, spot, { stories: spot.stories || [] });
+    },
   },
 ];
 
