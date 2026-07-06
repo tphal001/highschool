@@ -107,7 +107,7 @@ window.SITE_CONFIG = {
     },
     {
       id: "admission",
-      label: "Admission",
+      label: "Admissions",
       href: "admissions.html",
       children: [
         { label: "Overview", href: "admissions.html#overview" },
@@ -128,7 +128,7 @@ window.SITE_CONFIG = {
     },
     {
       id: "activity",
-      label: "Activity",
+      label: "Activities",
       href: "gallery.html?ctx=activity",
     },
     {
@@ -187,5 +187,5 @@ window.SITE_CONFIG = {
 
   /** Intro paragraph above quick links (column 1). */
   footerIntro:
-    "Dr. Gadagkar High School, Satararoad has served generations of learners with strong academics, caring staff, and a safe, inspiring campus.",
+    "The school has served generations of learners with strong academics, caring staff, and a safe, inspiring campus.",
 };

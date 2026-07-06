@@ -121,7 +121,7 @@
       esc(galleryHref) +
       '" class="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" aria-label="Open campus photo gallery">' +
       '<div class="site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35">' +
-      '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-primary">Campus in focus</p>' +
+      '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-primary">Our picture gallery</p>' +
       '<div id="home-gallery-preview" class="relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]"' +
       (imgs.length > 1 ? ' data-gallery-preview="1"' : "") +
       ">" +
@@ -131,6 +131,31 @@
           '<span class="text-[10px] font-semibold text-white/95 opacity-90 transition group-hover:opacity-100">Explore photos →</span></div>'
         : "") +
       "</div></div></a>"
+    );
+  }
+
+  function buildLightboxImageButton(src, title, imgClass, wrapClass) {
+    if (!src) return "";
+    imgClass =
+      imgClass ||
+      "w-full rounded-lg border border-slate-200 object-cover pointer-events-none";
+    wrapClass = wrapClass || "block w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2";
+    return (
+      '<button type="button" class="js-gallery-lightbox ' +
+      wrapClass +
+      '" data-lightbox-src="' +
+      esc(src) +
+      '" data-lightbox-alt="' +
+      esc(title || "") +
+      '" data-lightbox-caption="' +
+      esc(title || "") +
+      '">' +
+      '<img src="' +
+      esc(src) +
+      '" alt="" class="' +
+      imgClass +
+      '" loading="lazy"/>' +
+      "</button>"
     );
   }
 
@@ -278,15 +303,17 @@
     var openBtnClass =
       "js-open-announcement-modal cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2";
     var imageBlock = img
-      ? '<button type="button"' +
-        idxAttr +
-        ' class="' +
-        openBtnClass +
-        ' announcement-card__media-link block w-full shrink-0 overflow-hidden border-b border-slate-100 bg-slate-100">' +
+      ? '<button type="button" class="js-gallery-lightbox group announcement-card__media-link block w-full shrink-0 cursor-zoom-in overflow-hidden border-b border-slate-100 bg-slate-100 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-inset" data-lightbox-src="' +
+        esc(img) +
+        '" data-lightbox-alt="' +
+        esc(a.title) +
+        '" data-lightbox-caption="' +
+        esc(a.title) +
+        '">' +
         '<div class="announcement-card__media">' +
         '<img src="' +
         esc(img) +
-        '" alt="" class="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.02]" loading="lazy"/>' +
+        '" alt="" class="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.02] pointer-events-none" loading="lazy"/>' +
         "</div></button>"
       : "";
     return (
@@ -666,6 +693,69 @@
     }
   }
 
+  /** Section anchor from ?sub= or #hash (nav uses ?sub= for admissions inquiry). */
+  function getPageSub(defaultSub) {
+    try {
+      var sub = (new URLSearchParams(window.location.search || "").get("sub") || "").trim();
+      if (sub) return sub.toLowerCase();
+      var hash = (window.location.hash || "").replace(/^#/, "").trim();
+      if (hash) return hash.toLowerCase();
+      return (defaultSub || "").toLowerCase();
+    } catch (e) {
+      return (defaultSub || "").toLowerCase();
+    }
+  }
+
+  function setAdmissionsLayoutMode(inquiryOnly) {
+    if (document.body.getAttribute("data-page") !== "admissions") return;
+    var mainCol = document.querySelector("body[data-page='admissions'] main .lg\\:col-span-8");
+    var pageTitle = document.querySelector("body[data-page='admissions'] main h1");
+    var pageLead = pageTitle && pageTitle.nextElementSibling;
+    var sidebar = document.getElementById("page-sidebar");
+    if (pageTitle) pageTitle.classList.toggle("hidden", inquiryOnly);
+    if (pageLead && pageLead.tagName === "P") pageLead.classList.toggle("hidden", inquiryOnly);
+    if (sidebar) sidebar.classList.toggle("hidden", inquiryOnly);
+    if (mainCol) {
+      if (inquiryOnly) {
+        mainCol.classList.remove("lg:col-span-8");
+        mainCol.classList.add("lg:col-span-12");
+      } else {
+        mainCol.classList.add("lg:col-span-8");
+        mainCol.classList.remove("lg:col-span-12");
+      }
+    }
+    var content = document.getElementById("page-admissions");
+    if (content) content.classList.toggle("mt-10", !inquiryOnly);
+    if (content) content.classList.toggle("mt-0", inquiryOnly);
+  }
+
+  function buildAdmissionsInquiryHtml(withTopMargin) {
+    var sectionClass =
+      (withTopMargin ? "mt-12 " : "") +
+      "scroll-mt-52 rounded-2xl border border-mes-accent/30 bg-mes-light p-8";
+    return (
+      '<section id="inquiry" class="' +
+      sectionClass +
+      '" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">Inquiry form</h2>' +
+      (web3formsEnabled()
+        ? '<form class="inquiry-form mt-6 grid gap-4 sm:grid-cols-2" action="' +
+          esc(WEB3_FORMS_ACTION) +
+          '" method="POST">' +
+          web3FormHiddenFields("Dr. Gadagkar High School — Admissions inquiry") +
+          '<div><label class="block text-sm font-medium" for="in-name">Student name</label><input id="in-name" name="studentName" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="in-grade">Grade seeking</label><input id="in-grade" name="grade" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="in-parent">Parent / guardian</label><input id="in-parent" name="parentName" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div><label class="block text-sm font-medium" for="in-phone">Phone</label><input id="in-phone" name="phone" type="tel" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-email">Email</label><input id="in-email" name="email" type="email" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-msg">Message</label><textarea id="in-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-accent px-8 py-3 font-semibold text-mes-primaryDark hover:bg-mes-accentLight">Submit inquiry</button></div>' +
+          "</form>"
+        : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
+      "</section>"
+    );
+  }
+
   function renderMemberCards(members, opts) {
     opts = opts || {};
     if (!members || !members.length) return "";
@@ -825,10 +915,11 @@
     function eventImageHtml(x) {
       var src = x && x.image ? mediaSrc(x.image) : "";
       if (!src) return "";
-      return (
-        '<img src="' +
-        esc(src) +
-        '" alt="" class="mt-3 max-h-40 w-full rounded-lg border border-slate-200 object-cover" loading="lazy"/>'
+      return buildLightboxImageButton(
+        src,
+        x.title || "",
+        "mt-3 max-h-40 w-full rounded-lg border border-slate-200 object-cover",
+        "mt-3 block w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2"
       );
     }
 
@@ -888,9 +979,12 @@
             var idAttr = anchor ? ' id="' + esc(anchor) + '" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"' : ' class="rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"';
             var imgSrc = x.image ? mediaSrc(x.image) : "";
             var imgHtml = imgSrc
-              ? '<img src="' +
-                esc(imgSrc) +
-                '" alt="" class="mt-3 max-h-36 w-full rounded-lg border border-slate-200 object-cover" loading="lazy"/>'
+              ? buildLightboxImageButton(
+                  imgSrc,
+                  x.title || "",
+                  "mt-3 max-h-36 w-full rounded-lg border border-slate-200 object-cover",
+                  "mt-3 block w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2"
+                )
               : "";
             return (
               "<div" +
@@ -1076,6 +1170,15 @@
     var el = document.getElementById("page-admissions");
     if (!el || !C.admissions) return;
     var a = C.admissions;
+    var inquiryOnly = getPageSub("") === "inquiry";
+
+    setAdmissionsLayoutMode(inquiryOnly);
+
+    if (inquiryOnly) {
+      el.innerHTML = buildAdmissionsInquiryHtml();
+      return;
+    }
+
     el.innerHTML =
       '<section id="overview" class="scroll-mt-52" data-reveal>' +
       (a.sessionLabel && String(a.sessionLabel).trim()
@@ -1103,23 +1206,7 @@
         })
         .join("") +
       "</ul></section></div></section>" +
-      '<section id="inquiry" class="mt-12 scroll-mt-52 rounded-2xl border border-mes-accent/30 bg-mes-light p-8" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Inquiry form</h2>' +
-      (web3formsEnabled()
-        ? '<form class="inquiry-form mt-6 grid gap-4 sm:grid-cols-2" action="' +
-          esc(WEB3_FORMS_ACTION) +
-          '" method="POST">' +
-          web3FormHiddenFields("Dr. Gadagkar High School — Admissions inquiry") +
-          '<div><label class="block text-sm font-medium" for="in-name">Student name</label><input id="in-name" name="studentName" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div><label class="block text-sm font-medium" for="in-grade">Grade seeking</label><input id="in-grade" name="grade" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div><label class="block text-sm font-medium" for="in-parent">Parent / guardian</label><input id="in-parent" name="parentName" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div><label class="block text-sm font-medium" for="in-phone">Phone</label><input id="in-phone" name="phone" type="tel" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-email">Email</label><input id="in-email" name="email" type="email" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-msg">Message</label><textarea id="in-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-accent px-8 py-3 font-semibold text-mes-primaryDark hover:bg-mes-accentLight">Submit inquiry</button></div>' +
-          "</form>"
-        : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
-      "</section>";
+      buildAdmissionsInquiryHtml(true);
   }
 
   function renderContactPage() {

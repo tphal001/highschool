@@ -568,9 +568,17 @@
         if (img) {
           mediaEl.classList.remove("hidden");
           mediaEl.innerHTML =
+            '<button type="button" class="js-gallery-lightbox mx-auto block w-full cursor-zoom-in p-4 sm:p-6 focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent" data-lightbox-src="' +
+            img.replace(/"/g, "&quot;") +
+            '" data-lightbox-alt="' +
+            String(item.title || "").replace(/"/g, "&quot;") +
+            '" data-lightbox-caption="' +
+            String(item.title || "").replace(/"/g, "&quot;") +
+            '">' +
             '<img src="' +
             img.replace(/"/g, "&quot;") +
-            '" alt="" class="mx-auto max-h-[min(42vh,18rem)] w-full object-contain object-center p-4 sm:p-6"/>';
+            '" alt="" class="mx-auto max-h-[min(50vh,22rem)] w-full object-contain object-center pointer-events-none"/>' +
+            "</button>";
         } else {
           mediaEl.classList.add("hidden");
           mediaEl.innerHTML = "";
@@ -650,6 +658,7 @@
       document.addEventListener("click", function (e) {
         var btn = e.target.closest && e.target.closest(".js-open-announcement-modal");
         if (!btn) return;
+        if (e.target.closest && e.target.closest(".js-gallery-lightbox")) return;
         e.preventDefault();
         var raw = btn.getAttribute("data-announcement-index");
         var idx = raw != null ? parseInt(raw, 10) : 0;
@@ -729,6 +738,7 @@
       var btn = e.target.closest && e.target.closest(".js-gallery-lightbox");
       if (!btn) return;
       e.preventDefault();
+      e.stopPropagation();
       var src = btn.getAttribute("data-lightbox-src") || "";
       var alt = btn.getAttribute("data-lightbox-alt") || "";
       var caption = btn.getAttribute("data-lightbox-caption") || "";
