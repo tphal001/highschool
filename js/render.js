@@ -708,25 +708,49 @@
 
   function setAdmissionsLayoutMode(inquiryOnly) {
     if (document.body.getAttribute("data-page") !== "admissions") return;
-    var mainCol = document.querySelector("body[data-page='admissions'] main .lg\\:col-span-8");
     var pageTitle = document.querySelector("body[data-page='admissions'] main h1");
     var pageLead = pageTitle && pageTitle.nextElementSibling;
-    var sidebar = document.getElementById("page-sidebar");
     if (pageTitle) pageTitle.classList.toggle("hidden", inquiryOnly);
     if (pageLead && pageLead.tagName === "P") pageLead.classList.toggle("hidden", inquiryOnly);
-    if (sidebar) sidebar.classList.toggle("hidden", inquiryOnly);
-    if (mainCol) {
-      if (inquiryOnly) {
-        mainCol.classList.remove("lg:col-span-8");
-        mainCol.classList.add("lg:col-span-12");
-      } else {
-        mainCol.classList.add("lg:col-span-8");
-        mainCol.classList.remove("lg:col-span-12");
+  }
+
+  function setNewsPageLayoutMode(resultsOnly) {
+    if (document.body.getAttribute("data-page") !== "news") return;
+    var pageTitle = document.querySelector("body[data-page='news'] main h1");
+    var pageLead = pageTitle && pageTitle.nextElementSibling;
+    if (!pageTitle) return;
+    if (resultsOnly) {
+      pageTitle.textContent = "Results";
+      if (pageLead) pageLead.classList.add("hidden");
+    } else {
+      pageTitle.textContent = "News & Announcements";
+      if (pageLead) {
+        pageLead.textContent = "Events, circulars, and official notices.";
+        pageLead.classList.remove("hidden");
       }
     }
-    var content = document.getElementById("page-admissions");
-    if (content) content.classList.toggle("mt-10", !inquiryOnly);
-    if (content) content.classList.toggle("mt-0", inquiryOnly);
+  }
+
+  function setGalleryPageLayoutMode(activityMode, activityIntro) {
+    if (document.body.getAttribute("data-page") !== "gallery") return;
+    var pageTitle = document.querySelector("body[data-page='gallery'] main h1");
+    var pageLead = pageTitle && pageTitle.nextElementSibling;
+    if (!pageTitle) return;
+    if (activityMode) {
+      pageTitle.textContent = "Activities";
+      if (pageLead) {
+        pageLead.textContent =
+          activityIntro ||
+          "Sports, cultural programs, competitions, and co-curricular activities.";
+        pageLead.classList.remove("hidden");
+      }
+    } else {
+      pageTitle.textContent = "Gallery";
+      if (pageLead) {
+        pageLead.textContent = "Photos and moments from campus life.";
+        pageLead.classList.remove("hidden");
+      }
+    }
   }
 
   function buildAdmissionsInquiryHtml(withTopMargin) {
@@ -968,15 +992,19 @@
     }
 
     if (ctx === "results") {
+      setNewsPageLayoutMode(true);
       var results = sortNewsList(n.results || []);
+      var resultCardClass =
+        "result-card site-card-3d scroll-mt-52 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/45 hover:shadow-lg hover:shadow-mes-primary/10";
       el.innerHTML =
         '<div id="results" class="scroll-mt-52"></div>' +
-        '<p class="text-xl text-slate-600" data-reveal>Examination results and official announcements.</p>' +
-        '<div class="mt-12 grid gap-6 sm:grid-cols-2" data-reveal-stagger>' +
+        '<div class="mt-2 grid gap-6 sm:grid-cols-2" data-reveal-stagger>' +
         results
           .map(function (x, i) {
             var anchor = resultAnchorAt(x, i);
-            var idAttr = anchor ? ' id="' + esc(anchor) + '" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"' : ' class="rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"';
+            var idAttr = anchor
+              ? ' id="' + esc(anchor) + '" class="' + resultCardClass + '"'
+              : ' class="' + resultCardClass + '"';
             var imgSrc = x.image ? mediaSrc(x.image) : "";
             var imgHtml = imgSrc
               ? buildLightboxImageButton(
@@ -989,8 +1017,8 @@
             return (
               "<div" +
               idAttr +
-              ">" +
-              '<strong class="font-display text-mes-primary">' +
+              " data-reveal>" +
+              '<strong class="font-display text-lg text-mes-primary">' +
               esc(x.title) +
               "</strong>" +
               '<p class="mt-2">' +
@@ -1005,6 +1033,7 @@
       return;
     }
 
+    setNewsPageLayoutMode(false);
     el.innerHTML =
       '<div id="events" class="scroll-mt-52"></div>' +
       '<p class="text-xl text-slate-600" data-reveal>' +
@@ -1034,12 +1063,10 @@
 
     if (ctx === "activity") {
       var act = C.activity || { intro: "", items: [] };
+      setGalleryPageLayoutMode(true, act.intro);
       el.innerHTML =
         '<div id="activity-2026" class="scroll-mt-40"></div>' +
-        '<p class="text-xl text-slate-600" data-reveal>' +
-        esc(act.intro || "School activities and highlights.") +
-        "</p>" +
-        '<div class="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
+        '<div class="mt-2 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
         (act.items || [])
           .map(function (it) {
             var src = mediaSrc(it.image);
@@ -1067,6 +1094,7 @@
     }
 
     if (!C.gallery) return;
+    setGalleryPageLayoutMode(false);
     var g = C.gallery;
     el.innerHTML =
       '<div id="student-life" class="scroll-mt-40"></div>' +

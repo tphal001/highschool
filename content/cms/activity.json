@@ -1,10 +1,20 @@
 {
-  "intro": "Highlights from school activities for the current academic year.",
+  "intro": "Sports meets, cultural programs, science fairs, and inter-school competitions throughout the year.",
   "items": [
     {
-      "title": "Art workshop",
+      "title": "Inter-house sports meet",
+      "image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80",
+      "caption": "Track and field events — house spirit and teamwork."
+    },
+    {
+      "title": "Science exhibition",
+      "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80",
+      "caption": "Student projects and experiments on display."
+    },
+    {
+      "title": "Art & culture week",
       "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80",
-      "caption": "Creative arts session — 2025–26"
+      "caption": "Music, dance, and creative arts performances."
     }
   ]
 }
