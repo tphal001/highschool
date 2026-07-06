@@ -37,10 +37,12 @@
       var m = document.getElementById("vimp-news-modal");
       var h = document.getElementById("highlight-news-modal");
       var g = document.getElementById("gallery-lightbox");
+      var a = document.getElementById("announcement-modal");
       return (
         (m && !m.classList.contains("hidden")) ||
         (h && !h.classList.contains("hidden")) ||
-        (g && !g.classList.contains("hidden"))
+        (g && !g.classList.contains("hidden")) ||
+        (a && !a.classList.contains("hidden"))
       );
     }
 
@@ -138,6 +140,74 @@
         apply();
       });
     }
+  }
+
+  /** Keep inner pages below the fixed header + news ticker. */
+  function initInnerPageTopPadding() {
+    if (document.body.getAttribute("data-page") === "home") return;
+    var header = document.getElementById("site-header");
+    var main = document.querySelector("main");
+    if (!header || !main) return;
+
+    function apply() {
+      main.style.paddingTop = header.offsetHeight + 16 + "px";
+    }
+
+    apply();
+    window.addEventListener("resize", apply, { passive: true });
+    if (typeof ResizeObserver !== "undefined") {
+      var ro = new ResizeObserver(function () {
+        apply();
+      });
+      ro.observe(header);
+    }
+  }
+
+  function initHomeGalleryPreview() {
+    var wrap = document.getElementById("home-gallery-preview");
+    var img = document.getElementById("home-gallery-preview-img");
+    if (!wrap || !img || wrap.getAttribute("data-gallery-preview") !== "1") return;
+
+    var C = window.SITE_CONTENT || {};
+    var items = (C.gallery && C.gallery.items) || [];
+    var slides = [];
+    for (var i = 0; i < items.length; i++) {
+      var raw = items[i] && items[i].image;
+      if (!raw) continue;
+      if (typeof raw === "string") {
+        if (raw.trim()) slides.push(raw.trim());
+      } else if (raw.url) {
+        slides.push(String(raw.url).trim());
+      }
+    }
+    if (slides.length <= 1) return;
+
+    var idx = 0;
+    var timerId = null;
+    var prefersReducedMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function showAt(next) {
+      idx = next;
+      if (idx < 0) idx = slides.length - 1;
+      if (idx >= slides.length) idx = 0;
+      img.style.opacity = "0";
+      window.setTimeout(function () {
+        img.src = slides[idx];
+        img.style.opacity = "1";
+      }, 280);
+    }
+
+    function startAuto() {
+      if (prefersReducedMotion) return;
+      if (timerId) clearInterval(timerId);
+      timerId = setInterval(function () {
+        showAt(idx + 1);
+      }, 4500);
+    }
+
+    startAuto();
   }
 
   function initReveal() {
@@ -422,6 +492,171 @@
         setOpen(true, 0);
       });
     });
+  }
+
+  function initAnnouncementModal() {
+    var getItems =
+      typeof window.getSortedQuickAnnouncements === "function"
+        ? window.getSortedQuickAnnouncements
+        : function () {
+            var C = window.SITE_CONTENT || {};
+            return C.quickAnnouncements || [];
+          };
+    var customHref =
+      typeof window.announcementCustomHref === "function"
+        ? window.announcementCustomHref
+        : function () {
+            return "";
+          };
+    var bodyText =
+      typeof window.announcementBodyText === "function"
+        ? window.announcementBodyText
+        : function (a) {
+            return (a && (a.body || a.excerpt)) || "";
+          };
+
+    function resolveAnnouncementImage(item) {
+      var img = item && item.image;
+      if (!img) return "";
+      if (typeof img === "object") img = img.url || img.path || img.src || "";
+      img = String(img).trim();
+      if (!img) return "";
+      if (img.indexOf("http") === 0 || img.indexOf("//") === 0 || img.charAt(0) === "/") return img;
+      if (img.indexOf("images/") === 0) return "/" + img;
+      return img;
+    }
+
+    var modal = document.getElementById("announcement-modal");
+    if (!modal) {
+      modal = document.createElement("div");
+      modal.id = "announcement-modal";
+      modal.className =
+        "fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 lg:p-10";
+      modal.setAttribute("role", "dialog");
+      modal.setAttribute("aria-modal", "true");
+      modal.setAttribute("aria-labelledby", "announcement-modal-title");
+      modal.innerHTML =
+        '<div class="announcement-backdrop absolute inset-0 bg-slate-950/80 backdrop-blur-sm" data-announcement-dismiss aria-hidden="true"></div>' +
+        '<div class="relative z-10 flex w-full max-w-3xl items-center justify-center">' +
+        '<div class="announcement-panel relative max-h-[min(92vh,820px)] w-full overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-2xl sm:rounded-3xl">' +
+        '<button type="button" class="absolute right-3 top-3 z-20 flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 bg-white/95 text-2xl font-light text-slate-700 shadow-sm transition hover:bg-slate-50" data-announcement-dismiss aria-label="Close">×</button>' +
+        '<div class="max-h-[inherit] overflow-y-auto">' +
+        '<div id="announcement-modal-media" class="hidden border-b border-slate-100 bg-slate-50"></div>' +
+        '<div class="px-6 py-8 sm:px-10 sm:py-10">' +
+        '<p class="text-xs font-bold uppercase tracking-[0.16em] text-mes-accent">Announcement</p>' +
+        '<h2 id="announcement-modal-title" class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl"></h2>' +
+        '<p id="announcement-modal-body" class="mt-4 whitespace-pre-line text-sm leading-relaxed text-slate-700 sm:text-base"></p>' +
+        '<div id="announcement-modal-actions" class="mt-6 hidden flex-wrap gap-3"></div>' +
+        "</div></div></div></div>";
+      document.body.appendChild(modal);
+    }
+
+    var mediaEl = document.getElementById("announcement-modal-media");
+    var titleEl = document.getElementById("announcement-modal-title");
+    var bodyEl = document.getElementById("announcement-modal-body");
+    var actionsEl = document.getElementById("announcement-modal-actions");
+    var open = false;
+    var closeTimer = null;
+
+    function renderAt(idx) {
+      var items = getItems();
+      if (!items.length) return;
+      if (idx < 0 || idx >= items.length) idx = 0;
+      var item = items[idx];
+      var img = resolveAnnouncementImage(item);
+      if (mediaEl) {
+        if (img) {
+          mediaEl.classList.remove("hidden");
+          mediaEl.innerHTML =
+            '<img src="' +
+            img.replace(/"/g, "&quot;") +
+            '" alt="" class="mx-auto max-h-[min(42vh,18rem)] w-full object-contain object-center p-4 sm:p-6"/>';
+        } else {
+          mediaEl.classList.add("hidden");
+          mediaEl.innerHTML = "";
+        }
+      }
+      if (titleEl) titleEl.textContent = item.title || "";
+      if (bodyEl) bodyEl.textContent = bodyText(item);
+      if (actionsEl) {
+        var url = customHref(item);
+        if (url) {
+          var ext = /^https?:\/\//i.test(url) || url.indexOf("//") === 0;
+          actionsEl.innerHTML =
+            '<a href="' +
+            url.replace(/"/g, "&quot;") +
+            '"' +
+            (ext ? ' target="_blank" rel="noopener noreferrer"' : "") +
+            ' class="inline-flex items-center gap-2 rounded-full bg-mes-primary px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-mes-primaryDark">Open link <span aria-hidden="true">→</span></a>';
+          actionsEl.classList.remove("hidden");
+          actionsEl.classList.add("flex");
+        } else {
+          actionsEl.innerHTML = "";
+          actionsEl.classList.add("hidden");
+          actionsEl.classList.remove("flex");
+        }
+      }
+    }
+
+    function setOpen(shouldOpen, startIdx) {
+      open = shouldOpen;
+      if (closeTimer) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      if (shouldOpen) {
+        renderAt(typeof startIdx === "number" ? startIdx : 0);
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+        document.body.classList.add("overflow-hidden");
+        document.documentElement.classList.add("overflow-hidden");
+        modal.classList.remove("announcement-open");
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            modal.classList.add("announcement-open");
+          });
+        });
+      } else {
+        modal.classList.remove("announcement-open");
+        closeTimer = setTimeout(function () {
+          closeTimer = null;
+          modal.classList.add("hidden");
+          modal.classList.remove("flex");
+          document.body.classList.remove("overflow-hidden");
+          document.documentElement.classList.remove("overflow-hidden");
+        }, 220);
+      }
+    }
+
+    window.openAnnouncementModal = function (idx) {
+      setOpen(true, typeof idx === "number" ? idx : 0);
+    };
+
+    if (!modal.dataset.announcementBound) {
+      modal.dataset.announcementBound = "1";
+      modal.querySelectorAll("[data-announcement-dismiss]").forEach(function (el) {
+        el.addEventListener("click", function () {
+          setOpen(false);
+        });
+      });
+      document.addEventListener(
+        "keydown",
+        function (e) {
+          if (!open || e.key !== "Escape") return;
+          setOpen(false);
+        },
+        true
+      );
+      document.addEventListener("click", function (e) {
+        var btn = e.target.closest && e.target.closest(".js-open-announcement-modal");
+        if (!btn) return;
+        e.preventDefault();
+        var raw = btn.getAttribute("data-announcement-index");
+        var idx = raw != null ? parseInt(raw, 10) : 0;
+        if (isNaN(idx)) idx = 0;
+        setOpen(true, idx);
+      });
+    }
   }
 
   function initGalleryLightbox() {
@@ -772,8 +1007,11 @@
       window.renderPageContent();
     }
     initHomeHeroTopPadding();
+    initInnerPageTopPadding();
     initHeroSlider();
+    initHomeGalleryPreview();
     initHighlightNewsModal();
+    initAnnouncementModal();
     initVimpNewsModal();
     initGalleryLightbox();
     initMobileNav();

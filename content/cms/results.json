@@ -4,18 +4,13 @@
       "anchorId": "res-ssc",
       "title": "SSC Result – March 2024",
       "summary": "Official result links and notices will be published here when available.",
-      "displayDate": "Mar 2024"
+      "showInNav": true
     },
     {
       "anchorId": "res-hsc",
       "title": "HSC Result – March 2024",
       "summary": "Official result links and notices will be published here when available.",
-      "displayDate": "Mar 2024"
-    },
-    {
-      "title": "Semi - 2026",
-      "summary": "Official result links and notices will be published here when available.",
-      "anchorId": "Semi - 2026"
+      "showInNav": true
     }
   ]
 }

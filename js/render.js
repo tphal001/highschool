@@ -38,8 +38,8 @@
     return a;
   }
 
-  /** Home hero: bulleted quick news, random order, vertical scroll (duplicated block for seamless loop). */
-  function buildQuickNewsCardHtml(h) {
+  /** Latest update lines from CMS (newest first). */
+  function getQuickNewsLines(h) {
     var raw = (h && h.quickNews) || [];
     var lines = [];
     var i;
@@ -48,33 +48,89 @@
       var s = typeof x === "string" ? x : (x && (x.text || x.line)) || "";
       if (s) lines.push(s);
     }
-    if (!lines.length) {
-      lines = ["Add quick news lines in the CMS (Home → Quick news)."];
-    } else {
-      lines = shuffleArray(lines);
-    }
-    var liHtml = "";
-    for (i = 0; i < lines.length; i++) {
-      liHtml += '<li class="text-left">' + esc(lines[i]) + "</li>";
-    }
-    var ulClass =
-      "list-disc space-y-1 pl-4 text-xs leading-snug text-sky-900 marker:text-sky-600";
-    var twin =
-      '<ul class="' +
-      ulClass +
-      '">' +
-      liHtml +
-      "</ul>" +
-      '<ul class="motion-reduce:hidden ' +
-      ulClass +
-      '" aria-hidden="true">' +
-      liHtml +
-      "</ul>";
+    if (lines.length) lines.reverse();
+    return lines;
+  }
+
+  /** Horizontal ticker under the main menu (all pages). */
+  function buildNewsTickerHtml(h) {
+    var lines = getQuickNewsLines(h);
+    if (!lines.length) return "";
+    var sep =
+      '<span class="mx-4 inline-flex h-1 w-1 shrink-0 rounded-full bg-mes-accent/70" aria-hidden="true"></span>';
+    var chunk = lines
+      .map(function (line) {
+        return (
+          '<span class="inline-flex items-center px-0.5 text-xs font-medium text-slate-800 sm:text-sm">' +
+          esc(line) +
+          "</span>"
+        );
+      })
+      .join(sep);
     return (
-      '<div class="h-[6rem] overflow-hidden rounded-lg border border-mes-primary/15 bg-white/90 px-1 py-1 shadow-inner sm:h-[6.25rem]">' +
-      '<div class="animate-marquee-y motion-reduce:animate-none">' +
-      twin +
-      "</div></div>"
+      '<div class="flex items-center overflow-hidden py-2 sm:py-2.5">' +
+      '<span class="site-news-ticker-label mr-3 shrink-0 border-l-[3px] border-mes-primary pl-2 text-xs font-bold uppercase tracking-wide text-mes-primary">Updates</span>' +
+      '<div class="relative min-w-0 flex-1 overflow-hidden site-news-ticker-scroll">' +
+      '<div class="site-news-ticker-track animate-marquee-x flex w-max items-center whitespace-nowrap motion-reduce:animate-none">' +
+      chunk +
+      sep +
+      chunk +
+      "</div></div></div>"
+    );
+  }
+
+  function renderSiteNewsTicker() {
+    var el = document.getElementById("site-news-ticker");
+    if (!el) return;
+    var html = buildNewsTickerHtml(C.home);
+    if (!html) {
+      el.classList.add("hidden");
+      el.innerHTML = "";
+      return;
+    }
+    el.innerHTML = html;
+    el.classList.remove("hidden");
+  }
+
+  /** Compact gallery preview for the home hero (replaces the old updates card). */
+  function buildGalleryPreviewCardHtml() {
+    var galleryHref = "gallery.html?ctx=gallery#photo";
+    var items = (C.gallery && C.gallery.items) || [];
+    var imgs = [];
+    var i;
+    for (i = 0; i < items.length; i++) {
+      var src = mediaSrc(items[i].image);
+      if (src) imgs.push(src);
+    }
+    if (!imgs.length) {
+      var he = C.home && C.home.hero;
+      var slides = (he && he.slides && he.slides.length && he.slides) || [];
+      if (!slides.length && he && he.image) slides = [he.image];
+      for (i = 0; i < slides.length; i++) {
+        if (slides[i]) imgs.push(mediaSrc(slides[i]));
+      }
+    }
+    var first = imgs[0] || "";
+    var mediaHtml = first
+      ? '<img id="home-gallery-preview-img" src="' +
+        esc(first) +
+        '" alt="" class="h-full w-full object-cover transition-opacity duration-500" loading="lazy"/>'
+      : '<div class="flex h-full items-center justify-center px-4 text-center text-xs text-slate-500">Add photos in the CMS gallery.</div>';
+    return (
+      '<a href="' +
+      esc(galleryHref) +
+      '" class="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" aria-label="Open campus photo gallery">' +
+      '<div class="site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35">' +
+      '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-primary">Campus in focus</p>' +
+      '<div id="home-gallery-preview" class="relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]"' +
+      (imgs.length > 1 ? ' data-gallery-preview="1"' : "") +
+      ">" +
+      mediaHtml +
+      (imgs.length > 1
+        ? '<div class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent px-2 pb-1.5 pt-6">' +
+          '<span class="text-[10px] font-semibold text-white/95 opacity-90 transition group-hover:opacity-100">Explore photos →</span></div>'
+        : "") +
+      "</div></div></a>"
     );
   }
 
@@ -176,51 +232,86 @@
   }
 
   var ANNOUNCEMENT_CARD_CLASS =
-    "site-auto-glass site-card-3d group flex h-full min-h-0 flex-col overflow-hidden rounded-lg border border-slate-200 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/40 hover:shadow-xl hover:shadow-mes-primary/15 hover:ring-1 hover:ring-mes-accent/20";
+    "site-auto-glass site-card-3d group flex flex-col rounded-lg border border-slate-200 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/40 hover:shadow-xl hover:shadow-mes-primary/15 hover:ring-1 hover:ring-mes-accent/20";
 
-  function cardFromData(a) {
+  var DEFAULT_ANNOUNCEMENT_HREF = "news.html?ctx=events";
+
+  function announcementCustomHref(a) {
+    var href = ((a && a.href) || "").trim();
+    if (!href || href === DEFAULT_ANNOUNCEMENT_HREF) return "";
+    return href;
+  }
+
+  function announcementBodyText(a) {
+    var body = ((a && a.body) || "").trim();
+    if (body) return body;
+    return ((a && a.excerpt) || "").trim();
+  }
+
+  /** Newest first (uses internal sort key from build, or CMS list order). */
+  function sortedQuickAnnouncements(list) {
+    if (!list || !list.length) return [];
+    return list
+      .slice()
+      .map(function (a, idx) {
+        return Object.assign({}, a, { _cmsIdx: idx });
+      })
+      .sort(function (a, b) {
+        if (a.datetime && b.datetime) {
+          var byDate = String(b.datetime).localeCompare(String(a.datetime));
+          if (byDate !== 0) return byDate;
+        }
+        return (b._cmsIdx || 0) - (a._cmsIdx || 0);
+      });
+  }
+
+  function sortNewsList(list) {
+    if (!list || !list.length) return list || [];
+    return sortedQuickAnnouncements(list);
+  }
+
+  function cardFromData(a, index) {
     var img = mediaSrc(resolveMediaField(a.image));
-    var href = (a.href || "news.html?ctx=events").trim() || "news.html?ctx=events";
     var readLabel = "Read more →";
-    var ext = isExternalHref(href);
-    var linkTarget = ext ? ' target="_blank" rel="noopener noreferrer"' : "";
+    var idxAttr =
+      ' data-announcement-index="' + String(typeof index === "number" ? index : 0) + '"';
+    var openBtnClass =
+      "js-open-announcement-modal cursor-pointer text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2";
     var imageBlock = img
-      ? '<a href="' +
-        esc(href) +
-        '"' +
-        linkTarget +
-        ' class="announcement-card__media-link block shrink-0 overflow-hidden border-b border-slate-100 bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-inset">' +
+      ? '<button type="button"' +
+        idxAttr +
+        ' class="' +
+        openBtnClass +
+        ' announcement-card__media-link block w-full shrink-0 overflow-hidden border-b border-slate-100 bg-slate-100">' +
         '<div class="announcement-card__media">' +
         '<img src="' +
         esc(img) +
         '" alt="" class="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.02]" loading="lazy"/>' +
-        "</div></a>"
+        "</div></button>"
       : "";
     return (
       '<article class="' +
       ANNOUNCEMENT_CARD_CLASS +
       '">' +
       imageBlock +
-      '<div class="shrink-0 border-b border-slate-100 bg-slate-50/90 px-5 py-3 transition-colors duration-300 group-hover:bg-amber-50/60">' +
-      '<time datetime="' +
-      esc(a.datetime) +
-      '" class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">' +
-      esc(a.date) +
-      "</time></div>" +
-      '<div class="flex min-h-0 flex-1 flex-col p-5">' +
-      '<h3 class="shrink-0 text-base font-bold text-mes-primary transition-colors duration-200 group-hover:text-mes-primaryDark group-hover:underline">' +
+      '<div class="flex flex-1 flex-col p-5">' +
+      '<button type="button"' +
+      idxAttr +
+      ' class="' +
+      openBtnClass +
+      ' shrink-0 text-base font-bold text-mes-primary transition-colors duration-200 group-hover:text-mes-primaryDark group-hover:underline">' +
       esc(a.title) +
-      "</h3>" +
-      '<p class="mt-2 min-h-0 flex-1 text-sm leading-relaxed text-slate-600">' +
+      "</button>" +
+      '<p class="mt-2 text-sm leading-relaxed text-slate-600">' +
       esc(a.excerpt) +
       "</p>" +
-      '<a href="' +
-      esc(href) +
-      '"' +
-      linkTarget +
-      ' class="mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300 transition-colors duration-200 group-hover:text-mes-primary group-hover:decoration-mes-accent">' +
+      '<button type="button"' +
+      idxAttr +
+      ' class="' +
+      openBtnClass +
+      ' mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300 transition-colors duration-200 group-hover:text-mes-primary group-hover:decoration-mes-accent">' +
       esc(readLabel) +
-      "</a></div></article>"
+      "</button></div></article>"
     );
   }
 
@@ -398,12 +489,8 @@
         "</p>" +
         "</div>" +
         '<div class="min-w-0 lg:col-span-5 lg:row-start-2 flex flex-col justify-start lg:self-end" data-reveal>' +
-        '<div class="site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35">' +
-        '<p class="text-[10px] font-bold uppercase tracking-wider text-black">Latest updates</p>' +
-        '<div class="mt-1.5">' +
-        buildQuickNewsCardHtml(h) +
+        buildGalleryPreviewCardHtml() +
         "</div>" +
-        "</div></div>" +
         '<aside class="flex min-h-0 min-w-0 flex-col lg:col-span-5 lg:row-start-1 lg:h-full">' +
         '<a href="' +
         esc(fundHref) +
@@ -463,17 +550,11 @@
     }
 
     var qa = document.getElementById("home-quick-announcements");
-    if (qa && C.quickAnnouncements) {
-      var items = C.quickAnnouncements.slice(0, 3);
-      qa.innerHTML = items
+    if (qa && C.quickAnnouncements && C.quickAnnouncements.length) {
+      qa.innerHTML = sortedQuickAnnouncements(C.quickAnnouncements)
         .map(function (a, i) {
-          var span = i === 2 ? "sm:col-span-2 lg:col-span-1 " : "";
           return (
-            '<li class="' +
-            span +
-            'flex h-full min-h-0 flex-col" data-reveal>' +
-            cardFromData(a) +
-            "</li>"
+            '<li class="flex flex-col" data-reveal>' + cardFromData(a, i) + "</li>"
           );
         })
         .join("");
@@ -754,9 +835,7 @@
     function itemRow(x) {
       return (
         '<li class="border-b border-slate-100 py-4 last:border-0">' +
-        '<time class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
-        esc(x.displayDate) +
-        '</time><h3 class="mt-1 font-display text-lg font-semibold text-mes-primary">' +
+        '<h3 class="font-display text-lg font-semibold text-mes-primary">' +
         esc(x.title) +
         '</h3><p class="mt-1 text-slate-600">' +
         esc(x.summary) +
@@ -773,12 +852,7 @@
         "<li" +
         idPart +
         ">" +
-        (x.displayDate
-          ? '<time class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
-            esc(x.displayDate) +
-            "</time>"
-          : "") +
-        '<h3 class="mt-1 font-display text-lg font-semibold text-mes-primary">' +
+        '<h3 class="font-display text-lg font-semibold text-mes-primary">' +
         esc(x.title) +
         '</h3><p class="mt-1 text-slate-600">' +
         esc(x.summary) +
@@ -788,15 +862,29 @@
       );
     }
 
+    var evtAnchors = ["evt-silver", "evt-ashwarohan", "evt-virangana"];
+    function eventAnchorAt(x, i) {
+      if (typeof window.newsItemAnchorId === "function") {
+        return window.newsItemAnchorId(x, "evt-", i);
+      }
+      return (x.anchorId || "").trim() || evtAnchors[i] || "evt-" + i;
+    }
+    function resultAnchorAt(x, i) {
+      if (typeof window.newsItemAnchorId === "function") {
+        return window.newsItemAnchorId(x, "res-", i);
+      }
+      return (x.anchorId || "").trim() || "res-" + i;
+    }
+
     if (ctx === "results") {
-      var results = n.results || [];
+      var results = sortNewsList(n.results || []);
       el.innerHTML =
         '<div id="results" class="scroll-mt-52"></div>' +
         '<p class="text-xl text-slate-600" data-reveal>Examination results and official announcements.</p>' +
         '<div class="mt-12 grid gap-6 sm:grid-cols-2" data-reveal-stagger>' +
         results
-          .map(function (x) {
-            var anchor = (x.anchorId || "").trim();
+          .map(function (x, i) {
+            var anchor = resultAnchorAt(x, i);
             var idAttr = anchor ? ' id="' + esc(anchor) + '" class="scroll-mt-52 rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"' : ' class="rounded-xl border border-slate-200 bg-mes-light/50 p-5 text-sm text-slate-700"';
             var imgSrc = x.image ? mediaSrc(x.image) : "";
             var imgHtml = imgSrc
@@ -823,7 +911,6 @@
       return;
     }
 
-    var evtAnchors = ["evt-silver", "evt-ashwarohan", "evt-virangana"];
     el.innerHTML =
       '<div id="events" class="scroll-mt-52"></div>' +
       '<p class="text-xl text-slate-600" data-reveal>' +
@@ -831,18 +918,18 @@
       "</p>" +
       '<div class="mt-12 grid gap-10 lg:grid-cols-3" data-reveal-stagger>' +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Events</h2><ul class="mt-4">' +
-      (n.events || [])
+      sortNewsList(n.events || [])
         .map(function (x, i) {
-          var anchor = (x.anchorId || "").trim() || evtAnchors[i] || "";
+          var anchor = eventAnchorAt(x, i);
           return itemRowWithId(x, anchor);
         })
         .join("") +
       "</ul></div>" +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Circulars</h2><ul class="mt-4">' +
-      (n.circulars || []).map(itemRow).join("") +
+      sortNewsList(n.circulars || []).map(itemRow).join("") +
       "</ul></div>" +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Notices</h2><ul class="mt-4">' +
-      (n.notices || []).map(itemRow).join("") +
+      sortNewsList(n.notices || []).map(itemRow).join("") +
       "</ul></div></div>";
   }
 
@@ -991,6 +1078,11 @@
     var a = C.admissions;
     el.innerHTML =
       '<section id="overview" class="scroll-mt-52" data-reveal>' +
+      (a.sessionLabel && String(a.sessionLabel).trim()
+        ? '<p class="mb-4 inline-flex rounded-full border border-mes-accent/40 bg-mes-accent/15 px-4 py-1.5 text-sm font-semibold text-mes-primary">Admissions · ' +
+          esc(String(a.sessionLabel).trim()) +
+          "</p>"
+        : "") +
       '<p class="text-xl text-slate-600">' +
       esc(a.intro) +
       "</p>" +
@@ -1237,7 +1329,10 @@
   function getSidebarLinksForPage(page, cfg) {
     var fb = cfg.innerSidebarFallback || {};
     if (fb[page] && fb[page].length) return fb[page].slice();
-    var navLinks = cfg.navLinks || [];
+    var navLinks =
+      typeof window.resolveNavLinks === "function"
+        ? window.resolveNavLinks(cfg)
+        : cfg.navLinks || [];
     if (page === "news") {
       var nctx = "";
       try {
@@ -1443,6 +1538,7 @@
   }
 
   function runPageRenderer() {
+    renderSiteNewsTicker();
     var page = document.body.getAttribute("data-page");
     if (page === "home") renderHomePage();
     else if (page === "about") renderAboutPage();
@@ -1459,4 +1555,9 @@
 
   window.renderPageContent = runPageRenderer;
   window.renderHomePage = renderHomePage;
+  window.getSortedQuickAnnouncements = function () {
+    return sortedQuickAnnouncements((C && C.quickAnnouncements) || []);
+  };
+  window.announcementCustomHref = announcementCustomHref;
+  window.announcementBodyText = announcementBodyText;
 })();

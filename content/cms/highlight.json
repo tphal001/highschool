@@ -4,30 +4,30 @@
   "cacheBust": "v1",
   "items": [
     {
-      "accomplishment": "*पालकांनी योग्य शाळेची केलेली निवड विद्यार्थ्यांचे भवितव्य ठरवते....*\nसलग दुसऱ्या वर्षी शिष्यवृत्ती परीक्षेत *डॉ. गदगकर हायस्कूल* ने गुणवत्ता यादी स्थान मिळवले आहे. यावर्षी आपल्या विद्यालयाची इयत्ता आठवीची विद्यार्थिनी *कुमारी दिव्या सुरेश फाळके* हिने *कोरेगाव तालुक्यामध्ये प्रथम* येऊन शाळेच्या शिरपेचात मानाचा तुरा खोवला आहे....\n दिव्या फाळके व तिला मार्गदर्शन करणाऱ्या सर्व शिक्षकांचे हार्दिक अभिनंदन.......💐💐💐",
       "enabled": true,
-      "badge": "Highlights***",
-      "studentName": "कु. दिव्या सुरेश फाळके",
-      "posterImage": "/images/1000879527.jpg",
-      "headline": "शिष्यवृत्ती 2026 - \"दिव्या\" कोरेगाव तालुक्यामध्ये प्रथम",
-      "linkUrl": "",
-      "cacheBust": "v1",
-      "linkLabel": "View",
       "showOnHome": true,
-      "linkUrlLabel": ""
+      "badge": "Highlights",
+      "headline": "Gold Medal at State Science Olympiad",
+      "studentName": "Priya Deshmukh",
+      "accomplishment": "Our student secured first place among 200+ schools, bringing pride to Dr. Gadagkar High School and the Satararoad community.",
+      "posterImage": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+      "linkLabel": "View",
+      "linkUrl": "",
+      "linkUrlLabel": "Open link",
+      "cacheBust": "v1"
     },
     {
-      "accomplishment": "*आवडते मज मनापासून शाळा,\nलावीते लळा जसा माय माऊली बाळा*\n\n१९६३ पासून अखंडपणे ज्ञानदानाचे कार्य करत, समाजाच्या सर्व स्तरांपर्यंत शिक्षण पोहोचवून एक शैक्षणिक क्रांती घडवणारी आपली अभिमानाची संस्था —श्री शिवाजी शिक्षण प्रसारक मंडळ सातारारोड संचलित, डॉ. गदगकर हायस्कूल व जरंडेश्वर कनिष्ठ महाविद्यालय, सातारारोड — आजही विद्यार्थ्यांच्या घडणीत महत्त्वाची भूमिका बजावत आहे.\n\nया स्नेहबंधांना अधिक दृढ करण्यासाठी आणि आपल्या सर्व माजी विद्यार्थ्यांना एका व्यासपीठावर एकत्र आणण्यासाठी आम्ही माजी विद्यार्थी माहिती संकलन उपक्रम हाती घेतला आहे.\n\nतरी सर्व माजी विद्यार्थ्यांनी आपली माहिती दिलेल्या लिंकद्वारे भरावी. तसेच, आपल्या वर्गमित्रांपर्यंत व परिचित माजी विद्यार्थ्यांपर्यंत ही लिंक जरूर पोहोचवावी, ही नम्र विनंती.\n\nआपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल.",
       "enabled": true,
-      "badge": "Highlights***",
-      "studentName": "सर्व माजी विद्यार्थी",
-      "posterImage": "/images/1000876099.jpg",
-      "headline": "माजी विद्यार्थी मेळावा",
-      "linkUrl": "https://docs.google.com/forms/d/e/1FAIpQLSdpynZ6-v3caNLehbJy98HJblnm_EquCmFkqWNBQHn-cUJT_A/viewform?usp=header",
-      "cacheBust": "v1",
-      "linkLabel": "View",
       "showOnHome": true,
-      "linkUrlLabel": "Open link"
+      "badge": "Highlights",
+      "headline": "District sports championship winners",
+      "studentName": "Athletics team",
+      "accomplishment": "Our under-16 relay and long-jump teams brought home gold at the district meet — congratulations to coaches and students.",
+      "posterImage": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+      "linkLabel": "View",
+      "linkUrl": "",
+      "linkUrlLabel": "Open link",
+      "cacheBust": "v1"
     }
   ]
 }

@@ -15,15 +15,15 @@
  */
 window.SITE_CONFIG = {
   schoolName: "Dr. Gadagkar High School, Satararoad",
-  /** Small line above the main title (RLMSS-style affiliation line). */
+  /** Small line above the school name. */
   headerAffiliation: "Committed to excellence in education · Est. 1976",
-  /** Short line under the name in the header. */
-  tagline: "Excellence in education · Nurturing character",
+  /** Line under the school name in the header. */
+  tagline: "Learning with heart · Leading with purpose · Inspiring Futures",
   /** Shown in the circular crest when logoImageUrl is empty. */
   logoInitials: "DG",
-  /** Optional: URL to a PNG/SVG logo; leave "" to use initials badge. */
-  logoImageUrl: "",
-  address: "Cooper Cricket Ground, Satara-road, Maharashtra 415010",
+  /** School logo in the header (PNG/SVG). Leave "" to use initials badge. */
+  logoImageUrl: "/images/logo.png",
+  address: "Dr. Gadagkar Highschool, Satararoad, Tal. Koregaon, Dist. Satara - 415010",
   logoHref: "index.html",
   /** Must match the Home nav link href (used for the “vimp” notice modal). */
   homePageHref: "index.html",
@@ -44,8 +44,8 @@ window.SITE_CONFIG = {
     imageAlt: "Flash news",
     cacheBust: "v2",
   },
-  contactPhone: "+91 20 1234 5678",
-  contactEmail: "tphalke9@gmail.com",
+  contactPhone: "02163 299 190",
+  contactEmail: "ghschool63@gmail.com",
 
   /** Top bar (optional). Empty array hides the social column. */
   socialLinks: [
@@ -70,7 +70,7 @@ window.SITE_CONFIG = {
     },
     {
       title: "Location",
-      text: "Cooper Cricket Ground, Satara-road — Maharashtra 415010.",
+      text: "Dr. Gadagkar Highschool, Satararoad, Tal. Koregaon, Dist. Satara - 415010.",
       href: "contact.html",
     },
   ],
@@ -110,34 +110,26 @@ window.SITE_CONFIG = {
       label: "Admission",
       href: "admissions.html",
       children: [
-        { label: "Admissions Overview", href: "admissions.html#overview" },
-        { label: "Admissions 2025 – 26", href: "admissions.html#inquiry" },
+        { label: "Overview", href: "admissions.html#overview" },
+        { label: "Inquiry form", href: "admissions.html#inquiry" },
       ],
     },
     {
       id: "events",
       label: "Events",
       href: "news.html?ctx=events",
-      children: [
-        { label: "Silver Jubilee Year (2021 – 2022)", href: "news.html?ctx=events#evt-silver" },
-        { label: "Ashwarohan Mohim", href: "news.html?ctx=events#evt-ashwarohan" },
-        { label: "Virangana", href: "news.html?ctx=events#evt-virangana" },
-      ],
+      dynamicChildren: "events",
     },
     {
       id: "results",
       label: "Results",
       href: "news.html?ctx=results",
-      children: [
-        { label: "SSC Result – March 2024", href: "news.html?ctx=results#res-ssc" },
-        { label: "HSC Result – March 2024", href: "news.html?ctx=results#res-hsc" },
-      ],
+      dynamicChildren: "results",
     },
     {
       id: "activity",
       label: "Activity",
       href: "gallery.html?ctx=activity",
-      children: [{ label: "2025 – 26", href: "gallery.html?ctx=activity#activity-2026" }],
     },
     {
       id: "gallery",
@@ -146,14 +138,6 @@ window.SITE_CONFIG = {
       children: [
         { label: "Photo Gallery", href: "gallery.html?ctx=gallery#photo" },
         { label: "Video Gallery", href: "gallery.html?ctx=gallery#video" },
-        {
-          label: "रौप्य महोत्सवी वर्षाच्या उद्घाटन सोहळा – १३ जुलै, २०२१",
-          href: "gallery.html?ctx=gallery#marathi-1",
-        },
-        {
-          label: "संस्था हीरक महोत्सवी वर्षपूर्ती – प्रशालेत उत्साहात साजरी……",
-          href: "gallery.html?ctx=gallery#marathi-2",
-        },
       ],
     },
     { label: "Contact", href: "contact.html" },

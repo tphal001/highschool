@@ -1,11 +1,4 @@
 {
   "intro": "Faculty and staff listings can be added when ready.",
-  "members": [
-    {
-      "name": "Mr. Prashant Joshi",
-      "role": "Teacher",
-      "department": "English",
-      "photo": "/images/3.jpg"
-    }
-  ]
+  "members": []
 }

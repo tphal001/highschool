@@ -3,6 +3,7 @@ tailwind.config = {
   /** Injected in render.js — ensure Play CDN generates these utilities. */
   safelist: [
     "animate-marquee-y",
+    "animate-marquee-x",
     "motion-reduce:animate-none",
     "motion-reduce:hidden",
     "h-[6rem]",
@@ -80,12 +81,17 @@ tailwind.config = {
           "0%": { transform: "translateY(0)" },
           "100%": { transform: "translateY(-50%)" },
         },
+        "marquee-x": {
+          "0%": { transform: "translateX(0)" },
+          "100%": { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "fade-in-up": "fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards",
         "fade-in": "fade-in 0.8s ease-out forwards",
         "gradient-shift": "gradient-shift 12s ease-in-out infinite",
         "marquee-y": "marquee-y 28s linear infinite",
+        "marquee-x": "marquee-x 48s linear infinite",
       },
     },
   },

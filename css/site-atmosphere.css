@@ -350,6 +350,126 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   ) !important;
 }
 
+/* Header identity — standard school title stack */
+.site-header-identity {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.site-header-est {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.06em;
+  text-transform: none;
+  color: #b8860b;
+}
+
+.site-header-name {
+  margin: 0.2rem 0 0;
+  font-family: inherit;
+  font-size: 1.2rem;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  color: #7f1d1d;
+}
+
+.site-header-motto {
+  margin: 0.35rem 0 0;
+  max-width: 28rem;
+  font-size: 0.8125rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.45;
+  color: #64748b;
+}
+
+@media (min-width: 640px) {
+  .site-header-name {
+    font-size: 1.45rem;
+  }
+
+  .site-header-motto {
+    font-size: 0.875rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .site-header-name {
+    font-size: 1.6rem;
+  }
+}
+
+/* Header info boxes — stretch to match logo + title + tagline block */
+.site-header-brand-row {
+  align-items: stretch;
+}
+
+.site-header-brand-link {
+  align-self: stretch;
+}
+
+.site-header-info-boxes {
+  align-self: stretch;
+}
+
+.site-header-info-boxes__item {
+  display: flex;
+  align-items: stretch;
+}
+
+.site-header-info-card {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  padding: 0.5rem 0.55rem;
+  overflow: hidden;
+}
+
+.site-header-info-card__title {
+  margin: 0;
+  font-size: 0.625rem;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #1e293b;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+}
+
+.site-header-info-card__text {
+  margin: 0.25rem 0 0;
+  font-size: 0.625rem;
+  font-weight: 400;
+  line-height: 1.35;
+  color: #475569;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .site-header-info-card {
+    padding: 0.55rem 0.65rem;
+  }
+
+  .site-header-info-card__title,
+  .site-header-info-card__text {
+    font-size: 0.6875rem;
+  }
+}
+
 /* ── Home page: full-width bands ── */
 body.site-body[data-page="home"] #home-hero.site-hero-panel {
   background: linear-gradient(
@@ -646,6 +766,54 @@ announcement-card .announcement-card__media,
 /* ── Gallery lightbox ── */
 #gallery-lightbox {
   z-index: 110;
+}
+
+/* Desktop main nav — aligned top-level links (plain + dropdown) */
+#site-main-nav .site-nav-link {
+  box-sizing: border-box;
+}
+
+#site-main-nav ul > li {
+  display: flex;
+  align-items: stretch;
+}
+
+#site-main-nav .group > .site-nav-link {
+  width: 100%;
+}
+
+/* News ticker — light strip under nav; readable text, nav still dominant above */
+#site-news-ticker {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+#site-news-ticker .site-news-ticker-label {
+  line-height: 1.2;
+}
+
+#site-news-ticker .site-news-ticker-track {
+  will-change: transform;
+}
+
+.site-news-ticker-scroll::before,
+.site-news-ticker-scroll::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 1.25rem;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.site-news-ticker-scroll::before {
+  left: 0;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.95) 30%, transparent);
+}
+
+.site-news-ticker-scroll::after {
+  right: 0;
+  background: linear-gradient(270deg, rgba(255, 255, 255, 0.95) 30%, transparent);
 }
 
 #gallery-lightbox.gallery-lightbox-open .gallery-lightbox-backdrop {

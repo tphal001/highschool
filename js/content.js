@@ -170,48 +170,38 @@ window.SITE_CONTENT = {
     "intro": "Events, circulars, and official notices—updated regularly.",
     "events": [
       {
-        "date": "2026-04-12",
-        "displayDate": "Apr 12, 2026",
         "title": "Annual day rehearsal schedule",
-        "summary": "Grade-wise timings and venue details are shared with parents."
+        "summary": "Grade-wise timings and venue details are shared with parents.",
+        "showInNav": true
       },
       {
-        "date": "2026-04-05",
-        "displayDate": "Apr 5, 2026",
         "title": "Inter-house sports meet",
-        "summary": "Track and field events; students report in house colours."
+        "summary": "Track and field events; students report in house colours.",
+        "showInNav": true
       },
       {
-        "date": "2026-03-20",
-        "displayDate": "Mar 20, 2026",
         "title": "Virangana — campus spotlight",
-        "summary": "Highlights and updates from the campus spotlight."
+        "summary": "Highlights and updates from the campus spotlight.",
+        "anchorId": "evt-virangana",
+        "showInNav": true
       }
     ],
     "circulars": [
       {
-        "date": "2026-03-28",
-        "displayDate": "Mar 28, 2026",
         "title": "Fee payment window — Term II",
         "summary": "Online and offline options; deadline April 15."
       },
       {
-        "date": "2026-03-20",
-        "displayDate": "Mar 20, 2026",
         "title": "Uniform vendor update",
         "summary": "Approved vendor list for summer uniforms."
       }
     ],
     "notices": [
       {
-        "date": "2026-03-30",
-        "displayDate": "Mar 30, 2026",
         "title": "Holiday — local festival",
         "summary": "School closed as per government notification."
       },
       {
-        "date": "2026-03-18",
-        "displayDate": "Mar 18, 2026",
         "title": "PTM — schedule now",
         "summary": "Book slots via the parent portal."
       }
@@ -221,35 +211,30 @@ window.SITE_CONTENT = {
         "anchorId": "res-ssc",
         "title": "SSC Result – March 2024",
         "summary": "Official result links and notices will be published here when available.",
-        "displayDate": "Mar 2024"
+        "showInNav": true
       },
       {
         "anchorId": "res-hsc",
         "title": "HSC Result – March 2024",
         "summary": "Official result links and notices will be published here when available.",
-        "displayDate": "Mar 2024"
+        "showInNav": true
       }
     ]
   },
   "quickAnnouncements": [
     {
-      "datetime": "2026-03-28",
-      "date": "Mar 28, 2026",
       "title": "Spring arts showcase — tickets",
       "excerpt": "Music, theater, and visual arts. Early-bird pricing ends April 5.",
+      "body": "Our annual Spring Arts Showcase brings together music, theater, dance, and visual arts from students across all grades.\n\nEarly-bird tickets are available at the school office until April 5. Evening shows run April 12–14 in the auditorium.",
       "href": "news.html?ctx=events",
       "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
     },
     {
-      "datetime": "2026-03-22",
-      "date": "Mar 22, 2026",
       "title": "Summer programmes registration",
       "excerpt": "STEM labs, creative writing, and sports camps.",
       "href": "news.html?ctx=events"
     },
     {
-      "datetime": "2026-03-15",
-      "date": "Mar 15, 2026",
       "title": "Parent–teacher conferences",
       "excerpt": "Book your slot through the portal.",
       "href": "news.html?ctx=events"
@@ -330,6 +315,7 @@ window.SITE_CONTENT = {
   },
   "admissions": {
     "intro": "We welcome families who share our commitment to learning and values. Follow the steps below to apply.",
+    "sessionLabel": "2025–26",
     "process": [
       "Submit the inquiry form online or visit the school office.",
       "Attend a campus tour and interaction with admissions.",

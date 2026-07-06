@@ -34,7 +34,7 @@
   }
 
   var CHEVRON =
-    '<svg class="h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>';
+    '<svg class="site-nav-chevron h-3.5 w-3.5 shrink-0 opacity-90" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"/></svg>';
 
   var SEARCH_ICON =
     '<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>';
@@ -98,29 +98,29 @@
       .slice(0, 3)
       .map(function (b) {
         var inner =
-          '<p class="text-[10px] font-bold uppercase tracking-wide text-slate-800 line-clamp-2 sm:text-xs">' +
+          '<p class="site-header-info-card__title">' +
           esc(b.title || "") +
           "</p>" +
-          '<p class="mt-1 text-[10px] leading-snug text-slate-600 line-clamp-3 sm:text-xs">' +
+          '<p class="site-header-info-card__text">' +
           esc(b.text || "") +
           "</p>";
         var wrap =
           b.href && (b.href + "").trim()
             ? '<a href="' +
               esc(b.href) +
-              '" class="site-glass site-card-3d relative block h-full border border-slate-200 p-2.5 shadow-sm transition-all duration-300 ease-out hover:-translate-y-0.5 hover:border-mes-accent/50 md:p-3">' +
-              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[10px] border-t-[10px] border-l-transparent border-t-amber-600"></span>' +
+              '" class="site-header-info-card site-glass site-card-3d relative block h-full border border-slate-200 shadow-sm transition-all duration-300 ease-out hover:border-mes-accent/50">' +
+              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-amber-600"></span>' +
               inner +
               "</a>"
-            : '<div class="site-glass relative h-full border border-slate-200 p-2.5 shadow-sm md:p-3">' +
-              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[10px] border-t-[10px] border-l-transparent border-t-amber-600"></span>' +
+            : '<div class="site-header-info-card site-glass relative h-full border border-slate-200 shadow-sm">' +
+              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-amber-600"></span>' +
               inner +
               "</div>";
-        return '<li class="min-w-0 flex-1 sm:max-w-[11rem] lg:max-w-[12.5rem]">' + wrap + "</li>";
+        return '<li class="site-header-info-boxes__item min-w-0 flex-1 sm:max-w-[10.5rem] lg:max-w-[11.5rem]">' + wrap + "</li>";
       })
       .join("");
     return (
-      '<ul class="mt-4 flex w-full flex-col gap-2 sm:mt-0 sm:max-w-md sm:flex-row sm:justify-end lg:max-w-xl">' +
+      '<ul class="site-header-info-boxes mt-4 flex w-full flex-col gap-2 sm:mt-0 sm:h-full sm:max-w-lg sm:flex-row sm:items-stretch sm:justify-end sm:self-stretch lg:max-w-xl">' +
       html +
       "</ul>"
     );
@@ -165,15 +165,20 @@
    * RLMSS-style nav: maroon bar, gold line under bar, white hover tab + chevron, white or gold dropdown.
    * item.variant === "gold" → yellow/gold panel (like "More" on reference site).
    */
+  var NAV_LINK_LAYOUT =
+    "site-nav-link inline-flex h-full min-h-[3.125rem] w-full items-center justify-start gap-1.5 px-3 py-0 text-xs font-bold leading-tight lg:px-3.5 lg:text-sm";
+  var NAV_LINK_HOVER =
+    "border-b-[3px] border-transparent text-white transition-all duration-200 ease-out hover:border-mes-goldLine hover:bg-white hover:text-mes-primary hover:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.2)]";
+  var NAV_DROPDOWN_HOVER =
+    "border-b-[3px] border-transparent bg-transparent text-white transition-all duration-200 ease-out group-hover:border-mes-goldLine group-hover:bg-white group-hover:text-mes-primary group-hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.2)] [&_.site-nav-chevron]:transition-transform [&_.site-nav-chevron]:duration-300 group-hover:[&_.site-nav-chevron]:rotate-180";
+  var NAV_DROPDOWN_HOVER_GOLD =
+    "border-b-[3px] border-transparent bg-transparent text-white transition-all duration-200 ease-out group-hover:border-mes-goldLine group-hover:bg-mes-accentLight group-hover:text-mes-primaryDark group-hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.25)] [&_.site-nav-chevron]:transition-transform [&_.site-nav-chevron]:duration-300 group-hover:[&_.site-nav-chevron]:rotate-180";
+
   function navItemHtml(item) {
     var children = item.children;
     var isGold = item.variant === "gold";
 
     if (children && children.length) {
-      var triggerHover = isGold
-        ? "border-b-[3px] border-transparent bg-transparent text-white transition-all duration-200 ease-out group-hover:border-mes-goldLine group-hover:bg-mes-accentLight group-hover:text-mes-primaryDark group-hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.25)] [&_svg]:transition-transform [&_svg]:duration-300 group-hover:[&_svg]:rotate-180"
-        : "border-b-[3px] border-transparent bg-transparent text-white transition-all duration-200 ease-out group-hover:border-mes-goldLine group-hover:bg-white group-hover:text-mes-primary group-hover:shadow-[0_8px_24px_-4px_rgba(0,0,0,0.2)] [&_svg]:transition-transform [&_svg]:duration-300 group-hover:[&_svg]:rotate-180";
-
       var panelWrap = isGold
         ? "pointer-events-none absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,20rem)] max-w-[min(100vw-2rem,28rem)] translate-y-2 overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-mes-accentLight py-2 opacity-0 shadow-2xl shadow-black/20 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100"
         : "pointer-events-none absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,18rem)] max-w-[min(100vw-2rem,28rem)] translate-y-2 overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-white py-2 opacity-0 shadow-2xl shadow-black/15 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100";
@@ -183,13 +188,17 @@
         : "mx-1 block rounded-md px-3 py-2.5 text-sm font-bold leading-snug text-mes-primary transition-all duration-200 ease-out hover:translate-x-1 hover:bg-mes-light hover:shadow-sm";
 
       return (
-        '<div class="group relative flex h-full min-h-[3rem] items-stretch">' +
+        '<div class="group relative flex h-full min-h-[3.125rem] items-stretch">' +
         '<a href="' +
         esc(item.href || "#") +
-        '" class="flex h-full items-center gap-1 px-2.5 py-3 text-xs font-bold md:px-3 md:text-sm ' +
-        triggerHover +
+        '" class="' +
+        NAV_LINK_LAYOUT +
+        " " +
+        (isGold ? NAV_DROPDOWN_HOVER_GOLD : NAV_DROPDOWN_HOVER) +
         '">' +
+        '<span class="whitespace-nowrap">' +
         esc(item.label) +
+        "</span>" +
         CHEVRON +
         "</a>" +
         '<div class="' +
@@ -215,11 +224,15 @@
     return (
       '<a href="' +
       esc(item.href || "#") +
-      '" class="flex h-full min-h-[3rem] items-center border-b-[3px] border-transparent px-2.5 py-3 text-xs font-bold text-white transition-all duration-200 ease-out hover:border-mes-goldLine hover:bg-white hover:text-mes-primary hover:shadow-[0_6px_20px_-4px_rgba(0,0,0,0.2)] md:px-3 md:text-sm' +
+      '" class="' +
+      NAV_LINK_LAYOUT +
+      " " +
+      NAV_LINK_HOVER +
       homeMark +
       '">' +
+      '<span class="whitespace-nowrap">' +
       esc(item.label) +
-      "</a>"
+      "</span></a>"
     );
   }
 
@@ -313,15 +326,15 @@
       .join("");
     var searchHref = (cfg.navSearchHref || "news.html").trim() || "news.html";
     return (
-      '<div class="site-nav-outer mx-auto flex max-w-7xl items-stretch justify-between gap-1 px-4 sm:px-8 lg:px-10">' +
+      '<div class="site-nav-outer mx-auto flex max-w-7xl min-h-[3.125rem] items-stretch justify-between gap-1 px-4 sm:px-8 lg:px-10">' +
       '<nav class="min-w-0 flex-1 overflow-visible" aria-label="Primary navigation">' +
-      '<ul class="flex min-w-0 list-none flex-wrap items-stretch justify-start gap-x-0 gap-y-1">' +
+      '<ul class="flex min-w-0 list-none flex-wrap items-stretch justify-start gap-x-0 gap-y-0">' +
       items +
       "</ul></nav>" +
-      '<div class="flex shrink-0 items-center border-l border-white/25 pl-1 sm:pl-2">' +
+      '<div class="flex shrink-0 items-stretch border-l border-white/25 pl-1 sm:pl-2">' +
       '<a href="' +
       esc(searchHref) +
-      '" class="flex items-center justify-center rounded-md p-2.5 text-white transition-all duration-200 hover:scale-110 hover:bg-white/15 hover:text-mes-goldLine hover:shadow-[0_4px_14px_rgba(0,0,0,0.2)]" aria-label="Search">' +
+      '" class="site-nav-link inline-flex min-h-[3.125rem] items-center justify-center rounded-md px-2.5 text-white transition-all duration-200 hover:bg-white/15 hover:text-mes-goldLine hover:shadow-[0_4px_14px_rgba(0,0,0,0.2)] lg:px-3" aria-label="Search">' +
       SEARCH_ICON +
       "</a></div></div>"
     );
@@ -357,17 +370,20 @@
       var schoolName =
         this.getAttribute("school-name") || cfg.schoolName || "School";
       var affiliation = this.getAttribute("header-affiliation") || cfg.headerAffiliation || "";
-      var tagline = this.getAttribute("tagline") || cfg.tagline || "";
-      var address = this.getAttribute("address") || cfg.address || "";
       var logoHref = this.getAttribute("logo-href") || cfg.logoHref || "#";
-      var links = parseJson(this.getAttribute("nav-links"), cfg.navLinks || []);
+      var links =
+        typeof window.resolveNavLinks === "function"
+          ? window.resolveNavLinks(cfg)
+          : parseJson(this.getAttribute("nav-links"), cfg.navLinks || []);
 
       var initials = (cfg.logoInitials || "S").trim() || "S";
       var logoImg = (cfg.logoImageUrl || "").trim();
       var logoBlock = logoImg
         ? '<img src="' +
           esc(logoImg) +
-          '" alt="" class="h-14 w-14 rounded-full border-2 border-slate-200 object-cover shadow-sm sm:h-[4.5rem] sm:w-[4.5rem]" />'
+          '" alt="' +
+          esc(schoolName) +
+          '" class="h-14 w-auto max-w-[5.5rem] shrink-0 object-contain object-left sm:h-16 sm:max-w-[6rem]" />'
         : '<div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-mes-primary/25 bg-gradient-to-br from-mes-light to-amber-50/50 text-base font-bold text-mes-primary shadow-inner sm:h-[4.5rem] sm:w-[4.5rem] sm:text-lg">' +
           esc(initials) +
           "</div>";
@@ -378,38 +394,34 @@
         '<header id="site-header" class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 shadow-sm transition-shadow duration-500 ease-premium">' +
         buildTopBar() +
         '<div class="relative bg-gradient-to-r from-mes-light/70 via-white to-white">' +
-        '<div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-start sm:justify-between sm:px-8 sm:py-5 lg:px-10">' +
+        '<div class="site-header-brand-row mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-stretch sm:justify-between sm:px-8 sm:py-4 lg:px-10">' +
         '<a href="' +
         esc(logoHref) +
-        '" class="flex min-w-0 flex-1 items-start gap-3 sm:gap-4">' +
+        '" class="site-header-brand-link flex min-w-0 flex-1 items-center gap-3 sm:gap-4">' +
         logoBlock +
-        '<div class="min-w-0 pt-0.5">' +
+        '<div class="site-header-identity min-w-0">' +
         (affiliation
-          ? '<p class="text-[11px] font-medium leading-snug text-slate-700 sm:text-xs">' +
-            esc(affiliation) +
-            "</p>"
+          ? '<p class="site-header-est">' + esc(affiliation) + "</p>"
           : "") +
-        '<p class="mt-1 font-display text-lg font-bold leading-tight text-mes-primary sm:text-xl md:text-2xl">' +
+        '<h1 class="site-header-name">' +
         esc(schoolName) +
-        "</p>" +
-        (tagline
-          ? '<p class="mt-1 text-[11px] text-slate-600 sm:text-sm">' + esc(tagline) + "</p>"
-          : "") +
-        (address
-          ? '<p class="mt-1 max-w-xl text-[11px] leading-relaxed text-slate-500 sm:text-sm">' +
-            esc(address) +
-            "</p>"
-          : "") +
+        "</h1>" +
+        (function () {
+          var tagline = (cfg.tagline || "").trim();
+          if (!tagline) return "";
+          return '<p class="site-header-motto">' + esc(tagline) + "</p>";
+        })() +
         "</div></a>" +
         infoBoxes +
         "</div></div>" +
-        '<div class="border-b-2 border-mes-goldLine bg-mes-nav overflow-visible">' +
+        '<div id="site-main-nav" class="border-b-2 border-mes-goldLine bg-mes-nav overflow-visible shadow-[0_2px_10px_rgba(92,21,21,0.18)]">' +
         '<div class="hidden lg:block">' +
         buildNavDesktop(links) +
         "</div>" +
         buildNavMobileBar() +
         buildNavMobilePanel(links) +
         "</div>" +
+        '<div id="site-news-ticker" class="hidden border-t border-slate-300/90 bg-white/90 px-3 sm:px-8 lg:px-10" aria-live="polite"></div>' +
         "</header>" +
         floatingSocialRail();
     }
@@ -528,8 +540,6 @@
 
   class AnnouncementCard extends HTMLElement {
     connectedCallback() {
-      var datetime = this.getAttribute("datetime") || "";
-      var dateDisplay = this.getAttribute("date") || "";
       var title = this.getAttribute("title") || "";
       var excerpt = this.getAttribute("excerpt") || "";
       var href = this.getAttribute("href") || "#";
@@ -552,13 +562,6 @@
         CARD_ARTICLE_CLASS +
         '">' +
         imageBlock +
-        '<div class="shrink-0 border-b border-slate-100 bg-slate-50/90 px-5 py-3 transition-colors duration-300 group-hover:bg-amber-50/60">' +
-        '<time datetime="' +
-        esc(datetime) +
-        '" class="text-[10px] font-semibold uppercase tracking-wider text-slate-500">' +
-        esc(dateDisplay) +
-        "</time>" +
-        "</div>" +
         '<div class="flex min-h-0 flex-1 flex-col p-5">' +
         '<h3 class="shrink-0 text-base font-bold text-mes-primary transition-colors duration-200 group-hover:text-mes-primaryDark group-hover:underline">' +
         esc(title) +

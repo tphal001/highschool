@@ -10,6 +10,53 @@ import {
   ensureFlashNews,
 } from "./parse-content.mjs";
 
+function todayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Sort-only timestamp; strips CMS date fields from public content. */
+function stampListForSort(items, previousItems) {
+  if (!Array.isArray(items)) return items;
+  var prevDates = {};
+  (previousItems || []).forEach(function (p) {
+    if (p && p.title && p.datetime) {
+      prevDates[String(p.title).trim()] = p.datetime;
+    }
+  });
+  var today = todayIsoDate();
+  return items
+    .map(function (item, idx) {
+      if (!item || typeof item !== "object") return item;
+      var out = Object.assign({}, item);
+      delete out.date;
+      delete out.displayDate;
+      var title = String(out.title || "").trim();
+      var datetime = String(out.datetime || "").trim();
+      if (!datetime) datetime = prevDates[title] || today;
+      out.datetime = datetime;
+      out._cmsIdx = idx;
+      return out;
+    })
+    .sort(function (a, b) {
+      var byDate = String(b.datetime || "").localeCompare(String(a.datetime || ""));
+      if (byDate !== 0) return byDate;
+      return (b._cmsIdx || 0) - (a._cmsIdx || 0);
+    })
+    .map(function (item) {
+      if (!item || typeof item !== "object") return item;
+      var out = Object.assign({}, item);
+      delete out._cmsIdx;
+      return out;
+    });
+}
+
+function normalizeImageField(val) {
+  if (val == null) return "";
+  if (typeof val === "object") return String(val.url || val.path || val.src || "").trim();
+  if (typeof val === "string") return val.trim();
+  return "";
+}
+
 function readJsonFile(fp) {
   return JSON.parse(fs.readFileSync(fp, "utf8"));
 }
@@ -105,7 +152,7 @@ function emitContentJs(obj) {
 }
 
 /** Decap list widgets often save objects; render expects string arrays. */
-function normalizeSiteForEmit(site) {
+function normalizeSiteForEmit(site, previous) {
   function mapStrList(arr, key) {
     if (!Array.isArray(arr)) return arr;
     return arr.map(function (x) {
@@ -126,6 +173,7 @@ function normalizeSiteForEmit(site) {
   }
   if (site.home && Array.isArray(site.home.quickNews)) {
     site.home.quickNews = mapStrList(site.home.quickNews, "text").filter(Boolean);
+    site.home.quickNews.reverse();
   }
   if (site.home && site.home.aboutPreview && Array.isArray(site.home.aboutPreview.paragraphs)) {
     site.home.aboutPreview.paragraphs = mapStrList(site.home.aboutPreview.paragraphs, "p");
@@ -153,16 +201,34 @@ function normalizeSiteForEmit(site) {
     }
   }
   if (Array.isArray(site.quickAnnouncements)) {
-    site.quickAnnouncements = site.quickAnnouncements.map(function (a) {
+    var prevAnn =
+      previous && Array.isArray(previous.quickAnnouncements) ? previous.quickAnnouncements : [];
+    site.quickAnnouncements = stampListForSort(site.quickAnnouncements, prevAnn).map(function (a) {
       if (!a || typeof a !== "object") return a;
-      var img = a.image;
-      if (img != null && typeof img === "object") {
-        img = img.url || img.path || img.src || "";
-      }
-      if (typeof img === "string") img = img.trim();
-      else img = "";
-      return Object.assign({}, a, { image: img || a.image || "" });
+      var img = normalizeImageField(a.image);
+      return Object.assign({}, a, { image: img || "" });
     });
+  }
+  if (site.news) {
+    var prevNews = (previous && previous.news) || {};
+    if (Array.isArray(site.news.events)) {
+      site.news.events = stampListForSort(site.news.events, prevNews.events).map(function (e) {
+        if (!e || typeof e !== "object") return e;
+        return Object.assign({}, e, { image: normalizeImageField(e.image) || e.image || "" });
+      });
+    }
+    if (Array.isArray(site.news.circulars)) {
+      site.news.circulars = stampListForSort(site.news.circulars, prevNews.circulars);
+    }
+    if (Array.isArray(site.news.notices)) {
+      site.news.notices = stampListForSort(site.news.notices, prevNews.notices);
+    }
+    if (Array.isArray(site.news.results)) {
+      site.news.results = stampListForSort(site.news.results, prevNews.results).map(function (r) {
+        if (!r || typeof r !== "object") return r;
+        return Object.assign({}, r, { image: normalizeImageField(r.image) || r.image || "" });
+      });
+    }
   }
   return site;
 }
@@ -206,5 +272,11 @@ function normalizeHighlights(site) {
 }
 
 const defaults = readDefaults();
-const merged = normalizeSiteForEmit(normalizeHighlights(mergeCms(defaults)));
+var previousContent = null;
+try {
+  if (fs.existsSync(paths.contentJs)) {
+    previousContent = parseSiteContentFromContentJs();
+  }
+} catch (e) {}
+const merged = normalizeSiteForEmit(normalizeHighlights(mergeCms(defaults)), previousContent);
 emitContentJs(merged);

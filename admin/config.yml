@@ -77,6 +77,13 @@ collections:
         file: content/cms/admissions.json
         fields:
           - { label: Intro, name: intro, widget: text }
+          - {
+              label: Current admission session (optional),
+              name: sessionLabel,
+              widget: string,
+              required: false,
+              hint: "e.g. 2026–27 — shown on the admissions page, not in the menu.",
+            }
           - label: Process steps
             name: process
             widget: list
@@ -94,14 +101,20 @@ collections:
             name: events
             widget: list
             summary: "{{fields.title}}"
+            hint: "Newest events appear first on the site after you publish."
             fields:
-              - { label: Date (YYYY-MM-DD), name: date, widget: string }
-              - { label: Display date, name: displayDate, widget: string }
               - { label: Title, name: title, widget: string }
               - { label: Summary, name: summary, widget: text }
               - { label: Photo (optional), name: image, widget: image, required: false }
               - {
-                  label: Anchor ID (for menu links, e.g. evt-silver),
+                  label: Show in main menu,
+                  name: showInNav,
+                  widget: boolean,
+                  default: true,
+                  hint: "Uncheck when this event should drop off the Events submenu.",
+                }
+              - {
+                  label: Anchor ID (optional — auto-generated from title if empty),
                   name: anchorId,
                   widget: string,
                   required: false,
@@ -115,17 +128,24 @@ collections:
             name: items
             widget: list
             summary: "{{fields.title}}"
+            hint: "Newest items appear first on the site after you publish."
             fields:
               - { label: Title, name: title, widget: string }
               - { label: Summary, name: summary, widget: text }
+              - { label: Photo (optional), name: image, widget: image, required: false }
               - {
-                  label: Anchor ID (for menu links, e.g. res-ssc),
+                  label: Anchor ID (optional — auto-generated from title if empty),
                   name: anchorId,
                   widget: string,
                   required: false,
                 }
-              - { label: Display date (optional), name: displayDate, widget: string, required: false }
-              - { label: Image (optional), name: image, widget: image, required: false }
+              - {
+                  label: Show in main menu,
+                  name: showInNav,
+                  widget: boolean,
+                  default: true,
+                  hint: "Uncheck when this result should drop off the Results submenu.",
+                }
 
       - label: Activity
         name: activity
@@ -239,16 +259,24 @@ collections:
             name: items
             widget: list
             summary: "{{fields.title}}"
+            hint: "Newest announcements appear first after you publish."
             fields:
-              - { label: Sort date (YYYY-MM-DD), name: datetime, widget: string }
-              - { label: Display date, name: date, widget: string }
               - { label: Title, name: title, widget: string }
-              - { label: Excerpt, name: excerpt, widget: text }
+              - { label: Short summary (home card), name: excerpt, widget: text }
+              - {
+                  label: Full announcement (optional),
+                  name: body,
+                  widget: text,
+                  required: false,
+                  hint: "Shown when visitors click Read more. Leave blank to use the short summary only.",
+                }
               - { label: Poster / image (optional), name: image, widget: image, required: false }
               - {
-                  label: Link,
+                  label: Optional link,
                   name: href,
                   widget: string,
+                  required: false,
+                  hint: "Google Form, payment page, or other URL — shown as a button inside the announcement popup. Leave blank or use the default for no extra link.",
                   default: "news.html?ctx=events",
                 }
 
@@ -259,4 +287,5 @@ collections:
           - label: Update lines (scroll on home hero)
             name: items
             widget: list
+            hint: "Newest lines appear first in the home ticker."
             field: { label: Update line, name: text, widget: string }

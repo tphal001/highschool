@@ -1,22 +1,20 @@
 {
   "events": [
     {
-      "date": "2026-04-12",
-      "displayDate": "Apr 12, 2026",
       "title": "Annual day rehearsal schedule",
-      "summary": "Grade-wise timings and venue details are shared with parents."
+      "summary": "Grade-wise timings and venue details are shared with parents.",
+      "showInNav": true
     },
     {
-      "date": "2026-04-05",
-      "displayDate": "Apr 5, 2026",
       "title": "Inter-house sports meet",
-      "summary": "Track and field events; students report in house colours."
+      "summary": "Track and field events; students report in house colours.",
+      "showInNav": true
     },
     {
-      "date": "2026-03-20",
-      "displayDate": "Mar 20, 2026",
       "title": "Virangana — campus spotlight",
-      "summary": "Highlights and updates from the campus spotlight."
+      "summary": "Highlights and updates from the campus spotlight.",
+      "anchorId": "evt-virangana",
+      "showInNav": true
     }
   ]
 }
