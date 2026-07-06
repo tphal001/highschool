@@ -1,23 +1,6 @@
 {
   "items": [
     {
-      "title": "Spring arts showcase — tickets",
-      "excerpt": "Music, theater, and visual arts. Early-bird pricing ends April 5.",
-      "body": "Our annual Spring Arts Showcase brings together music, theater, dance, and visual arts from students across all grades.\n\nEarly-bird tickets are available at the school office until April 5. Evening shows run April 12–14 in the auditorium.",
-      "href": "news.html?ctx=events",
-      "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
-    },
-    {
-      "title": "Summer programmes registration",
-      "excerpt": "STEM labs, creative writing, and sports camps.",
-      "href": "news.html?ctx=events"
-    },
-    {
-      "title": "Parent–teacher conferences",
-      "excerpt": "Book your slot through the portal.",
-      "href": "news.html?ctx=events"
-    },
-    {
       "href": "news.html?ctx=events",
       "title": "माजी विद्यार्थी संघ",
       "excerpt": "Scan the QR Code to join our WhatsApp Group.",
