@@ -2,15 +2,17 @@
   "items": [
     {
       "anchorId": "res-ssc",
-      "title": "SSC Result – March 2024",
-      "summary": "Official result links and notices will be published here when available.",
-      "showInNav": true
+      "title": "SSC Result – 2026",
+      "summary": "मेहनत केल्यानंतर सफलता मिळते,\nसफलता मिळाल्यावर आनंद मिळतो,\nमेहनत तर सगळेच करतात,\nपण सफलता तर त्यांनाच मिळते जे कठीण मेहनत करतात !",
+      "showInNav": true,
+      "image": "/images/img-20260601-wa0000.jpg"
     },
     {
       "anchorId": "res-hsc",
-      "title": "HSC Result – March 2024",
-      "summary": "Official result links and notices will be published here when available.",
-      "showInNav": true
+      "title": "HSC Result – 2026",
+      "summary": "Congratulations on your amazing HSC results! Your hard work has truly paid off - so proud of you all...!",
+      "showInNav": true,
+      "image": "/images/img-20260601-wa0001.jpg"
     }
   ]
 }
