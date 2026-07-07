@@ -51,11 +51,11 @@ window.SITE_CONFIG = {
   /** Optional card on the Contact page — website developer / maintainer. */
   websiteMaintainer: {
     enabled: true,
-    name: "Tushar Phalke",
+    name: "Tushar Shankar Phalke",
     classYear: "2008",
     role: "Website developer & maintainer",
     highlight: "Built and maintained by a proud alumnus — Class of 2008.",
-    photo: "/images/Tushar.jpg",
+    photo: "/images/tushar.jpg",
     phone: "+91 9404650064",
     linkedIn: "https://www.linkedin.com/in/tushar-phalke-59792767/",
     note: "For website updates, technical issues, or help with online content — not for admissions or general school enquiries.",

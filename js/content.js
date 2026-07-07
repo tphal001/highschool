@@ -55,7 +55,7 @@ window.SITE_CONTENT = {
           "name": "Tushar Phalke",
           "role": "Class of 2008 · Software Development Specialist",
           "initials": "TP",
-          "photo": "images/Tushar.jpg"
+          "photo": "images/tushar.jpg"
         }
       ],
       "stats": [

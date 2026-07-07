@@ -1558,8 +1558,7 @@
     el.innerHTML =
       '<div class="grid gap-12 lg:grid-cols-2">' +
       '<div data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Visit & reach us</h2>' +
-      '<p class="mt-4 text-lg text-slate-600">' +
+      '<p class="text-lg text-slate-600">' +
       esc(cfg.address) +
       "</p>" +
       '<p class="mt-4 text-slate-600"><strong>Hours:</strong> ' +
@@ -1615,7 +1614,7 @@
     var photoHtml = photo
       ? '<img src="' +
         esc(mediaSrc(photo)) +
-        '" alt="" class="h-20 w-20 shrink-0 rounded-full object-cover ring-2 ring-mes-primary/20 shadow-sm" loading="lazy"/>'
+        '" alt="" class="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-mes-primary/15 shadow-sm" loading="lazy"/>'
       : "";
     var classYear = (m.classYear || "").trim();
     var badge = classYear ? "Class of " + classYear + " · Alumni" : "Alumni";
@@ -1630,41 +1629,44 @@
         : phone;
     var linkedIn = (m.linkedIn || "").trim();
     return (
-      '<section class="mt-12 scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
-      '<div class="rounded-2xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-amber-50/40 p-6 shadow-sm sm:p-8">' +
-      '<p class="text-xs font-bold uppercase tracking-[0.16em] text-mes-accent">About this website</p>' +
-      '<h2 id="website-maintainer-heading" class="mt-2 font-display text-xl font-bold text-mes-primary sm:text-2xl">' +
+      '<section class="mt-8 max-w-xl scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
+      '<div class="rounded-xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-amber-50/40 p-4 shadow-sm sm:p-5">' +
+      '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-mes-primary sm:text-lg">' +
       esc(m.role || "Website support") +
       "</h2>" +
       (m.highlight
-        ? '<p class="mt-2 text-sm font-medium text-mes-primary/90 sm:text-base">' + esc(m.highlight) + "</p>"
+        ? '<p class="mt-1.5 text-xs font-medium leading-snug text-mes-primary/90 sm:text-sm">' +
+          esc(m.highlight) +
+          "</p>"
         : "") +
-      '<div class="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">' +
+      '<div class="mt-4 flex gap-4 sm:items-start">' +
       photoHtml +
       '<div class="min-w-0 flex-1">' +
-      '<p class="font-display text-lg font-bold text-mes-primary">' +
+      '<p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm font-bold text-mes-primary sm:text-base">' +
+      '<span class="font-display">' +
       esc(m.name || "") +
+      "</span>" +
+      (linkedIn
+        ? '<span class="font-normal text-slate-400" aria-hidden="true">|</span>' +
+          '<a href="' +
+          esc(linkedIn) +
+          '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-0.5 font-sans text-sm font-semibold text-mes-primary hover:text-mes-accent hover:underline"><span aria-hidden="true">🔗</span> LinkedIn</a>'
+        : "") +
       "</p>" +
-      '<p class="mt-1 inline-flex rounded-full border border-mes-accent/35 bg-mes-accent/10 px-3 py-0.5 text-xs font-semibold text-mes-primary">' +
+      '<p class="mt-1 inline-flex rounded-full border border-mes-accent/35 bg-mes-accent/10 px-2 py-0.5 text-[11px] font-semibold text-mes-primary">' +
       esc(badge) +
       "</p>" +
       (m.note
-        ? '<p class="mt-4 text-sm leading-relaxed text-slate-600">' + esc(m.note) + "</p>"
+        ? '<p class="mt-2 text-xs leading-relaxed text-slate-600">' + esc(m.note) + "</p>"
         : "") +
-      '<div class="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm">' +
       (phone
-        ? '<a href="tel:' +
+        ? '<p class="mt-2 text-xs"><a href="tel:' +
           esc(phoneTel) +
           '" class="font-semibold text-mes-primary hover:text-mes-accent hover:underline">' +
           esc(phoneDisplay) +
-          "</a>"
+          "</a></p>"
         : "") +
-      (linkedIn
-        ? '<a href="' +
-          esc(linkedIn) +
-          '" target="_blank" rel="noopener noreferrer" class="font-semibold text-mes-primary hover:text-mes-accent hover:underline">LinkedIn</a>'
-        : "") +
-      "</div></div></div></div></section>"
+      "</div></div></div></section>"
     );
   }
 
