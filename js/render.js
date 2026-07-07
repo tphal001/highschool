@@ -1579,14 +1579,16 @@
     var co = C.contact || {};
     el.innerHTML =
       '<div class="space-y-8">' +
-      '<div class="text-lg text-slate-600" data-reveal>' +
+      '<div class="text-lg leading-relaxed text-slate-600" data-reveal>' +
       '<p>' +
       esc(cfg.address) +
       "</p>" +
-      '<p class="mt-3"><strong>Hours:</strong> ' +
+      '<p class="mt-3 flex flex-wrap items-center gap-x-2 gap-y-2 text-base sm:gap-x-3 sm:text-lg">' +
+      '<span><span aria-hidden="true">🕘</span> <strong>Hours:</strong> ' +
       esc(co.hours) +
-      "</p>" +
-      '<p class="mt-3"><a class="font-semibold text-mes-primary hover:underline" href="tel:' +
+      "</span>" +
+      '<span class="hidden text-slate-300 sm:inline" aria-hidden="true">·</span>' +
+      '<a class="font-semibold text-mes-primary hover:underline" href="tel:' +
       esc(
         typeof window.contactPhoneTelHref === "function"
           ? window.contactPhoneTelHref(cfg.contactPhone)
@@ -1598,10 +1600,11 @@
           ? window.formatContactPhoneDisplay(cfg.contactPhone)
           : cfg.contactPhone
       ) +
-      "</a></p>" +
-      '<p class="mt-1"><a class="font-semibold text-mes-primary hover:underline" href="mailto:' +
+      "</a>" +
+      '<span class="hidden text-slate-300 sm:inline" aria-hidden="true">·</span>' +
+      '<a class="font-semibold text-mes-primary hover:underline" href="mailto:' +
       esc(cfg.contactEmail) +
-      '">' +
+      '"><span aria-hidden="true">✉️</span> ' +
       esc(cfg.contactEmail) +
       "</a></p>" +
       "</div>" +
