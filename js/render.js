@@ -1550,21 +1550,43 @@
       buildAdmissionsInquiryHtml(true);
   }
 
+  function buildContactFormHtml() {
+    if (!web3formsEnabled()) {
+      return '<div class="mt-4">' + web3FormsSetupNoticeHtml() + "</div>";
+    }
+    return (
+      '<form id="contact-form" class="contact-form mt-4 flex flex-1 flex-col gap-3" action="' +
+      esc(WEB3_FORMS_ACTION) +
+      '" method="POST">' +
+      web3FormHiddenFields("Dr. Gadagkar High School — Website contact") +
+      '<div><label class="block text-sm font-medium" for="cf-name">Name</label><input id="cf-name" name="name" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2"/></div>' +
+      '<div><label class="block text-sm font-medium" for="cf-email">Email</label><input id="cf-email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2"/></div>' +
+      '<div class="grid gap-3 sm:grid-cols-2">' +
+      '<div><label class="block text-sm font-medium" for="cf-phone">Phone</label><input id="cf-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2"/></div>' +
+      '<div><label class="block text-sm font-medium" for="cf-subject">Subject</label><input id="cf-subject" name="topic" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2"/></div>' +
+      "</div>" +
+      '<div class="flex min-h-0 flex-1 flex-col"><label class="block text-sm font-medium" for="cf-msg">Message</label><textarea id="cf-msg" name="message" rows="3" required class="mt-1 min-h-[4.5rem] w-full flex-1 rounded-lg border border-slate-300 px-4 py-2"></textarea></div>' +
+      '<div class="mt-auto pt-1"><button type="submit" class="rounded-full bg-mes-primary px-8 py-2.5 font-semibold text-white hover:bg-mes-primaryDark">Send message</button>' +
+      formDeliveryNoteHtml() +
+      "</div></form>"
+    );
+  }
+
   function renderContactPage() {
     var el = document.getElementById("page-contact");
     if (!el) return;
     var cfg = window.SITE_CONFIG || {};
     var co = C.contact || {};
     el.innerHTML =
-      '<div class="grid gap-12 lg:grid-cols-2">' +
-      '<div data-reveal>' +
-      '<p class="text-lg text-slate-600">' +
+      '<div class="space-y-8">' +
+      '<div class="text-lg text-slate-600" data-reveal>' +
+      '<p>' +
       esc(cfg.address) +
       "</p>" +
-      '<p class="mt-4 text-slate-600"><strong>Hours:</strong> ' +
+      '<p class="mt-3"><strong>Hours:</strong> ' +
       esc(co.hours) +
       "</p>" +
-      '<p class="mt-4"><a class="font-semibold text-mes-primary hover:underline" href="tel:' +
+      '<p class="mt-3"><a class="font-semibold text-mes-primary hover:underline" href="tel:' +
       esc(
         typeof window.contactPhoneTelHref === "function"
           ? window.contactPhoneTelHref(cfg.contactPhone)
@@ -1577,34 +1599,24 @@
           : cfg.contactPhone
       ) +
       "</a></p>" +
-      '<p class="mt-2"><a class="font-semibold text-mes-primary hover:underline" href="mailto:' +
+      '<p class="mt-1"><a class="font-semibold text-mes-primary hover:underline" href="mailto:' +
       esc(cfg.contactEmail) +
       '">' +
       esc(cfg.contactEmail) +
       "</a></p>" +
-      '<div class="mt-8 aspect-video overflow-hidden rounded-xl border border-slate-200">' +
-      '<iframe title="School location" class="h-full w-full border-0" loading="lazy" src="' +
+      "</div>" +
+      '<div class="grid gap-8 lg:grid-cols-2 lg:items-stretch">' +
+      '<div class="flex min-h-[18rem] flex-col sm:min-h-[20rem]" data-reveal>' +
+      '<div class="flex-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-100">' +
+      '<iframe title="School location" class="h-full min-h-[16rem] w-full border-0 sm:min-h-[18rem]" loading="lazy" src="' +
       esc(co.mapEmbed) +
       '"></iframe></div></div>' +
-      '<div data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Send a message</h2>' +
-      (web3formsEnabled()
-        ? '<form id="contact-form" class="contact-form mt-6 grid gap-4" action="' +
-          esc(WEB3_FORMS_ACTION) +
-          '" method="POST">' +
-          web3FormHiddenFields("Dr. Gadagkar High School — Website contact") +
-          '<div><label class="block text-sm font-medium" for="cf-name">Name</label><input id="cf-name" name="name" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div><label class="block text-sm font-medium" for="cf-email">Email</label><input id="cf-email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div><label class="block text-sm font-medium" for="cf-phone">Phone</label><input id="cf-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div><label class="block text-sm font-medium" for="cf-subject">Subject</label><input id="cf-subject" name="topic" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div><label class="block text-sm font-medium" for="cf-msg">Message</label><textarea id="cf-msg" name="message" rows="4" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white hover:bg-mes-primaryDark">Send message</button>' +
-          formDeliveryNoteHtml() +
-          "</div>" +
-          "</form>"
-        : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
+      '<div class="flex min-h-[18rem] flex-col sm:min-h-[20rem]" data-reveal>' +
+      '<h2 class="font-display text-xl font-bold text-mes-primary sm:text-2xl">Send a message</h2>' +
+      buildContactFormHtml() +
       "</div></div>" +
-      buildWebsiteMaintainerCardHtml(cfg);
+      buildWebsiteMaintainerCardHtml(cfg) +
+      "</div>";
   }
 
   function buildWebsiteMaintainerCardHtml(cfg) {
@@ -1629,7 +1641,7 @@
         : phone;
     var linkedIn = (m.linkedIn || "").trim();
     return (
-      '<section class="mt-8 max-w-xl scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
+      '<section class="mt-2 w-full scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
       '<div class="rounded-xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-amber-50/40 p-4 shadow-sm sm:p-5">' +
       '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-mes-primary sm:text-lg">' +
       esc(m.role || "Website support") +
