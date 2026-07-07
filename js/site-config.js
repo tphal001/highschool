@@ -48,6 +48,19 @@ window.SITE_CONFIG = {
   /** Inbox for Web3Forms submissions (must match the email used to create web3formsAccessKey). */
   formsInboxEmail: "ghschool63@gmail.com",
 
+  /** Optional card on the Contact page — website developer / maintainer. */
+  websiteMaintainer: {
+    enabled: true,
+    name: "Tushar Phalke",
+    classYear: "2008",
+    role: "Website developer & maintainer",
+    highlight: "Built and maintained by a proud alumnus — Class of 2008.",
+    photo: "/images/Tushar.jpg",
+    phone: "+91 9404650064",
+    linkedIn: "https://www.linkedin.com/in/tushar-phalke-59792767/",
+    note: "For website updates, technical issues, or help with online content — not for admissions or general school enquiries.",
+  },
+
   /** Top bar (optional). Empty array hides the social column. */
   socialLinks: [
     { label: "Facebook", href: "https://www.facebook.com/" },

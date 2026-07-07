@@ -1604,7 +1604,68 @@
           "</div>" +
           "</form>"
         : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
-      "</div></div>";
+      "</div></div>" +
+      buildWebsiteMaintainerCardHtml(cfg);
+  }
+
+  function buildWebsiteMaintainerCardHtml(cfg) {
+    var m = cfg && cfg.websiteMaintainer;
+    if (!m || m.enabled === false) return "";
+    var photo = (m.photo || "").trim();
+    var photoHtml = photo
+      ? '<img src="' +
+        esc(mediaSrc(photo)) +
+        '" alt="" class="h-20 w-20 shrink-0 rounded-full object-cover ring-2 ring-mes-primary/20 shadow-sm" loading="lazy"/>'
+      : "";
+    var classYear = (m.classYear || "").trim();
+    var badge = classYear ? "Class of " + classYear + " · Alumni" : "Alumni";
+    var phone = (m.phone || "").trim();
+    var phoneTel =
+      typeof window.contactPhoneTelHref === "function"
+        ? window.contactPhoneTelHref(phone)
+        : phone.replace(/\D/g, "");
+    var phoneDisplay =
+      typeof window.formatContactPhoneDisplay === "function"
+        ? window.formatContactPhoneDisplay(phone)
+        : phone;
+    var linkedIn = (m.linkedIn || "").trim();
+    return (
+      '<section class="mt-12 scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
+      '<div class="rounded-2xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-amber-50/40 p-6 shadow-sm sm:p-8">' +
+      '<p class="text-xs font-bold uppercase tracking-[0.16em] text-mes-accent">About this website</p>' +
+      '<h2 id="website-maintainer-heading" class="mt-2 font-display text-xl font-bold text-mes-primary sm:text-2xl">' +
+      esc(m.role || "Website support") +
+      "</h2>" +
+      (m.highlight
+        ? '<p class="mt-2 text-sm font-medium text-mes-primary/90 sm:text-base">' + esc(m.highlight) + "</p>"
+        : "") +
+      '<div class="mt-6 flex flex-col gap-6 sm:flex-row sm:items-start">' +
+      photoHtml +
+      '<div class="min-w-0 flex-1">' +
+      '<p class="font-display text-lg font-bold text-mes-primary">' +
+      esc(m.name || "") +
+      "</p>" +
+      '<p class="mt-1 inline-flex rounded-full border border-mes-accent/35 bg-mes-accent/10 px-3 py-0.5 text-xs font-semibold text-mes-primary">' +
+      esc(badge) +
+      "</p>" +
+      (m.note
+        ? '<p class="mt-4 text-sm leading-relaxed text-slate-600">' + esc(m.note) + "</p>"
+        : "") +
+      '<div class="mt-4 flex flex-wrap gap-x-4 gap-y-2 text-sm">' +
+      (phone
+        ? '<a href="tel:' +
+          esc(phoneTel) +
+          '" class="font-semibold text-mes-primary hover:text-mes-accent hover:underline">' +
+          esc(phoneDisplay) +
+          "</a>"
+        : "") +
+      (linkedIn
+        ? '<a href="' +
+          esc(linkedIn) +
+          '" target="_blank" rel="noopener noreferrer" class="font-semibold text-mes-primary hover:text-mes-accent hover:underline">LinkedIn</a>'
+        : "") +
+      "</div></div></div></div></section>"
+    );
   }
 
   function wrapSidebarPanel(content) {
