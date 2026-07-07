@@ -5,30 +5,6 @@
       "name": "Mrs. Sabale Madhavi Ravindra",
       "role": "पर्यवेक्षक",
       "photo": "/images/female.png"
-    },
-    {
-      "name": "Mrs. Yadav Ranjana Bhanudas",
-      "department": "M.A.B.Ed.",
-      "photo": "/images/female.png",
-      "role": "."
-    },
-    {
-      "name": "Mr. Kashid Shripad Abaso",
-      "department": "M.Sc.M.Ed.D.S.M.",
-      "photo": "/images/male.png",
-      "role": "."
-    },
-    {
-      "name": "Mrs. Phalke Vaishali Pradeep",
-      "department": "M.Sc.B.Ed.",
-      "photo": "/images/female.png",
-      "role": "."
-    },
-    {
-      "name": "Mrs. Phalke Sandhya Jitendra",
-      "department": "M.A.B.Ed.",
-      "photo": "/images/female.png",
-      "role": "."
     }
   ]
 }
