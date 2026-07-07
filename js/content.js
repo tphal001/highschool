@@ -221,7 +221,20 @@ window.SITE_CONTENT = {
         "summary": "Official result links and notices will be published here when available.",
         "showInNav": true
       }
-    ]
+    ],
+    "recognitions": {
+      "intro": "Honours and special mentions celebrating student achievement.",
+      "items": [
+        {
+          "name": "Priya Deshmukh",
+          "summary": "Gold medal — State Science Olympiad (Class X)."
+        },
+        {
+          "name": "Athletics relay team",
+          "summary": "District under-16 relay champions — March 2026."
+        }
+      ]
+    }
   },
   "quickAnnouncements": [
     {

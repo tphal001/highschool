@@ -1027,12 +1027,7 @@
       buildAboutMissionSection(a).replace('class="scroll-mt-52 grid', 'class="mt-16 scroll-mt-52 grid') +
       buildAboutBoardSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
       buildAboutPrincipalSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
-      buildAboutStaffSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
-      '<section id="achievers" class="mt-16 scroll-mt-52" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Achievers</h2>' +
-      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
-      "Student achievements and honours can be listed here when ready." +
-      "</p></section>";
+      buildAboutStaffSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"');
   }
 
   function renderAcademicsPage() {
@@ -1082,6 +1077,62 @@
     if (!el || !C.news) return;
     var n = C.news;
     var ctx = getPageCtx("events");
+
+    function recognitionItemTitle(item) {
+      if (!item) return "";
+      return String(item.name || item.title || "").trim();
+    }
+
+    function buildRecognitionsSectionHtml(recognitionData) {
+      var data = recognitionData || {};
+      var items = sortCmsList(data.items || []);
+      var cardClass =
+        "result-card site-card-3d rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/45 hover:shadow-lg hover:shadow-mes-primary/10";
+      var intro = (data.intro || "").trim();
+      var introHtml = intro
+        ? '<p class="mb-6 text-lg leading-relaxed text-slate-600" data-reveal>' + esc(intro) + "</p>"
+        : "";
+      if (!items.length) {
+        return (
+          '<div id="recognitions" class="scroll-mt-52"></div>' +
+          introHtml +
+          '<p class="text-slate-600" data-reveal>No recognitions listed yet.</p>'
+        );
+      }
+      return (
+        '<div id="recognitions" class="scroll-mt-52"></div>' +
+        introHtml +
+        '<div class="mt-2 grid gap-6 sm:grid-cols-2" data-reveal-stagger>' +
+        items
+          .map(function (item) {
+            var title = recognitionItemTitle(item);
+            var imgSrc = item.image ? mediaSrc(item.image) : "";
+            var imgHtml = imgSrc
+              ? buildLightboxImageButton(
+                  imgSrc,
+                  title,
+                  "mt-3 max-h-40 w-full rounded-lg border border-slate-200 object-cover",
+                  "mt-3 block w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2"
+                )
+              : "";
+            return (
+              '<div class="' +
+              cardClass +
+              '" data-reveal>' +
+              '<strong class="font-display text-lg text-mes-primary">' +
+              esc(title || "Recognition") +
+              "</strong>" +
+              '<p class="mt-2">' +
+              esc(item.summary || "") +
+              "</p>" +
+              imgHtml +
+              "</div>"
+            );
+          })
+          .join("") +
+        "</div>"
+      );
+    }
 
     function eventImageHtml(x) {
       var src = x && x.image ? mediaSrc(x.image) : "";
@@ -1168,6 +1219,12 @@
       var results = sortCmsList(n.results || []);
       var resultCardClass =
         "result-card site-card-3d scroll-mt-52 rounded-xl border border-slate-200 bg-white p-5 text-sm text-slate-700 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/45 hover:shadow-lg hover:shadow-mes-primary/10";
+
+      if (sub === "recognitions") {
+        setInnerPageHeader("news", { title: "Recognitions", hideLead: true });
+        el.innerHTML = buildRecognitionsSectionHtml(n.recognitions);
+        return;
+      }
 
       if (isSectionOnlySub("news", sub, ctx)) {
         var singleResult = findResultBySub(sub);
@@ -1744,9 +1801,17 @@
     return [];
   }
 
+  function sidebarNavHref(href) {
+    if (typeof window.stripHashAppendSubParam === "function") {
+      return window.stripHashAppendSubParam(href);
+    }
+    return href || "";
+  }
+
   function linkMatchesCurrentLocation(href) {
+    var normalized = sidebarNavHref(href);
     var a = document.createElement("a");
-    a.href = href;
+    a.href = normalized;
     var curPath = (window.location.pathname.split("/").pop() || "").toLowerCase();
     var linkPath = (a.pathname.split("/").pop() || "").toLowerCase();
     if (curPath !== linkPath) return false;
@@ -1761,18 +1826,12 @@
     } else if (curCtx !== linkCtx) {
       return false;
     }
-    var curSub = (curParams.get("sub") || "").toLowerCase();
-    var linkSubFromQuery = (linkParams.get("sub") || "").toLowerCase();
-    var linkHashRaw = (a.hash || "").replace(/^#/, "").toLowerCase();
-    var curHashRaw = (window.location.hash || "").replace(/^#/, "").toLowerCase();
-    var linkTarget = linkHashRaw || linkSubFromQuery;
-    if (linkTarget) {
-      if (curHashRaw && curHashRaw === linkTarget) return true;
-      if (curSub && curSub === linkTarget) return true;
-      return false;
+    var curSub = getPageSub("");
+    var linkSub = (linkParams.get("sub") || "").toLowerCase();
+    if (linkSub) {
+      return curSub === linkSub;
     }
-    /** Link has no section anchor — current only when URL has no #fragment and no sub. */
-    if (!curHashRaw && !curSub) return true;
+    if (!curSub) return true;
     return false;
   }
 
@@ -1797,9 +1856,10 @@
           '<ul class="site-sidebar-related-links list-none space-y-3 pl-0">' +
           links
             .map(function (l) {
+              var href = sidebarNavHref(l.href);
               return (
                 '<li class="min-w-0"><a href="' +
-                esc(l.href) +
+                esc(href) +
                 '" class="site-sidebar-link block break-words text-sm font-semibold leading-snug text-mes-primary transition hover:text-mes-accent hover:underline">' +
                 esc(l.label) +
                 "</a></li>"

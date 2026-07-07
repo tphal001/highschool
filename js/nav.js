@@ -70,7 +70,9 @@
       if (!item) return item;
       var copy = Object.assign({}, item);
       if (item.dynamicChildren === "events" || item.dynamicChildren === "results") {
-        copy.children = resolveDynamicNavChildren(item.dynamicChildren, C);
+        var dynamic = resolveDynamicNavChildren(item.dynamicChildren, C);
+        var staticKids = item.children ? item.children.slice() : [];
+        copy.children = staticKids.concat(dynamic);
       } else if (item.children) {
         copy.children = item.children.slice();
       }

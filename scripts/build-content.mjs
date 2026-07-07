@@ -103,6 +103,9 @@ function applyCmsFile(site, filename, data) {
     case "results.json":
       if (data.items) site.news.results = data.items;
       break;
+    case "recognitions.json":
+      site.news.recognitions = data;
+      break;
     case "activity.json":
       site.activity = data;
       break;
@@ -238,6 +241,22 @@ function normalizeSiteForEmit(site, previous) {
       site.news.results = stampListForSort(site.news.results, prevNews.results).map(function (r) {
         if (!r || typeof r !== "object") return r;
         return Object.assign({}, r, { image: normalizeImageField(r.image) || r.image || "" });
+      });
+    }
+    if (site.news.recognitions && Array.isArray(site.news.recognitions.items)) {
+      var prevRecItems =
+        (prevNews.recognitions && prevNews.recognitions.items) || [];
+      site.news.recognitions.items = stampListForSort(
+        site.news.recognitions.items.map(function (it) {
+          return Object.assign({}, it, { title: it.name || it.title || "recognition" });
+        }),
+        prevRecItems.map(function (it) {
+          return Object.assign({}, it, { title: it.name || it.title || "recognition" });
+        }),
+        "title"
+      ).map(function (it) {
+        if (!it || typeof it !== "object") return it;
+        return Object.assign({}, it, { image: normalizeImageField(it.image) || it.image || "" });
       });
     }
   }

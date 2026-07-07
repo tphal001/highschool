@@ -125,6 +125,7 @@ window.SITE_CONFIG = {
       id: "results",
       label: "Results",
       href: "news.html?ctx=results",
+      children: [{ label: "Recognitions", href: "news.html?ctx=results#recognitions" }],
       dynamicChildren: "results",
     },
     {

@@ -44,6 +44,10 @@ const CMS_SEEDS = [
     data: (d) => ({ items: d.news.results || [] }),
   },
   {
+    file: "recognitions.json",
+    data: (d) => d.news.recognitions || { intro: "", items: [] },
+  },
+  {
     file: "activity.json",
     data: (d) => d.activity || { intro: "", items: [] },
   },

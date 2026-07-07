@@ -139,8 +139,8 @@
   }
 
   /**
-   * Main nav only: avoid #fragment (no jump). Put the anchor id in ?sub= so Related information
-   * can hide the active submenu; sidebar links still use full # URLs.
+   * Inner-page / sidebar links: put #fragment in ?sub= so each click reloads the section view
+   * (same behaviour as the main nav submenus).
    */
   function stripHashAppendSubParam(href) {
     var h = (href || "").trim();
@@ -596,4 +596,6 @@
   customElements.define("site-navbar", SiteNavbar);
   customElements.define("site-footer", SiteFooter);
   customElements.define("announcement-card", AnnouncementCard);
+
+  window.stripHashAppendSubParam = stripHashAppendSubParam;
 })();

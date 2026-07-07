@@ -147,6 +147,27 @@ collections:
                   hint: "Uncheck when this result should drop off the Results submenu.",
                 }
 
+      - label: Recognitions
+        name: recognitions
+        file: content/cms/recognitions.json
+        fields:
+          - {
+              label: Intro (optional),
+              name: intro,
+              widget: text,
+              required: false,
+              hint: "Short line shown at the top of the Recognitions section.",
+            }
+          - label: Recognised candidates
+            name: items
+            widget: list
+            summary: "{{fields.name}}"
+            hint: "Newest recognitions appear first after you publish."
+            fields:
+              - { label: Candidate name, name: name, widget: string }
+              - { label: Summary, name: summary, widget: text }
+              - { label: Photo (optional), name: image, widget: image, required: false }
+
       - label: Circulars
         name: circulars
         file: content/cms/circulars.json
