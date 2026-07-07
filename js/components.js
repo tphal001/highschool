@@ -39,6 +39,18 @@
   var SEARCH_ICON =
     '<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>';
 
+  function phoneDisplay(phone) {
+    return typeof window.formatContactPhoneDisplay === "function"
+      ? window.formatContactPhoneDisplay(phone)
+      : phone;
+  }
+
+  function phoneTel(phone) {
+    return typeof window.contactPhoneTelHref === "function"
+      ? window.contactPhoneTelHref(phone)
+      : String(phone || "").replace(/\s/g, "");
+  }
+
   function buildTopBar() {
     var phone = cfg.contactPhone || "";
     var email = cfg.contactEmail || "";
@@ -69,9 +81,9 @@
       '<div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">' +
       (phone
         ? '<a href="tel:' +
-          esc(phone.replace(/\s/g, "")) +
+          esc(phoneTel(phone)) +
           '" class="truncate font-medium hover:text-mes-accentLight">' +
-          esc(phone) +
+          esc(phoneDisplay(phone)) +
           "</a>"
         : "") +
       (phone && email ? '<span class="text-white/25" aria-hidden="true">|</span>' : "") +
@@ -477,9 +489,9 @@
         (address ? '<p class="mt-2 text-xs leading-relaxed text-slate-600">' + esc(address) + "</p>" : "") +
         (phone
           ? '<p class="mt-1.5 text-xs"><a href="tel:' +
-            esc(phone.replace(/\s/g, "")) +
+            esc(phoneTel(phone)) +
             '" class="text-mes-accent hover:underline">' +
-            esc(phone) +
+            esc(phoneDisplay(phone)) +
             "</a></p>"
           : "") +
         (email

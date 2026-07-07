@@ -453,7 +453,7 @@
       })
       .join("");
     el.innerHTML =
-      '<div class="mb-4 sm:mb-5" data-reveal>' +
+      '<div class="mb-3 sm:mb-4" data-reveal>' +
       '<span class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-mes-primary">' +
       '<span class="text-base leading-none text-mes-accent" aria-hidden="true">★</span> Highlights' +
       "</span></div>" +
@@ -698,7 +698,7 @@
         esc(al.sectionSubtitle) +
         "</p>" +
         "</div>" +
-        '<div class="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-12" data-reveal-stagger>' +
+        '<div class="mt-6 grid gap-8 lg:grid-cols-2 lg:gap-10" data-reveal-stagger>' +
         '<div class="space-y-8">' +
         storiesHtml +
         "</div>" +
@@ -1509,9 +1509,17 @@
       esc(co.hours) +
       "</p>" +
       '<p class="mt-4"><a class="font-semibold text-mes-primary hover:underline" href="tel:' +
-      esc((cfg.contactPhone || "").replace(/\s/g, "")) +
+      esc(
+        typeof window.contactPhoneTelHref === "function"
+          ? window.contactPhoneTelHref(cfg.contactPhone)
+          : (cfg.contactPhone || "").replace(/\s/g, "")
+      ) +
       '">' +
-      esc(cfg.contactPhone) +
+      esc(
+        typeof window.formatContactPhoneDisplay === "function"
+          ? window.formatContactPhoneDisplay(cfg.contactPhone)
+          : cfg.contactPhone
+      ) +
       "</a></p>" +
       '<p class="mt-2"><a class="font-semibold text-mes-primary hover:underline" href="mailto:' +
       esc(cfg.contactEmail) +

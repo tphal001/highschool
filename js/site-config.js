@@ -190,3 +190,15 @@ window.SITE_CONFIG = {
   footerIntro:
     "The school has served generations of learners with strong academics, caring staff, and a safe, inspiring campus.",
 };
+
+/** Display phone with emoji; tel: links use digits only. */
+window.formatContactPhoneDisplay = function (phone) {
+  phone = String(phone || "").trim();
+  if (!phone) return "";
+  if (phone.indexOf("\u{1F4DE}") !== -1 || phone.indexOf("📞") !== -1) return phone;
+  return "\u{1F4DE} " + phone;
+};
+
+window.contactPhoneTelHref = function (phone) {
+  return String(phone || "").replace(/\D/g, "");
+};

@@ -433,10 +433,11 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 }
 
 .site-logo-mark__img {
-  height: 112%;
-  width: 112%;
-  object-fit: cover;
-  mix-blend-mode: multiply;
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  object-position: center;
+  padding: 0.2rem;
 }
 
 @media (min-width: 640px) {
