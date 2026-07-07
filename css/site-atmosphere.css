@@ -412,6 +412,40 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   align-self: stretch;
 }
 
+/* Circular logo — blends PNG white box into header gradient */
+.site-logo-mark {
+  display: flex;
+  height: 3.5rem;
+  width: 3.5rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 9999px;
+  background: linear-gradient(145deg, rgba(248, 243, 234, 0.98), rgba(255, 255, 255, 0.92));
+  box-shadow: inset 0 0 0 1px rgba(127, 29, 29, 0.1);
+}
+
+.site-logo-mark--initials {
+  border: 2px solid rgba(127, 29, 29, 0.18);
+  background: linear-gradient(145deg, rgba(248, 243, 234, 0.98), rgba(255, 251, 245, 0.95));
+  box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.8);
+}
+
+.site-logo-mark__img {
+  height: 112%;
+  width: 112%;
+  object-fit: cover;
+  mix-blend-mode: multiply;
+}
+
+@media (min-width: 640px) {
+  .site-logo-mark {
+    height: 4rem;
+    width: 4rem;
+  }
+}
+
 .site-header-info-boxes {
   align-self: stretch;
 }

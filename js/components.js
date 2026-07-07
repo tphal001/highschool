@@ -379,12 +379,14 @@
       var initials = (cfg.logoInitials || "S").trim() || "S";
       var logoImg = (cfg.logoImageUrl || "").trim();
       var logoBlock = logoImg
-        ? '<img src="' +
+        ? '<span class="site-logo-mark">' +
+          '<img src="' +
           esc(logoImg) +
           '" alt="' +
           esc(schoolName) +
-          '" class="h-14 w-auto max-w-[5.5rem] shrink-0 object-contain object-left sm:h-16 sm:max-w-[6rem]" />'
-        : '<div class="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-mes-primary/25 bg-gradient-to-br from-mes-light to-amber-50/50 text-base font-bold text-mes-primary shadow-inner sm:h-[4.5rem] sm:w-[4.5rem] sm:text-lg">' +
+          '" class="site-logo-mark__img" />' +
+          "</span>"
+        : '<div class="site-logo-mark site-logo-mark--initials flex items-center justify-center text-base font-bold text-mes-primary sm:text-lg">' +
           esc(initials) +
           "</div>";
 

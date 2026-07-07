@@ -203,17 +203,34 @@
     return true;
   }
 
+  function formsInboxEmail() {
+    var cfg = window.SITE_CONFIG || {};
+    return (cfg.formsInboxEmail || cfg.contactEmail || "").trim();
+  }
+
+  function formDeliveryNoteHtml() {
+    var mail = formsInboxEmail();
+    if (!mail) return "";
+    return (
+      '<span class="ml-2 text-sm text-slate-500">Delivered to ' + esc(mail) + ".</span>"
+    );
+  }
+
   /** Hidden fields for Web3Forms (replaces FormSubmit.co — that service often errors or is unreachable). */
   function web3FormHiddenFields(subjectLine) {
     if (!web3formsEnabled()) return "";
     var cfg = window.SITE_CONFIG || {};
     var next = thankYouRedirectUrl();
+    var school = (cfg.schoolName || "Dr. Gadagkar High School").trim();
     var out =
       '<input type="hidden" name="access_key" value="' +
       esc((cfg.web3formsAccessKey || "").trim()) +
       '" />' +
       '<input type="hidden" name="subject" value="' +
       esc(subjectLine) +
+      '" />' +
+      '<input type="hidden" name="from_name" value="' +
+      esc(school) +
       '" />';
     if (next) {
       out += '<input type="hidden" name="redirect" value="' + esc(next) + '" />';
@@ -231,7 +248,9 @@
       "This site uses <strong>Web3Forms</strong> to deliver messages to your inbox." +
       "</p>" +
       '<ol class="mt-4 list-decimal space-y-2 pl-5 text-sm">' +
-      '<li>Open <a href="https://web3forms.com" class="font-semibold underline" target="_blank" rel="noopener">web3forms.com</a> and create a free access key for your inbox.</li>' +
+      '<li>Open <a href="https://web3forms.com" class="font-semibold underline" target="_blank" rel="noopener">web3forms.com</a> and create a free access key using <strong>' +
+      esc(formsInboxEmail() || "your school inbox") +
+      "</strong>.</li>" +
       "<li>Paste the access key into the site’s Web3Forms setting (your web administrator can update this in the site configuration).</li>" +
       "<li>Push to GitHub and redeploy on Vercel.</li>" +
       "</ol>" +
@@ -434,7 +453,7 @@
       })
       .join("");
     el.innerHTML =
-      '<div class="mb-8 sm:mb-10" data-reveal>' +
+      '<div class="mb-4 sm:mb-5" data-reveal>' +
       '<span class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-mes-primary">' +
       '<span class="text-base leading-none text-mes-accent" aria-hidden="true">★</span> Highlights' +
       "</span></div>" +
@@ -675,11 +694,11 @@
         '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-1/2 after:h-[3px] after:w-24 after:-translate-x-1/2 after:bg-mes-red">' +
         esc(al.sectionTitle) +
         "</h2>" +
-        '<p class="mt-5 text-lg leading-relaxed text-slate-600">' +
+        '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
         esc(al.sectionSubtitle) +
         "</p>" +
         "</div>" +
-        '<div class="mt-14 grid gap-10 lg:grid-cols-2 lg:gap-16" data-reveal-stagger>' +
+        '<div class="mt-8 grid gap-10 lg:grid-cols-2 lg:gap-12" data-reveal-stagger>' +
         '<div class="space-y-8">' +
         storiesHtml +
         "</div>" +
@@ -836,7 +855,9 @@
           '<div><label class="block text-sm font-medium" for="in-phone">Phone</label><input id="in-phone" name="phone" type="tel" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-email">Email</label><input id="in-email" name="email" type="email" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-msg">Message</label><textarea id="in-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-accent px-8 py-3 font-semibold text-mes-primaryDark hover:bg-mes-accentLight">Submit inquiry</button></div>' +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-accent px-8 py-3 font-semibold text-mes-primaryDark hover:bg-mes-accentLight">Submit inquiry</button>' +
+          formDeliveryNoteHtml() +
+          "</div>" +
           "</form>"
         : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
       "</section>"
@@ -1420,8 +1441,10 @@
           '<div><label class="block text-sm font-medium text-slate-700" for="alumni-email">Email</label><input id="alumni-email" name="email" type="email" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div><label class="block text-sm font-medium text-slate-700" for="alumni-phone">Phone</label><input id="alumni-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-profession">Profession / organisation</label><input id="alumni-profession" name="profession" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
-          '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-msg">Message</label><textarea id="alumni-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white transition hover:bg-mes-primaryDark">Submit registration</button> <span class="ml-2 text-sm text-slate-500">Sent via Web3Forms to your configured inbox.</span></div>' +
+          '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-msg">Message / Success Story</label><textarea id="alumni-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white transition hover:bg-mes-primaryDark">Submit registration</button>' +
+          formDeliveryNoteHtml() +
+          "</div>" +
           "</form>"
         : web3FormsSetupNoticeHtml()) +
       "</section></div>";
@@ -1511,7 +1534,9 @@
           '<div><label class="block text-sm font-medium" for="cf-phone">Phone</label><input id="cf-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div><label class="block text-sm font-medium" for="cf-subject">Subject</label><input id="cf-subject" name="topic" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div><label class="block text-sm font-medium" for="cf-msg">Message</label><textarea id="cf-msg" name="message" rows="4" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white hover:bg-mes-primaryDark">Send message</button></div>' +
+          '<div><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white hover:bg-mes-primaryDark">Send message</button>' +
+          formDeliveryNoteHtml() +
+          "</div>" +
           "</form>"
         : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
       "</div></div>";
