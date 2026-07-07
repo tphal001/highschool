@@ -1,4 +1,10 @@
 {
   "intro": "Faculty and staff listings can be added when ready.",
-  "members": []
+  "members": [
+    {
+      "name": "Mrs. Sabale Madhavi Ravindra",
+      "role": "पर्यवेक्षक",
+      "photo": "/images/female.png"
+    }
+  ]
 }
