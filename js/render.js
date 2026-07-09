@@ -876,8 +876,8 @@
           var photoHtml = photo
             ? '<img src="' +
               esc(mediaSrc(photo)) +
-              '" alt="" class="h-16 w-16 shrink-0 rounded-full object-cover" loading="lazy"/>'
-            : '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-mes-primary/10 text-lg font-bold text-mes-primary">' +
+              '" alt="" class="h-20 w-20 shrink-0 rounded-lg border border-slate-200 bg-slate-50 object-contain" loading="lazy"/>'
+            : '<div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-mes-primary/10 text-lg font-bold text-mes-primary">' +
               esc((m.name || "?").charAt(0)) +
               "</div>";
           return (
