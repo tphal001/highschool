@@ -2,16 +2,16 @@
   "events": [
     {
       "title": "Annual day rehearsal schedule",
-      "summary": "Grade-wise timings and venue details are shared with parents.",
+      "summary": "Grade-wise timings & venue details are shared with parents.",
       "showInNav": true
     },
     {
       "title": "Inter-house sports meet",
-      "summary": "Track and field events; students report in house colours.",
+      "summary": "Track & field events; students report in house colours.",
       "showInNav": true
     },
     {
-      "title": "Virangana — campus spotlight",
+      "title": "Virangana - campus spotlight",
       "summary": "Highlights and updates from the campus spotlight.",
       "anchorId": "evt-virangana",
       "showInNav": true
@@ -19,7 +19,7 @@
     {
       "showInNav": true,
       "title": "माजी विद्यार्थी मेळावा",
-      "summary": "15th August 2026 - आपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल.",
+      "summary": "15th August, 2026 - आपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल.",
       "image": "/images/1000876099.jpg"
     }
   ]
