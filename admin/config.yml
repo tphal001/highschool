@@ -40,6 +40,7 @@ collections:
             name: members
             widget: list
             summary: "{{fields.name}}"
+            hint: "Members appear on the site in the same order as listed here (new entries at the end)."
             fields:
               - { label: Name, name: name, widget: string }
               - { label: Role / designation, name: role, widget: string }
@@ -66,6 +67,7 @@ collections:
             name: members
             widget: list
             summary: "{{fields.name}}"
+            hint: "Staff appear on the site in the same order as listed here (new entries at the end)."
             fields:
               - { label: Name, name: name, widget: string }
               - { label: Role, name: role, widget: string }

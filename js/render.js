@@ -866,7 +866,7 @@
 
   function renderMemberCards(members, opts) {
     opts = opts || {};
-    members = sortCmsList(members || []);
+    members = members || [];
     if (!members || !members.length) return "";
     return (
       '<ul class="mt-6 grid gap-4 sm:grid-cols-2">' +
@@ -909,7 +909,7 @@
       '<h2 class="font-display text-3xl font-bold text-mes-primary">Our history</h2>' +
       '<p class="mt-2 text-lg text-mes-accent">Since <strong>' +
       esc(String(a.history.sinceYear)) +
-      "</strong> — more than 50 years of excellence.</p>" +
+      "</strong> - more than 60 years of excellence.</p>" +
       '<div class="mt-8 space-y-4 text-lg leading-relaxed text-slate-700">' +
       a.history.paragraphs
         .map(function (p) {

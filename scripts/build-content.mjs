@@ -260,25 +260,6 @@ function normalizeSiteForEmit(site, previous) {
       });
     }
   }
-  var prevAbout = (previous && previous.about) || {};
-  if (site.about && site.about.board && Array.isArray(site.about.board.members)) {
-    site.about.board.members = stampListForSort(
-      site.about.board.members.map(function (m) {
-        return Object.assign({}, m, { title: m.name || "" });
-      }),
-      (prevAbout.board && prevAbout.board.members) || [],
-      "title"
-    );
-  }
-  if (site.about && site.about.staff && Array.isArray(site.about.staff.members)) {
-    site.about.staff.members = stampListForSort(
-      site.about.staff.members.map(function (m) {
-        return Object.assign({}, m, { title: m.name || "" });
-      }),
-      (prevAbout.staff && prevAbout.staff.members) || [],
-      "title"
-    );
-  }
   if (site.activity && Array.isArray(site.activity.items)) {
     var prevAct = (previous && previous.activity && previous.activity.items) || [];
     site.activity.items = stampListForSort(site.activity.items, prevAct);

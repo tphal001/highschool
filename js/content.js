@@ -10,7 +10,7 @@ window.SITE_CONTENT = {
         "images/3.jpg"
       ],
       "imageAlt": "Campus and school life",
-      "badge": "50+ years of excellence · Est. 1976",
+      "badge": "60+ years of excellence · Est. 1963",
       "headline": "Where curiosity meets purpose.",
       "headlineAccent": "purpose",
       "subtext": "Dr. Gadagkar High School, Satararoad nurtures scholarship, character, and leadership for every learner.",
@@ -30,9 +30,9 @@ window.SITE_CONTENT = {
       "footerLine": "Dr. Gadagkar High School"
     },
     "legacy": {
-      "badge": "50+ Years",
-      "title": "50+ Years of Excellence",
-      "line": "A legacy of learning, leadership, and community—built together since 1976.",
+      "badge": "60+ Years",
+      "title": "60+ Years of Excellence",
+      "line": "A legacy of learning, leadership, and community—built together since 1963.",
       "linkLabel": "Read our history →",
       "linkHref": "about.html#history"
     },
@@ -40,7 +40,7 @@ window.SITE_CONTENT = {
       "title": "About our school",
       "subtitle": "Rooted in tradition. Ready for tomorrow.",
       "paragraphs": [
-        "Founded in 1976, we have grown from a small neighbourhood school into a trusted institution serving generations of families in Satararoad and beyond.",
+        "Founded in 1963, we have grown from a small neighbourhood school into a trusted institution serving generations of families in Satararoad and beyond.",
         "Our focus is simple: strong academics, caring teachers, and a safe, inspiring environment where every student can thrive."
       ],
       "linkLabel": "About Us",
@@ -105,11 +105,11 @@ window.SITE_CONTENT = {
   "about": {
     "history": {
       "title": "Our history",
-      "sinceYear": 1976,
+      "sinceYear": 1963,
       "paragraphs": [
-        "Dr. Gadagkar High School, Satararoad was established in 1976 with a modest campus and a bold vision: to offer quality education to every child in the community, regardless of background.",
+        "Dr. Gadagkar High School, Satararoad was established in 1963 with a modest campus and a bold vision: to offer quality education to every child in the community, regardless of background.",
         "Over five decades, the school has expanded its facilities, deepened its academic programmes, and built a reputation for holistic development—academics, sports, arts, and service.",
-        "Today we celebrate 50+ years of excellence and look forward to the next chapter with the same spirit of innovation and care."
+        "Today we celebrate 60+ years of excellence and look forward to the next chapter with the same spirit of innovation and care."
       ]
     },
     "mission": {

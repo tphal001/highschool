@@ -14,7 +14,7 @@
 window.SITE_CONFIG = {
   schoolName: "Dr. Gadagkar High School, Satararoad",
   /** Small line above the school name. */
-  headerAffiliation: "Committed to excellence in education · Est. 1976",
+  headerAffiliation: "Committed to excellence in education · Est. 1963",
   /** Line under the school name in the header. */
   tagline: "Learning with heart · Leading with purpose · Inspiring Futures",
   /** Shown in the circular crest when logoImageUrl is empty. */
