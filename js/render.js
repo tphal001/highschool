@@ -815,10 +815,10 @@
     if (!pageTitle) return;
     if (resultsOnly) {
       pageTitle.textContent = "Results";
-      if (pageLead) pageLead.classList.add("hidden");
+      if (pageLead && pageLead.tagName === "P") pageLead.classList.add("hidden");
     } else {
       pageTitle.textContent = "News & Announcements";
-      if (pageLead) pageLead.classList.add("hidden");
+      if (pageLead && pageLead.tagName === "P") pageLead.classList.add("hidden");
     }
   }
 
