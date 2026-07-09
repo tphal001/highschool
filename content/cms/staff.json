@@ -1,4 +1,202 @@
-{
-  "intro": "",
-  "members": []
-}
+{
+  "intro": "Our dedicated teachers and support staff guide students with care, discipline, and a commitment to strong learning every day.",
+  "members": [
+    {
+      "name": "Mr. Zanjurne Satish Popat",
+      "role": "Principal",
+      "department": "M.A.B.Ed.D.S.M.",
+      "photo": "/images/1000885205.jpg"
+    },
+    {
+      "name": "Mrs. Sabale Madhavi Ravindra",
+      "role": "Vice Principal",
+      "department": ".",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Yadav Ranjana Bhanudas",
+      "role": "Assistant Teacher",
+      "department": "M.A.B.Ed.",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mr. Kashid Shripad Abaso",
+      "role": "Assistant Teacher",
+      "department": "M.Sc.M.Ed.D.S.M.",
+      "photo": "/images/1000885234.jpg"
+    },
+    {
+      "name": "Mrs. Phalke Vaishali Pradeep",
+      "department": "M.Sc.B.Ed.",
+      "role": "Assistant Teacher",
+      "photo": "/images/1000885391.jpg"
+    },
+    {
+      "name": "Mrs. Phalke Sandhya Jitendra",
+      "role": "Assistant Teacher",
+      "department": "M.A.B.Ed.",
+      "photo": "/images/1000885250.jpg"
+    },
+    {
+      "name": "Mrs. Phalke Asha Suresh",
+      "role": "Assistant Teacher",
+      "department": "M.Sc.B.Ed.D.S.M.",
+      "photo": "/images/1000885398.jpg"
+    },
+    {
+      "name": "Mrs. More Nita Gajanan",
+      "role": "Assistant Teacher",
+      "department": "B.A.D.Ed.",
+      "photo": "/images/1000885243.jpg"
+    },
+    {
+      "name": "Mrs. Lokhande Vidya Ganesh",
+      "role": "Assistant Teacher",
+      "department": "B.A.B.Ed.",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Kadam Rajashri Vijaykumar",
+      "role": "Assistant Teacher",
+      "department": "M.A.B.Ed.",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Adhav Varsha Sanjay",
+      "role": "Assistant Teacher",
+      "department": "B.A.D.Ed.",
+      "photo": "/images/1000886744.jpg"
+    },
+    {
+      "name": "Mr. Shidature Ganesh Maruti",
+      "role": "Assistant Teacher",
+      "department": "B.A.D.Ed.",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Jamadade Ganesh Kalidas",
+      "role": "Assistant Teacher",
+      "department": "B.A.D.Ed.D.S.M.",
+      "photo": "/images/1000885578.jpg"
+    },
+    {
+      "name": "Mr. Joshi Prashant Ashok",
+      "role": "Assistant Teacher",
+      "department": "M.A.M.Ed.LLB.",
+      "photo": "/images/1000885126.jpg"
+    },
+    {
+      "name": "Mr. Adhav Sanjay Tukaram",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Phalke Omkar Kishor",
+      "role": "Jr. Clerk",
+      "department": "B.Com",
+      "photo": "/images/1000885186.jpg"
+    },
+    {
+      "name": "Mrs. Sonawane Kirti Sujit",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mr. Kamble Suresh Bhiva",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Bhosale Ravindra Vilas",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Paradhi Sunilkumar Lakhanlal",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Mane Santosh Maruti",
+      "role": ".",
+      "department": "."
+    },
+    {
+      "name": "Mr. Phalke Pratik Prataprao",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mrs. Phalke Kavita Sharad",
+      "role": "Assistant Teacher",
+      "department": "M.A.B.Ed.",
+      "photo": "/images/1000885372.jpg"
+    },
+    {
+      "name": "Mrs. Jadhav Suvarna Hemant",
+      "role": "Assistant Teacher",
+      "department": "M.A.B.Ed.",
+      "photo": "/images/1000885212.jpg"
+    },
+    {
+      "name": "Mrs. Yadav Manda Mahesh",
+      "role": "Assistant Teacher",
+      "department": "M.Com.B.Ed.",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mr. Khatake Dadasaheb Bhanudas",
+      "role": "Assistant Teacher",
+      "department": "M.A.B.Ed.D.S.M.",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mrs. Karande Rohini Prabhakar",
+      "role": "Assistant Teacher",
+      "department": "M.A.B.Ed.B.P.Ed.",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Walekar Archana Raghunath",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Mahadik Smita Sanjay",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Shidature Rupali Ganesh",
+      "role": "Assistant Teacher",
+      "department": "B.A.D.Ed.",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mr. Jangam Kiran Vijay",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Chavan Pankaj Nagesh",
+      "role": "Assistant Teacher",
+      "department": "B.A.B.C.A.B.Ed.",
+      "photo": "/images/1000885226.jpg"
+    },
+    {
+      "name": "Mr. Kambale Sayaji Ananda",
+      "role": ".",
+      "department": ".",
+      "photo": "/images/male.png"
+    }
+  ]
+}
