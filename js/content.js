@@ -131,11 +131,11 @@ window.SITE_CONTENT = {
       ]
     },
     "board": {
-      "intro": "Governance details can be published here when available.",
+      "intro": "",
       "members": []
     },
     "staff": {
-      "intro": "Faculty and staff listings can be added when ready.",
+      "intro": "",
       "members": []
     }
   },
@@ -169,7 +169,7 @@ window.SITE_CONTENT = {
     ]
   },
   "news": {
-    "intro": "Events, circulars, and official notices—updated regularly.",
+    "intro": "",
     "events": [
       {
         "title": "Annual day rehearsal schedule",

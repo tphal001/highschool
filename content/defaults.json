@@ -128,11 +128,11 @@
       ]
     },
     "board": {
-      "intro": "Governance details can be published here when available.",
+      "intro": "",
       "members": []
     },
     "staff": {
-      "intro": "Faculty and staff listings can be added when ready.",
+      "intro": "",
       "members": []
     }
   },
@@ -166,7 +166,7 @@
     ]
   },
   "news": {
-    "intro": "Events, circulars, and official notices—updated regularly.",
+    "intro": "",
     "events": [
       {
         "title": "Annual day rehearsal schedule",

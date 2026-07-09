@@ -788,6 +788,18 @@
     return newestFirstList(items);
   }
 
+  function optionalIntroParagraph(intro, className) {
+    intro = (intro || "").trim();
+    if (!intro) return "";
+    return (
+      '<p class="' +
+      (className || "mt-4 text-lg leading-relaxed text-slate-600") +
+      '">' +
+      esc(intro) +
+      "</p>"
+    );
+  }
+
   function setAdmissionsLayoutMode(inquiryOnly) {
     if (document.body.getAttribute("data-page") !== "admissions") return;
     var pageTitle = document.querySelector("body[data-page='admissions'] main h1");
@@ -806,10 +818,7 @@
       if (pageLead) pageLead.classList.add("hidden");
     } else {
       pageTitle.textContent = "News & Announcements";
-      if (pageLead) {
-        pageLead.textContent = "Events, circulars, and official notices.";
-        pageLead.classList.remove("hidden");
-      }
+      if (pageLead) pageLead.classList.add("hidden");
     }
   }
 
@@ -876,8 +885,8 @@
           var photoHtml = photo
             ? '<img src="' +
               esc(mediaSrc(photo)) +
-              '" alt="" class="h-20 w-20 shrink-0 rounded-lg border border-slate-200 bg-slate-50 object-contain" loading="lazy"/>'
-            : '<div class="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg bg-mes-primary/10 text-lg font-bold text-mes-primary">' +
+              '" alt="" class="h-16 w-16 shrink-0 rounded-full object-cover object-top" loading="lazy"/>'
+            : '<div class="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-mes-primary/10 text-lg font-bold text-mes-primary">' +
               esc((m.name || "?").charAt(0)) +
               "</div>";
           return (
@@ -944,9 +953,7 @@
     return (
       '<section id="board" class="scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Board and Governing Body Members</h2>' +
-      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
-      esc((a.board && a.board.intro) || "Governance details can be published here when available.") +
-      "</p>" +
+      optionalIntroParagraph(a.board && a.board.intro) +
       renderMemberCards(a.board && a.board.members) +
       "</section>"
     );
@@ -985,9 +992,7 @@
     return (
       '<section id="staff" class="scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-2xl font-bold text-mes-primary">Staff</h2>' +
-      '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
-      esc((a.staff && a.staff.intro) || "Faculty and staff listings can be added when ready.") +
-      "</p>" +
+      optionalIntroParagraph(a.staff && a.staff.intro) +
       renderMemberCards(a.staff && a.staff.members, { department: true }) +
       "</section>"
     );
@@ -1322,9 +1327,7 @@
     setNewsPageLayoutMode(false);
     el.innerHTML =
       '<div id="events" class="scroll-mt-52"></div>' +
-      '<p class="text-xl text-slate-600" data-reveal>' +
-      esc(n.intro) +
-      "</p>" +
+      optionalIntroParagraph(n.intro, "text-xl text-slate-600") +
       '<div class="mt-12 grid gap-10 lg:grid-cols-3" data-reveal-stagger>' +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Events</h2><ul class="mt-4">' +
       sortCmsList(n.events || [])
