@@ -949,10 +949,13 @@
     );
   }
 
-  function buildAboutBoardSection(a) {
+  function buildAboutBoardSection(a, opts) {
+    opts = opts || {};
     return (
       '<section id="board" class="scroll-mt-52" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Board and Governing Body Members</h2>' +
+      (opts.omitHeading
+        ? ""
+        : '<h2 class="font-display text-2xl font-bold text-mes-primary">Board and Governing Body Members</h2>') +
       optionalIntroParagraph(a.board && a.board.intro) +
       renderMemberCards(a.board && a.board.members) +
       "</section>"
@@ -988,10 +991,11 @@
     );
   }
 
-  function buildAboutStaffSection(a) {
+  function buildAboutStaffSection(a, opts) {
+    opts = opts || {};
     return (
       '<section id="staff" class="scroll-mt-52" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Staff</h2>' +
+      (opts.omitHeading ? "" : '<h2 class="font-display text-2xl font-bold text-mes-primary">Staff</h2>') +
       optionalIntroParagraph(a.staff && a.staff.intro) +
       renderMemberCards(a.staff && a.staff.members, { department: true }) +
       "</section>"
@@ -1022,7 +1026,7 @@
         title: ABOUT_SECTION_HEADERS[sub] || "About",
         hideLead: true,
       });
-      el.innerHTML = sectionBuilders[sub](a);
+      el.innerHTML = sectionBuilders[sub](a, { omitHeading: true });
       return;
     }
 
