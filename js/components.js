@@ -132,7 +132,7 @@
       })
       .join("");
     return (
-      '<ul class="site-header-info-boxes mt-4 flex w-full flex-col gap-2 sm:mt-0 sm:max-w-lg sm:flex-row sm:items-center sm:justify-end sm:self-center lg:max-w-xl">' +
+      '<ul class="site-header-info-boxes mt-4 flex w-full flex-col gap-2 sm:mt-0 sm:max-w-lg sm:flex-row sm:items-stretch sm:justify-end sm:self-center lg:max-w-xl">' +
       html +
       "</ul>"
     );

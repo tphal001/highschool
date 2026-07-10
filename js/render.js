@@ -61,7 +61,7 @@
     var chunk = lines
       .map(function (line) {
         return (
-          '<span class="inline-flex items-center px-0.5 text-xs font-medium text-slate-800 sm:text-sm">' +
+          '<span class="inline-flex items-center px-0.5 text-xs font-medium text-black sm:text-sm">' +
           esc(line) +
           "</span>"
         );
