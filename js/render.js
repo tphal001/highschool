@@ -945,7 +945,7 @@
         return (p || "").trim();
       })
       .map(function (p) {
-        return '<p class="text-lg leading-relaxed text-slate-600">&ldquo;' + esc(p) + '&rdquo;</p>';
+        return '<p class="text-base leading-relaxed text-slate-600 sm:text-lg">&ldquo;' + esc(p) + '&rdquo;</p>';
       })
       .join("");
     var photoClass = messageHtml
@@ -985,20 +985,20 @@
       '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
       esc(heading) +
       "</h2>" +
-      '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
-      '<div class="flex w-full shrink-0 flex-col items-center md:min-w-[18rem] md:items-start lg:min-w-[19rem]">' +
+      '<div class="site-chairman-card mt-8 flex w-full min-w-0 flex-col gap-6 overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 lg:flex-row lg:items-start lg:gap-10">' +
+      '<div class="flex w-full shrink-0 flex-col items-center lg:w-56 lg:items-start xl:w-64">' +
       photoBlock +
-      '<h3 class="mt-4 w-full text-center font-display text-base font-bold leading-snug whitespace-nowrap text-slate-900 sm:text-lg md:text-left lg:text-xl">' +
+      '<h3 class="mt-4 w-full max-w-full text-center font-display text-sm font-bold leading-tight text-slate-900 sm:text-base lg:whitespace-nowrap lg:text-left lg:text-[0.95rem] xl:text-lg">' +
       esc(c.name) +
       "</h3>" +
       (c.role
-        ? '<p class="mt-1 w-full text-center text-base font-medium text-mes-primaryDark md:text-left">' +
+        ? '<p class="mt-1 w-full text-center text-base font-medium text-mes-primaryDark lg:text-left">' +
           esc(c.role) +
           "</p>"
         : "") +
       "</div>" +
-      '<div class="min-w-0 flex-1 border-t border-slate-100 pt-6 md:border-l md:border-t-0 md:pl-10 md:pt-0 lg:pl-12">' +
-      '<div class="space-y-3 text-lg leading-relaxed text-slate-600">' +
+      '<div class="min-w-0 w-full flex-1 border-t border-slate-100 pt-6 lg:border-l lg:border-t-0 lg:pl-10 lg:pt-0 xl:pl-12">' +
+      '<div class="min-w-0 break-words">' +
       messageHtml +
       "</div></div></div></section>"
     );

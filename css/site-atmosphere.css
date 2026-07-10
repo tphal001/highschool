@@ -624,6 +624,18 @@ body.site-body #page-about section + section {
   margin-top: 1.5rem;
 }
 
+body.site-body #page-about #chairman .site-chairman-card {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
+}
+
+body.site-body #page-about #chairman .site-chairman-card > * {
+  min-width: 0;
+}
+
 /* Sidebar — self-contained panels (Related info, Fund appeal) */
 body.site-body #page-sidebar {
   min-width: 0;
