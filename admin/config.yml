@@ -216,16 +216,16 @@ collections:
           - { label: Intro, name: intro, widget: string }
           - label: Bulk add photos
             name: bulkImages
-            widget: list
+            widget: galleryBulkPicker
             required: false
-            summary: "{{fields.image}}"
-            label_singular: photo
-            hint: "Use Add, then choose many images at once (Ctrl/Shift). Title and category are optional — leave blank if you like. Photos move into the gallery when you publish."
-            field: { label: Photo, name: image, widget: image }
+            hint: "Upload or pick multiple photos at once (Ctrl/Shift in Media). Title and category are optional — leave blank if you like. Photos move into the gallery when you publish."
+            media_library:
+              config:
+                multiple: true
           - label: Photo items
             name: items
             widget: list
-            summary: "{{fields.image}}"
+            summary: "{{#if fields.title}}{{fields.title}}{{#if fields.category}} · {{fields.category}}{{/if}}{{else}}{{#if fields.category}}{{fields.category}}{{else}}Photo{{/if}}{{/if}}"
             hint: "Newest photos appear first after you publish. Title and category are optional."
             fields:
               - { label: Title (optional), name: title, widget: string, required: false }
