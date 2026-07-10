@@ -1,7 +1,11 @@
 {
   "intro": "Moments from campus life - celebrations, learning, and everyday joy.",
   "videoNote": "Video gallery can be added here when ready.",
-  "bulkImages": [],
+  "bulkImages": [
+    "/images/1000888480.jpg",
+    "/images/1000888482.jpg",
+    "/images/1000888484.jpg"
+  ],
   "items": [
     {
       "title": "Annual day",
