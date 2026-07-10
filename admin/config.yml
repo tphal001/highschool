@@ -218,7 +218,7 @@ collections:
             name: bulkImages
             widget: galleryBulkPicker
             required: false
-            hint: "Upload or pick multiple photos at once (Ctrl/Shift in Media). Title and category are optional — leave blank if you like. Photos move into the gallery when you publish."
+            hint: "Upload or pick multiple photos at once (Ctrl/Shift in Media). Photos appear in Photo items below immediately. Publish to save to the site."
             media_library:
               config:
                 multiple: true
