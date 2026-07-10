@@ -381,20 +381,35 @@
 
   function buildHighlightCardHtml(hn, index) {
     var img = mediaSrc(resolveMediaField(hn.posterImage));
+    var linkUrl = (hn.linkUrl || hn.linkHref || "").trim();
     var student =
       hn.studentName && hn.studentName.trim()
         ? '<p class="mt-2 font-display text-xl font-bold text-mes-goldLine sm:text-2xl">' +
           esc(hn.studentName) +
           "</p>"
         : "";
+    var posterImgHtml = img
+      ? '<img src="' +
+        esc(img) +
+        '" alt="" class="mx-auto w-full max-w-md object-contain object-center lg:max-w-none" loading="lazy"/>'
+      : "";
+    if (img && linkUrl) {
+      var ext = isExternalHref(linkUrl);
+      posterImgHtml =
+        '<a href="' +
+        esc(linkUrl) +
+        '"' +
+        (ext ? ' target="_blank" rel="noopener noreferrer"' : "") +
+        ' class="block rounded-lg transition hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2 focus-visible:ring-offset-mes-navDeep">' +
+        posterImgHtml +
+        "</a>";
+    }
     return (
       '<article class="site-highlight-poster site-card-3d overflow-hidden rounded-3xl border border-mes-goldLine/40 bg-gradient-to-br from-mes-nav via-mes-navDeep to-slate-950 shadow-2xl" data-reveal>' +
       '<div class="grid gap-0 lg:grid-cols-2 lg:items-start">' +
       (img
         ? '<div class="site-highlight-poster__media border-b border-mes-goldLine/15 bg-black/25 p-5 sm:p-8 lg:border-b-0 lg:border-r">' +
-          '<img src="' +
-          esc(img) +
-          '" alt="" class="mx-auto w-full max-w-md object-contain object-center lg:max-w-none" loading="lazy"/>' +
+          posterImgHtml +
           "</div>"
         : "") +
       '<div class="flex flex-col justify-center px-6 py-8 sm:px-10 sm:py-10 lg:py-12">' +
