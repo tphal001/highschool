@@ -305,6 +305,29 @@
     return imgUrl;
   }
 
+  function highlightItemLinkUrl(item) {
+    return (item && (item.linkUrl || item.linkHref) || "").trim();
+  }
+
+  function isExternalHighlightHref(url) {
+    return /^https?:\/\//i.test(url) || url.indexOf("//") === 0;
+  }
+
+  function wrapHighlightPosterLink(imgHtml, item) {
+    var url = highlightItemLinkUrl(item);
+    if (!url || !imgHtml) return imgHtml;
+    var ext = isExternalHighlightHref(url);
+    return (
+      '<a href="' +
+      url.replace(/"/g, "&quot;") +
+      '"' +
+      (ext ? ' target="_blank" rel="noopener noreferrer"' : "") +
+      ' class="relative z-[1] block cursor-pointer rounded-lg transition hover:opacity-95 focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2 focus-visible:ring-offset-mes-navDeep">' +
+      imgHtml +
+      "</a>"
+    );
+  }
+
   function initHighlightNewsModal() {
     var C = typeof window.SITE_CONTENT !== "undefined" ? window.SITE_CONTENT : {};
     var hl = C.highlights || {};
@@ -367,9 +390,12 @@
         mediaEl.innerHTML =
           navHtml +
           (imgUrl
-            ? '<img src="' +
-              imgUrl.replace(/"/g, "&quot;") +
-              '" alt="" class="mx-auto max-h-[min(50vh,22rem)] w-full max-w-md object-contain object-center lg:max-h-[min(72vh,26rem)]"/>'
+            ? wrapHighlightPosterLink(
+                '<img src="' +
+                  imgUrl.replace(/"/g, "&quot;") +
+                  '" alt="" class="mx-auto max-h-[min(50vh,22rem)] w-full max-w-md object-contain object-center lg:max-h-[min(72vh,26rem)]"/>',
+                item
+              )
             : "");
       }
       if (counterEl) {
@@ -388,10 +414,10 @@
       }
       if (bodyEl) bodyEl.textContent = item.accomplishment || "";
       if (actionsEl) {
-        var url = (item.linkUrl || item.linkHref || "").trim();
+        var url = highlightItemLinkUrl(item);
         var urlHtml = "";
         if (url) {
-          var ext = /^https?:\/\//i.test(url) || url.indexOf("//") === 0;
+          var ext = isExternalHighlightHref(url);
           var urlLabel = (item.linkUrlLabel || "Open link").trim() || "Open link";
           urlHtml =
             '<a href="' +
