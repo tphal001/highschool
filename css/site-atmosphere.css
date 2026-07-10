@@ -14,6 +14,11 @@
   --site-cyan-glow: rgba(34, 211, 238, 0.18);
   --site-link: #155e75;
   --site-link-hover: #0e7490;
+  --site-footer-gradient: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--site-cream) 92%, white) 0%,
+    var(--site-cream-deep) 100%
+  );
   --site-card-border: rgba(14, 116, 144, 0.34);
   --site-card-shadow:
     0 1px 0 rgba(255, 255, 255, 0.95) inset,
@@ -200,11 +205,7 @@ body.site-body site-footer {
 body.site-body #site-footer.site-footer-glass {
   position: relative;
   z-index: 3;
-  background: linear-gradient(
-    180deg,
-    color-mix(in srgb, var(--site-cream) 92%, white) 0%,
-    var(--site-cream-deep) 100%
-  ) !important;
+  background: var(--site-footer-gradient) !important;
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border-top: 1px solid rgba(8, 145, 178, 0.12) !important;
@@ -278,9 +279,8 @@ body.site-body main {
   border-top: 1px solid rgba(8, 145, 178, 0.08);
 }
 
-/* Home — Highlights & Quick announcements: lighter ice-blue bands */
-body.site-body[data-page="home"] #home-highlight-section,
-body.site-body[data-page="home"] #announcements {
+/* Home — Highlights: lighter ice-blue band */
+body.site-body[data-page="home"] #home-highlight-section {
   background: linear-gradient(
     180deg,
     var(--site-cream-pale) 0%,
@@ -289,8 +289,16 @@ body.site-body[data-page="home"] #announcements {
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
 }
 
-body.site-body[data-page="home"] #home-highlight-section + .site-legacy-band,
+/* Home — Quick announcements: match footer surface */
 body.site-body[data-page="home"] #announcements {
+  background: var(--site-footer-gradient) !important;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  border-top: 1px solid rgba(8, 145, 178, 0.12);
+}
+
+body.site-body[data-page="home"] #home-highlight-section + .site-legacy-band {
   border-top-color: rgba(8, 145, 178, 0.06);
 }
 

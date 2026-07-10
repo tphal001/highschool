@@ -492,7 +492,7 @@
             (phone
               ? '<a href="tel:' +
                 esc(phoneTel(phone)) +
-                '" class="site-action-link inline-flex items-center gap-1 hover:underline"><span aria-hidden="true">📞</span>' +
+                '" class="site-action-link inline-flex items-center gap-1 hover:underline">' +
                 esc(phoneDisplay(phone)) +
                 "</a>"
               : "") +
