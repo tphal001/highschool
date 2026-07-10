@@ -1,12 +1,12 @@
 {
-  "intro": "Moments from campus life—celebrations, learning, and everyday joy.",
+  "intro": "Moments from campus life - celebrations, learning, and everyday joy.",
   "videoNote": "Video gallery can be added here when ready.",
   "bulkImages": [],
   "items": [
     {
       "title": "Annual day",
       "category": "Events",
-      "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+      "image": "/images/event.jpg"
     },
     {
       "title": "Science lab",
@@ -21,7 +21,7 @@
     {
       "title": "Library",
       "category": "campus",
-      "image": "https://images.unsplash.com/photo-1521587760476-6c12a4b04090?auto=format&fit=crop&w=800&q=80"
+      "image": "/images/lib.png"
     },
     {
       "title": "Art workshop",
