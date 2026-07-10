@@ -214,26 +214,23 @@ collections:
         file: content/cms/gallery.json
         fields:
           - { label: Intro, name: intro, widget: string }
-          - label: Add photos from Media
-            name: galleryBulkTrigger
-            widget: image
-            required: false
-            choose_url: false
-            hint: "Click Choose an image, then select one or more photos from Media (Ctrl/Shift+click). They are added to Photo items below — check the count before Publish."
-            media_library:
-              allow_multiple: true
-              config:
-                multiple: true
           - label: Photo items
             name: items
             widget: list
             summary: "{{fields.title}}"
             label_singular: photo
-            hint: "Newest photos appear first after you publish. Title and category are optional."
+            hint: "Click Add photo, then Choose an image. In Media, tick several photos and click Choose selected — each one is added as a separate row. Newest photos show first on the site after Publish."
             fields:
               - { label: Title (optional), name: title, widget: string, required: false }
               - { label: Category (optional), name: category, widget: string, required: false }
-              - { label: Photo, name: image, widget: image }
+              - label: Photo
+                name: image
+                widget: image
+                choose_url: false
+                media_library:
+                  allow_multiple: true
+                  config:
+                    multiple: true
           - { label: Video gallery note, name: videoNote, widget: text, required: false }
 
       - label: Highlights (posters & popup)
