@@ -1653,7 +1653,7 @@
     var linkedIn = (m.linkedIn || "").trim();
     return (
       '<section class="mt-2 w-full scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
-      '<div class="rounded-xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-amber-50/40 p-4 shadow-sm sm:p-5">' +
+      '<div class="rounded-xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
       '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-mes-primary sm:text-lg">' +
       esc(m.role || "Website support") +
       "</h2>" +

@@ -63,7 +63,7 @@
         return (
           '<a href="' +
           esc(s.href) +
-          '" class="text-amber-100/90 transition hover:text-mes-accentLight" target="_blank" rel="noopener noreferrer">' +
+          '" class="text-cyan-100/90 transition hover:text-mes-accentLight" target="_blank" rel="noopener noreferrer">' +
           esc(s.label || "Link") +
           "</a>"
         );
@@ -76,7 +76,7 @@
         : "";
 
     return (
-      '<div class="border-b border-white/10 bg-mes-topbar text-[11px] text-amber-50/95 sm:text-xs">' +
+      '<div class="border-b border-white/10 bg-mes-topbar text-[11px] text-cyan-50/95 sm:text-xs">' +
       '<div class="mx-auto flex max-w-7xl flex-wrap items-center justify-between gap-x-4 gap-y-2 px-4 py-2 sm:px-8 lg:px-10">' +
       '<div class="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1">' +
       (phone
@@ -121,11 +121,11 @@
             ? '<a href="' +
               esc(b.href) +
               '" class="site-header-info-card site-glass site-card-3d relative block h-full border border-slate-200 shadow-sm transition-all duration-300 ease-out hover:border-mes-accent/50">' +
-              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-amber-600"></span>' +
+              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-cyan-500"></span>' +
               inner +
               "</a>"
             : '<div class="site-header-info-card site-glass relative h-full border border-slate-200 shadow-sm">' +
-              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-amber-600"></span>' +
+              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-cyan-500"></span>' +
               inner +
               "</div>";
         return '<li class="site-header-info-boxes__item min-w-0 flex-1 sm:max-w-[10.5rem] lg:max-w-[11.5rem]">' + wrap + "</li>";
@@ -174,7 +174,7 @@
   }
 
   /**
-   * RLMSS-style nav: maroon bar, gold line under bar, white hover tab + chevron, white or gold dropdown.
+   * Aqua nav: teal bar, cyan line under bar, white hover tab + chevron, white or aqua dropdown.
    * item.variant === "gold" → yellow/gold panel (like "More" on reference site).
    */
   var NAV_LINK_LAYOUT =
@@ -196,7 +196,7 @@
         : "pointer-events-none absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,18rem)] max-w-[min(100vw-2rem,28rem)] translate-y-2 overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-white py-2 opacity-0 shadow-2xl shadow-black/15 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100";
 
       var childClass = isGold
-        ? "mx-1 block rounded-md px-3 py-2.5 text-sm font-bold leading-snug text-mes-primaryDark transition-all duration-200 ease-out first:mt-0 hover:translate-x-1 hover:bg-amber-200/70 hover:shadow-md"
+        ? "mx-1 block rounded-md px-3 py-2.5 text-sm font-bold leading-snug text-mes-primaryDark transition-all duration-200 ease-out first:mt-0 hover:translate-x-1 hover:bg-cyan-100/80 hover:shadow-md"
         : "mx-1 block rounded-md px-3 py-2.5 text-sm font-bold leading-snug text-mes-primary transition-all duration-200 ease-out hover:translate-x-1 hover:bg-mes-light hover:shadow-sm";
 
       return (
@@ -255,7 +255,7 @@
     if (children && children.length) {
       var panelBg = isGold ? "bg-mes-accentLight" : "bg-mes-navDeep";
       var childClass = isGold
-        ? "block border-b border-amber-200/40 py-3 pl-4 pr-4 text-sm font-bold leading-snug text-mes-primaryDark transition-colors duration-200 hover:bg-amber-200/40 active:bg-amber-200/50 sm:pl-5 sm:hover:translate-x-1"
+        ? "block border-b border-cyan-200/50 py-3 pl-4 pr-4 text-sm font-bold leading-snug text-mes-primaryDark transition-colors duration-200 hover:bg-cyan-100/60 active:bg-cyan-100/70 sm:pl-5 sm:hover:translate-x-1"
         : "block border-b border-white/10 py-3 pl-4 pr-4 text-sm font-semibold leading-snug text-white transition-colors duration-200 hover:bg-white/10 active:bg-white/15 sm:pl-5 sm:hover:translate-x-1";
       var childLinks = children
         .map(function (c) {
@@ -428,7 +428,7 @@
         "</div></a>" +
         infoBoxes +
         "</div></div>" +
-        '<div id="site-main-nav" class="border-b-2 border-mes-goldLine bg-mes-nav overflow-visible shadow-[0_2px_10px_rgba(92,21,21,0.18)]">' +
+        '<div id="site-main-nav" class="border-b-2 border-mes-goldLine bg-mes-nav overflow-visible shadow-[0_2px_10px_rgba(8,145,178,0.18)]">' +
         '<div class="hidden lg:block">' +
         buildNavDesktop(links) +
         "</div>" +
