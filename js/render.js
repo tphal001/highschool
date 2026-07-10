@@ -945,7 +945,7 @@
         return (p || "").trim();
       })
       .map(function (p) {
-        return "<p>" + esc(p) + "</p>";
+        return '<p class="text-lg leading-relaxed text-slate-600">&ldquo;' + esc(p) + '&rdquo;</p>';
       })
       .join("");
     var photoClass = messageHtml
@@ -971,7 +971,7 @@
         '<div class="mt-8 flex flex-col items-center gap-6 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center sm:gap-10 sm:p-8">' +
         photoBlock +
         '<div class="min-w-0 text-center sm:text-left">' +
-        '<h3 class="font-display text-xl font-bold leading-snug text-slate-900 sm:text-2xl">' +
+        '<h3 class="font-display text-lg font-bold leading-snug whitespace-nowrap text-slate-900 sm:text-xl">' +
         esc(c.name) +
         "</h3>" +
         (c.role
@@ -986,9 +986,9 @@
       esc(heading) +
       "</h2>" +
       '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
-      '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
+      '<div class="flex w-full shrink-0 flex-col items-center md:min-w-[18rem] md:items-start lg:min-w-[19rem]">' +
       photoBlock +
-      '<h3 class="mt-4 w-full text-center font-display text-xl font-bold leading-snug text-slate-900 md:text-left">' +
+      '<h3 class="mt-4 w-full text-center font-display text-base font-bold leading-snug whitespace-nowrap text-slate-900 sm:text-lg md:text-left lg:text-xl">' +
       esc(c.name) +
       "</h3>" +
       (c.role
