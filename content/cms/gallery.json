@@ -31,6 +31,21 @@
       "title": "Assembly",
       "category": "Events",
       "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
+    },
+    {
+      "image": "/images/1000888484.jpg",
+      "title": ".",
+      "category": "."
+    },
+    {
+      "title": ".",
+      "image": "/images/1000888482.jpg",
+      "category": "."
+    },
+    {
+      "title": ".",
+      "image": "/images/1000888480.jpg",
+      "category": "."
     }
   ]
 }
