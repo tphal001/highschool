@@ -82,7 +82,7 @@ tailwind.config = {
 
           /** Soft ice-blue page fill */
 
-          light: "#dbeafe",
+          light: "#e0f2fe",
 
           /** Dark top strip behind contact */
 
@@ -110,7 +110,7 @@ tailwind.config = {
 
           gold: "#06b6d4",
 
-          cream: "#dbeafe",
+          cream: "#e0f2fe",
 
         },
 
