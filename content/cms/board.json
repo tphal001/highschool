@@ -1,4 +1,60 @@
-{
-  "intro": "",
-  "members": []
-}
+{
+  "intro": "Our governing body supports the school’s vision, policies, and long-term development in partnership with the principal and staff.",
+  "members": [
+    {
+      "name": "Dr. Gadagkar Atul Shashikant",
+      "role": "अध्यक्ष",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Phalke Sanjay Shivajirao",
+      "role": "उपाध्यक्ष",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Doshi Rajesh Dhanyakumar",
+      "role": "कार्याध्यक्ष",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Phalke Jagannathrao Sawalram",
+      "role": "सचिव",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mrs. Gadagkar Anuradha Shashikant",
+      "role": "संचालक",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Bhise Mayadevi Tulasidas",
+      "role": "संचालक",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mrs. Gadagkar Rupali Atul",
+      "role": "संचालक",
+      "photo": "/images/female.png"
+    },
+    {
+      "name": "Mr. Phalke Kishor Jagannathrao",
+      "role": "संचालक",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Phalke Akash Shrimant",
+      "role": "संचालक",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Adhav Sanjay Tukaram",
+      "role": "संचालक",
+      "photo": "/images/male.png"
+    },
+    {
+      "name": "Mr. Jadhav Avinash Abaso",
+      "role": "मुख्याध्यापक",
+      "photo": "/images/male.png"
+    }
+  ]
+}
