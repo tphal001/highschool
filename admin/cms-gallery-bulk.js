@@ -1,19 +1,46 @@
 /**
- * Decap CMS — Gallery: bulk add photos directly into Photo items list.
- * Load after decap-cms.js.
+ * Decap CMS — Gallery: add photos from Media into Photo items (native image field).
+ * Load after decap-cms.js, before CMS.init().
  */
 (function () {
   "use strict";
 
   var GALLERY_FILE = "content/cms/gallery.json";
+  var TRIGGER_FIELD = "galleryBulkTrigger";
   var ROW_GAP_MS = 1200;
 
+  var ITEMS_FIELD_META = {
+    name: "items",
+    label: "Photo items",
+    widget: "list",
+    fields: [
+      { name: "title", label: "Title (optional)", widget: "string", required: false },
+      { name: "category", label: "Category (optional)", widget: "string", required: false },
+      { name: "image", label: "Photo", widget: "image" },
+    ],
+  };
+
+  var TRIGGER_FIELD_META = {
+    name: TRIGGER_FIELD,
+    label: "Add photos from Media",
+    widget: "image",
+  };
+
   function boot() {
-    if (!window.CMS || !window.createClass || !window.h) return;
-    registerGalleryBulkToolbarWidget();
+    if (!window.CMS) return;
     registerPreSave();
-    watchGalleryEditor();
+    waitForStore(watchGalleryMediaTrigger);
     window.SiteGalleryBulk = { appendPhotosToItems: appendPhotosToItems };
+  }
+
+  function waitForStore(fn) {
+    if (getCmsStore()) {
+      fn();
+      return;
+    }
+    window.setTimeout(function () {
+      waitForStore(fn);
+    }, 150);
   }
 
   function isGalleryEditor() {
@@ -31,7 +58,9 @@
   }
 
   function fromJs(val) {
-    if (window.Immutable && window.Immutable.fromJS) return window.Immutable.fromJS(val);
+    if (window.Immutable && window.Immutable.fromJS) {
+      return window.Immutable.fromJS(val);
+    }
     return val;
   }
 
@@ -61,6 +90,19 @@
       });
   }
 
+  function pathsFromMediaValue(val) {
+    if (!val) return [];
+    if (typeof val === "string") return val.trim() ? [val.trim()] : [];
+    if (!Array.isArray(val)) return [];
+    return val
+      .map(function (row) {
+        if (typeof row === "string") return row.trim();
+        if (row && typeof row === "object") return String(row.image || row.url || "").trim();
+        return "";
+      })
+      .filter(Boolean);
+  }
+
   function mergeBulkIntoItems(data) {
     var plain = toJs(data) || {};
     var bulk = normalizeBulkValue(plain.bulkImages);
@@ -69,6 +111,28 @@
       items.push({ title: "", category: "", image: row.image });
     });
     return { items: items, bulkImages: [] };
+  }
+
+  function getCmsStore() {
+    if (!window.CMS) return null;
+    if (typeof CMS.getStore === "function") return CMS.getStore();
+    if (CMS.store) return CMS.store;
+    return null;
+  }
+
+  function dispatchField(fieldMeta, value) {
+    var store = getCmsStore();
+    if (!store || typeof store.dispatch !== "function") return false;
+    store.dispatch({
+      type: "DRAFT_CHANGE_FIELD",
+      payload: {
+        field: fromJs(fieldMeta),
+        value: value === null || value === "" ? null : fromJs(value),
+        metadata: {},
+        entries: [],
+      },
+    });
+    return true;
   }
 
   function registerPreSave() {
@@ -206,260 +270,39 @@
     next();
   }
 
-  function uploadFilesToItems(files, onStatus, onDone) {
-    var listRoot = findItemsListRoot();
-    if (!listRoot || !files.length) {
-      if (onDone) onDone(0);
-      return;
-    }
+  function watchGalleryMediaTrigger() {
+    var store = getCmsStore();
+    if (!store || typeof store.subscribe !== "function") return;
 
-    var queue = files.slice();
-    var added = 0;
+    var lastSignature = "";
+    var busy = false;
 
-    function latestFileInput() {
-      var item = latestListItem(listRoot);
-      if (!item) return null;
-      var inputs = item.querySelectorAll('input[type="file"]');
-      return inputs.length ? inputs[inputs.length - 1] : null;
-    }
+    store.subscribe(function () {
+      if (busy || !isGalleryEditor()) return;
 
-    function dispatchSingle(input, file) {
-      var dt = new DataTransfer();
-      dt.items.add(file);
-      input.files = dt.files;
-      input.dispatchEvent(new Event("change", { bubbles: true }));
-    }
+      var state = store.getState();
+      var draft = state && state.entryDraft;
+      var entry = draft && draft.get && draft.get("entry");
+      if (!isGalleryEntry(entry)) return;
 
-    function next() {
-      if (!queue.length) {
-        if (onDone) onDone(added);
-        return;
-      }
+      var data = entry.get("data");
+      if (!data) return;
 
-      if (!clickListAdd(listRoot)) {
-        if (onDone) onDone(added);
-        return;
-      }
+      var triggerVal = data.get(TRIGGER_FIELD);
+      var paths = pathsFromMediaValue(triggerVal);
+      var signature = paths.slice().sort().join("|");
 
-      var file = queue.shift();
-      var remaining = queue.length;
-      if (onStatus) onStatus("Uploading… " + (files.length - remaining) + "/" + files.length);
+      if (!signature || signature === lastSignature) return;
 
-      window.setTimeout(function () {
-        var input = latestFileInput();
-        if (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.patchInput) {
-          window.SiteCmsBulkUpload.patchInput(input);
-        }
-        if (input) {
-          dispatchSingle(input, file);
-          added += 1;
-        }
-        window.setTimeout(next, ROW_GAP_MS);
-      }, 500);
-    }
+      lastSignature = signature;
+      busy = true;
 
-    next();
-  }
-
-  function pathsFromMediaValue(val) {
-    if (!val) return [];
-    if (typeof val === "string") return val.trim() ? [val.trim()] : [];
-    if (!Array.isArray(val)) return [];
-    return val
-      .map(function (row) {
-        if (typeof row === "string") return row.trim();
-        if (row && typeof row === "object") return String(row.image || row.url || "").trim();
-        return "";
-      })
-      .filter(Boolean);
-  }
-
-  function registerGalleryBulkToolbarWidget() {
-    var h = window.h;
-    var createClass = window.createClass;
-
-    var GalleryBulkToolbar = createClass({
-      displayName: "GalleryBulkToolbar",
-
-      getInitialState: function () {
-        return { status: "", busy: false };
-      },
-
-      fileInputId: function () {
-        return (this.props.forID || "gallery-bulk") + "-file-input";
-      },
-
-      clearTrigger: function () {
-        this.props.onChange("");
-      },
-
-      openFilePicker: function () {
-        var input = document.getElementById(this.fileInputId());
-        if (input) input.click();
-      },
-
-      openMediaLibrary: function () {
-        var props = this.props;
-        if (!props.onOpenMediaLibrary) {
-          this.setState({ status: "Media library unavailable — refresh and try again." });
-          return;
-        }
-
-        var cfg = props.field.getIn ? props.field.getIn(["media_library", "config"]) : null;
-        if (cfg && cfg.toJS) cfg = cfg.toJS();
-        if (!cfg || typeof cfg !== "object") cfg = {};
-        cfg.multiple = true;
-
-        props.onOpenMediaLibrary({
-          controlID: props.forID,
-          allowMultiple: true,
-          forImage: true,
-          field: props.field,
-          value: "",
-          config: cfg,
-        });
-      },
-
-      handleFiles: function (e) {
-        var files = e.target.files ? Array.from(e.target.files) : [];
-        e.target.value = "";
-        if (!files.length) return;
-
-        var self = this;
-        self.setState({ busy: true, status: "Adding " + files.length + " photo(s) to Photo items…" });
-
-        uploadFilesToItems(
-          files,
-          function (msg) {
-            self.setState({ status: msg });
-          },
-          function (count) {
-            self.setState({
-              busy: false,
-              status: count
-                ? count + " photo(s) added — check Photo items count below, then Publish."
-                : "Could not add photos. Expand Photo items and try again.",
-            });
-          }
-        );
-      },
-
-      componentDidUpdate: function (prevProps) {
-        var val = this.props.value;
-        if (val === prevProps.value) return;
-
-        var paths = pathsFromMediaValue(val);
-        this.clearTrigger();
-
-        if (!paths.length) return;
-
-        var self = this;
-        self.setState({ busy: true, status: "Adding " + paths.length + " photo(s) to Photo items…" });
-
-        appendPhotosToItems(paths, function (count) {
-          self.setState({
-            busy: false,
-            status: count
-              ? count + " photo(s) added from Media — check Photo items count below, then Publish."
-              : "Could not add photos from Media. Try Upload from computer instead.",
-          });
-        });
-      },
-
-      render: function () {
-        var busy = this.state.busy;
-        var btnStyle = {
-          padding: "0.45rem 0.85rem",
-          fontSize: "0.8125rem",
-          fontWeight: 600,
-          borderRadius: "0.375rem",
-          cursor: busy ? "wait" : "pointer",
-        };
-
-        return h(
-          "div",
-          { className: this.props.classNameWrapper, id: this.props.forID },
-          h(
-            "p",
-            { style: { margin: "0 0 0.75rem", fontSize: "0.8125rem", color: "#475569" } },
-            "Pick photos from Media or upload from your computer. They are added to Photo items below — check the count before you Publish."
-          ),
-          h("input", {
-            id: this.fileInputId(),
-            type: "file",
-            multiple: true,
-            accept: "image/*",
-            disabled: busy,
-            style: { display: "none" },
-            onChange: this.handleFiles,
-          }),
-          h(
-            "div",
-            { style: { display: "flex", flexWrap: "wrap", gap: "0.5rem", alignItems: "center" } },
-            h(
-              "button",
-              {
-                type: "button",
-                disabled: busy,
-                onClick: this.openMediaLibrary,
-                style: Object.assign({}, btnStyle, {
-                  border: "1px solid #0e7490",
-                  background: "#ecfeff",
-                  color: "#0e7490",
-                }),
-              },
-              "Choose from Media"
-            ),
-            h(
-              "button",
-              {
-                type: "button",
-                disabled: busy,
-                onClick: this.openFilePicker,
-                style: Object.assign({}, btnStyle, {
-                  border: "1px solid #cbd5e1",
-                  background: "#fff",
-                  color: "#0f172a",
-                }),
-              },
-              "Upload from computer"
-            )
-          ),
-          this.state.status
-            ? h(
-                "p",
-                {
-                  style: {
-                    margin: "0.75rem 0 0",
-                    fontSize: "0.8125rem",
-                    color: "#0f172a",
-                    fontWeight: 600,
-                    padding: "0.5rem 0.75rem",
-                    background: "#f0fdf4",
-                    border: "1px solid #86efac",
-                    borderRadius: "0.375rem",
-                  },
-                },
-                this.state.status
-              )
-            : null
-        );
-      },
+      appendPhotosToItems(paths, function () {
+        dispatchField(TRIGGER_FIELD_META, null);
+        lastSignature = "";
+        busy = false;
+      });
     });
-
-    CMS.registerWidget("galleryBulkToolbar", GalleryBulkToolbar);
-  }
-
-  function watchGalleryEditor() {
-    function tick() {
-      if (!isGalleryEditor()) return;
-      var list = findItemsListRoot();
-      if (list && !list.getAttribute("data-gallery-items-watched")) {
-        list.setAttribute("data-gallery-items-watched", "1");
-      }
-    }
-    tick();
-    new MutationObserver(tick).observe(document.body, { childList: true, subtree: true });
   }
 
   boot();
