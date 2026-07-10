@@ -1,41 +1,411 @@
 {
-  "intro": "Moments from campus life - celebrations, learning, and everyday joy.",
-  "videoNote": "Video gallery can be added here when ready.",
-  "bulkImages": [
-    "/images/1000888480.jpg",
-    "/images/1000888482.jpg",
-    "/images/1000888484.jpg"
-  ],
-  "items": [
+  "partial": false,
+  "path": "content/cms/gallery.json",
+  "meta": {
+    "path": "content/cms/gallery.json"
+  },
+  "isModification": null,
+  "raw": "{\n  \"intro\": \"Moments from campus life - celebrations, learning, and everyday joy.\",\n  \"videoNote\": \"Video gallery can be added here when ready.\",\n  \"bulkImages\": [\n    \"/images/1000888480.jpg\",\n    \"/images/1000888482.jpg\",\n    \"/images/1000888484.jpg\"\n  ],\n  \"items\": [\n    {\n      \"title\": \"Annual day\",\n      \"category\": \"Events\",\n      \"image\": \"/images/event.jpg\"\n    },\n    {\n      \"title\": \"Science lab\",\n      \"category\": \"campus\",\n      \"image\": \"https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80\"\n    },\n    {\n      \"title\": \"Sports day\",\n      \"category\": \"Events\",\n      \"image\": \"https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80\"\n    },\n    {\n      \"title\": \"Library\",\n      \"category\": \"campus\",\n      \"image\": \"/images/lib.png\"\n    },\n    {\n      \"title\": \"Art workshop\",\n      \"category\": \"activities\",\n      \"image\": \"https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80\"\n    },\n    {\n      \"title\": \"Assembly\",\n      \"category\": \"Events\",\n      \"image\": \"https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80\"\n    }\n  ]\n}\n",
+  "data": {
+    "intro": "Moments from campus life - celebrations, learning, and everyday joy.",
+    "videoNote": "Video gallery can be added here when ready.",
+    "bulkImages": [],
+    "items": [
+      {
+        "title": "Annual day",
+        "category": "Events",
+        "image": "/images/event.jpg"
+      },
+      {
+        "title": "Science lab",
+        "category": "campus",
+        "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "title": "Sports day",
+        "category": "Events",
+        "image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "title": "Library",
+        "category": "campus",
+        "image": "/images/lib.png"
+      },
+      {
+        "title": "Art workshop",
+        "category": "activities",
+        "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "title": "Assembly",
+        "category": "Events",
+        "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
+      },
+      {
+        "title": "",
+        "category": "",
+        "image": "/images/1000888480.jpg"
+      },
+      {
+        "title": "",
+        "category": "",
+        "image": "/images/1000888482.jpg"
+      },
+      {
+        "title": "",
+        "category": "",
+        "image": "/images/1000888484.jpg"
+      }
+    ]
+  },
+  "author": "",
+  "slug": "gallery",
+  "newRecord": false,
+  "status": "",
+  "mediaFiles": [
     {
-      "title": "Annual day",
-      "category": "Events",
-      "image": "/images/event.jpg"
+      "id": "b3572e001bb2976a837a9dbc04f8163f53879eda",
+      "name": "1.jpg",
+      "size": 566237,
+      "displayURL": {
+        "id": "b3572e001bb2976a837a9dbc04f8163f53879eda",
+        "path": "images/1.jpg"
+      },
+      "path": "images/1.jpg"
     },
     {
-      "title": "Science lab",
-      "category": "campus",
-      "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
+      "id": "ec684c1800de9f1aeca42cc1d0bc42387128ce61",
+      "name": "1000876099.jpg",
+      "size": 328035,
+      "displayURL": {
+        "id": "ec684c1800de9f1aeca42cc1d0bc42387128ce61",
+        "path": "images/1000876099.jpg"
+      },
+      "path": "images/1000876099.jpg"
     },
     {
-      "title": "Sports day",
-      "category": "Events",
-      "image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80"
+      "id": "a18224ff80f94b375acfdde63eae2808303bb82d",
+      "name": "1000879527.jpg",
+      "size": 366124,
+      "displayURL": {
+        "id": "a18224ff80f94b375acfdde63eae2808303bb82d",
+        "path": "images/1000879527.jpg"
+      },
+      "path": "images/1000879527.jpg"
     },
     {
-      "title": "Library",
-      "category": "campus",
-      "image": "/images/lib.png"
+      "id": "26f00c5a960347a9e423972692bf2c42e2a0a015",
+      "name": "1000885126.jpg",
+      "size": 20822,
+      "displayURL": {
+        "id": "26f00c5a960347a9e423972692bf2c42e2a0a015",
+        "path": "images/1000885126.jpg"
+      },
+      "path": "images/1000885126.jpg"
     },
     {
-      "title": "Art workshop",
-      "category": "activities",
-      "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
+      "id": "60d676c2004e39f81c2f38ffae11754772f4bff9",
+      "name": "1000885143.jpg",
+      "size": 117612,
+      "displayURL": {
+        "id": "60d676c2004e39f81c2f38ffae11754772f4bff9",
+        "path": "images/1000885143.jpg"
+      },
+      "path": "images/1000885143.jpg"
     },
     {
-      "title": "Assembly",
-      "category": "Events",
-      "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
+      "id": "a75e12fc0b223d0567679be52342d124e4c27a4c",
+      "name": "1000885186.jpg",
+      "size": 72515,
+      "displayURL": {
+        "id": "a75e12fc0b223d0567679be52342d124e4c27a4c",
+        "path": "images/1000885186.jpg"
+      },
+      "path": "images/1000885186.jpg"
+    },
+    {
+      "id": "85ba1e5129a277b7c5d4e180ad0f658b929a8cf9",
+      "name": "1000885212.jpg",
+      "size": 109378,
+      "displayURL": {
+        "id": "85ba1e5129a277b7c5d4e180ad0f658b929a8cf9",
+        "path": "images/1000885212.jpg"
+      },
+      "path": "images/1000885212.jpg"
+    },
+    {
+      "id": "82243809d2b99e2cb9383ff3e55ebed0a883c966",
+      "name": "1000885226.jpg",
+      "size": 44738,
+      "displayURL": {
+        "id": "82243809d2b99e2cb9383ff3e55ebed0a883c966",
+        "path": "images/1000885226.jpg"
+      },
+      "path": "images/1000885226.jpg"
+    },
+    {
+      "id": "b165a14a98841730a83ab9cc83edd7632a28cf5e",
+      "name": "1000885234.jpg",
+      "size": 94562,
+      "displayURL": {
+        "id": "b165a14a98841730a83ab9cc83edd7632a28cf5e",
+        "path": "images/1000885234.jpg"
+      },
+      "path": "images/1000885234.jpg"
+    },
+    {
+      "id": "e12ec2619b342a11819032af1baf16f16440ae2f",
+      "name": "1000885243.jpg",
+      "size": 117441,
+      "displayURL": {
+        "id": "e12ec2619b342a11819032af1baf16f16440ae2f",
+        "path": "images/1000885243.jpg"
+      },
+      "path": "images/1000885243.jpg"
+    },
+    {
+      "id": "70f2c40e22639808cde7d552bede8e84689f4fd4",
+      "name": "1000885250.jpg",
+      "size": 139451,
+      "displayURL": {
+        "id": "70f2c40e22639808cde7d552bede8e84689f4fd4",
+        "path": "images/1000885250.jpg"
+      },
+      "path": "images/1000885250.jpg"
+    },
+    {
+      "id": "abf4e29586e69eaada5dc405d2126047cad81ab0",
+      "name": "1000885372.jpg",
+      "size": 36893,
+      "displayURL": {
+        "id": "abf4e29586e69eaada5dc405d2126047cad81ab0",
+        "path": "images/1000885372.jpg"
+      },
+      "path": "images/1000885372.jpg"
+    },
+    {
+      "id": "45ed4df58787b12262682d9816380ec2546767e6",
+      "name": "1000885391.jpg",
+      "size": 133773,
+      "displayURL": {
+        "id": "45ed4df58787b12262682d9816380ec2546767e6",
+        "path": "images/1000885391.jpg"
+      },
+      "path": "images/1000885391.jpg"
+    },
+    {
+      "id": "4f60547ce76c7a7dcde3c7487e46d4e339a933f3",
+      "name": "1000885398.jpg",
+      "size": 21603,
+      "displayURL": {
+        "id": "4f60547ce76c7a7dcde3c7487e46d4e339a933f3",
+        "path": "images/1000885398.jpg"
+      },
+      "path": "images/1000885398.jpg"
+    },
+    {
+      "id": "d3f302aeeef6c9b27283821b59126124b5b8732f",
+      "name": "1000885578.jpg",
+      "size": 72994,
+      "displayURL": {
+        "id": "d3f302aeeef6c9b27283821b59126124b5b8732f",
+        "path": "images/1000885578.jpg"
+      },
+      "path": "images/1000885578.jpg"
+    },
+    {
+      "id": "8d195d528234de222b54a82e47688dd72ea24eb3",
+      "name": "1000886744.jpg",
+      "size": 14464,
+      "displayURL": {
+        "id": "8d195d528234de222b54a82e47688dd72ea24eb3",
+        "path": "images/1000886744.jpg"
+      },
+      "path": "images/1000886744.jpg"
+    },
+    {
+      "id": "ae59f5c58c77b5c65a162c596dc097393590cd9d",
+      "name": "1000888480.jpg",
+      "size": 113640,
+      "displayURL": {
+        "id": "ae59f5c58c77b5c65a162c596dc097393590cd9d",
+        "path": "images/1000888480.jpg"
+      },
+      "path": "images/1000888480.jpg"
+    },
+    {
+      "id": "b8874240dd423ce4f447753c0cf9234d8bdb7bb8",
+      "name": "1000888482.jpg",
+      "size": 117887,
+      "displayURL": {
+        "id": "b8874240dd423ce4f447753c0cf9234d8bdb7bb8",
+        "path": "images/1000888482.jpg"
+      },
+      "path": "images/1000888482.jpg"
+    },
+    {
+      "id": "8efef729943c36e7b48fbc999b3dd40a9be454da",
+      "name": "1000888484.jpg",
+      "size": 139746,
+      "displayURL": {
+        "id": "8efef729943c36e7b48fbc999b3dd40a9be454da",
+        "path": "images/1000888484.jpg"
+      },
+      "path": "images/1000888484.jpg"
+    },
+    {
+      "id": "9fa45e1f95de6e926368acef651053da253a0787",
+      "name": "2.jpg",
+      "size": 490947,
+      "displayURL": {
+        "id": "9fa45e1f95de6e926368acef651053da253a0787",
+        "path": "images/2.jpg"
+      },
+      "path": "images/2.jpg"
+    },
+    {
+      "id": "42e07511b076f5368afe253f7baf1ac6c3ce150c",
+      "name": "3.jpg",
+      "size": 268094,
+      "displayURL": {
+        "id": "42e07511b076f5368afe253f7baf1ac6c3ce150c",
+        "path": "images/3.jpg"
+      },
+      "path": "images/3.jpg"
+    },
+    {
+      "id": "1915a70476cda9236a0ac7289ca44ec26ab1f8b8",
+      "name": "event.jpg",
+      "size": 115582,
+      "displayURL": {
+        "id": "1915a70476cda9236a0ac7289ca44ec26ab1f8b8",
+        "path": "images/event.jpg"
+      },
+      "path": "images/event.jpg"
+    },
+    {
+      "id": "ca14f4da0a3dc931730582be4df6912f0c3af9ed",
+      "name": "female.png",
+      "size": 10673,
+      "displayURL": {
+        "id": "ca14f4da0a3dc931730582be4df6912f0c3af9ed",
+        "path": "images/female.png"
+      },
+      "path": "images/female.png"
+    },
+    {
+      "id": "f2c4fb77c88a089db5840fb2ea3e55354e0aba97",
+      "name": "flash.jpg",
+      "size": 100941,
+      "displayURL": {
+        "id": "f2c4fb77c88a089db5840fb2ea3e55354e0aba97",
+        "path": "images/flash.jpg"
+      },
+      "path": "images/flash.jpg"
+    },
+    {
+      "id": "ad115f0f5a18f9801fa3a645fae1fa593b61fe49",
+      "name": "img-20260601-wa0000.jpg",
+      "size": 703863,
+      "displayURL": {
+        "id": "ad115f0f5a18f9801fa3a645fae1fa593b61fe49",
+        "path": "images/img-20260601-wa0000.jpg"
+      },
+      "path": "images/img-20260601-wa0000.jpg"
+    },
+    {
+      "id": "db9fb2a1c31df6e9ed6426b6286252557cee8ca6",
+      "name": "img-20260601-wa0001.jpg",
+      "size": 713415,
+      "displayURL": {
+        "id": "db9fb2a1c31df6e9ed6426b6286252557cee8ca6",
+        "path": "images/img-20260601-wa0001.jpg"
+      },
+      "path": "images/img-20260601-wa0001.jpg"
+    },
+    {
+      "id": "7439170913cd7fb928c7f0d65f8459a259fa2391",
+      "name": "img-20260630-wa0004.jpg",
+      "size": 71116,
+      "displayURL": {
+        "id": "7439170913cd7fb928c7f0d65f8459a259fa2391",
+        "path": "images/img-20260630-wa0004.jpg"
+      },
+      "path": "images/img-20260630-wa0004.jpg"
+    },
+    {
+      "id": "f7e6b75f09cc6862c89d5ba8a972cab38524774d",
+      "name": "img-20260710-wa0039.jpg",
+      "size": 90190,
+      "displayURL": {
+        "id": "f7e6b75f09cc6862c89d5ba8a972cab38524774d",
+        "path": "images/img-20260710-wa0039.jpg"
+      },
+      "path": "images/img-20260710-wa0039.jpg"
+    },
+    {
+      "id": "e64e48b146c235db948631ab917ed337d1186202",
+      "name": "img-20260710-wa0058.jpg",
+      "size": 46590,
+      "displayURL": {
+        "id": "e64e48b146c235db948631ab917ed337d1186202",
+        "path": "images/img-20260710-wa0058.jpg"
+      },
+      "path": "images/img-20260710-wa0058.jpg"
+    },
+    {
+      "id": "7122c03fa6f62b48a0e563447311d56e0ef1b794",
+      "name": "lib.png",
+      "size": 101568,
+      "displayURL": {
+        "id": "7122c03fa6f62b48a0e563447311d56e0ef1b794",
+        "path": "images/lib.png"
+      },
+      "path": "images/lib.png"
+    },
+    {
+      "id": "8a7d1579448fa7db0484c85e7eadbb23aa986b27",
+      "name": "logo.png",
+      "size": 1702801,
+      "displayURL": {
+        "id": "8a7d1579448fa7db0484c85e7eadbb23aa986b27",
+        "path": "images/logo.png"
+      },
+      "path": "images/logo.png"
+    },
+    {
+      "id": "3178c6ca466e119409c51ddb2f3c40f3e8d804d2",
+      "name": "male.png",
+      "size": 11892,
+      "displayURL": {
+        "id": "3178c6ca466e119409c51ddb2f3c40f3e8d804d2",
+        "path": "images/male.png"
+      },
+      "path": "images/male.png"
+    },
+    {
+      "id": "1195496e1c07ba14924f7a94f17e4cc662c9c16a",
+      "name": "principal.jpg",
+      "size": 36715,
+      "displayURL": {
+        "id": "1195496e1c07ba14924f7a94f17e4cc662c9c16a",
+        "path": "images/principal.jpg"
+      },
+      "path": "images/principal.jpg"
+    },
+    {
+      "id": "e0347dc1dd798c0692ab67badfd897a7369a0bf2",
+      "name": "tushar.jpg",
+      "size": 797559,
+      "displayURL": {
+        "id": "e0347dc1dd798c0692ab67badfd897a7369a0bf2",
+        "path": "images/tushar.jpg"
+      },
+      "path": "images/tushar.jpg"
     }
-  ]
+  ],
+  "label": "Gallery",
+  "updatedOn": "",
+  "i18n": {},
+  "collection": "staff_content"
 }
