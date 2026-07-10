@@ -182,7 +182,7 @@ window.SITE_CONFIG = {
   },
 
   /** REQUIRED for forms. Create at https://web3forms.com using ghschool63@gmail.com only. */
-  web3formsAccessKey: "",
+  web3formsAccessKey: "0fcbbf69-3552-4c1e-9f97-bba9b7e3daeb",
 
   /** Optional: full https URL to thank-you.html after submit. Leave "" to auto from current site. */
   formThankYouUrl: "",
