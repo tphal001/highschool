@@ -214,14 +214,22 @@ collections:
         file: content/cms/gallery.json
         fields:
           - { label: Intro, name: intro, widget: string }
+          - label: Bulk add photos
+            name: bulkImages
+            widget: list
+            required: false
+            summary: "{{fields.image}}"
+            label_singular: photo
+            hint: "Use Add, then choose many images at once (Ctrl/Shift). Title and category are optional — leave blank if you like. Photos move into the gallery when you publish."
+            field: { label: Photo, name: image, widget: image }
           - label: Photo items
             name: items
             widget: list
-            summary: "{{fields.title}}"
-            hint: "Newest photos appear first after you publish."
+            summary: "{{fields.image}}"
+            hint: "Newest photos appear first after you publish. Title and category are optional."
             fields:
-              - { label: Title, name: title, widget: string }
-              - { label: Category, name: category, widget: string }
+              - { label: Title (optional), name: title, widget: string, required: false }
+              - { label: Category (optional), name: category, widget: string, required: false }
               - { label: Photo, name: image, widget: image }
           - { label: Video gallery note, name: videoNote, widget: text, required: false }
 

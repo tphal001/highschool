@@ -15,6 +15,30 @@ function todayIsoDate() {
 }
 
 /** Sort-only timestamp; strips CMS date fields from public content. */
+/** Append bulkImages rows into gallery.items (title/category optional). */
+function mergeGalleryBulkImages(gallery) {
+  if (!gallery || typeof gallery !== "object") return;
+  var bulk = gallery.bulkImages;
+  if (!Array.isArray(bulk) || !bulk.length) {
+    delete gallery.bulkImages;
+    return;
+  }
+  gallery.items = Array.isArray(gallery.items) ? gallery.items.slice() : [];
+  bulk.forEach(function (row) {
+    var img =
+      typeof row === "string"
+        ? row
+        : row && typeof row === "object"
+          ? row.image || row.url || ""
+          : "";
+    img = String(img || "").trim();
+    if (img) {
+      gallery.items.push({ title: "", category: "", image: img });
+    }
+  });
+  delete gallery.bulkImages;
+}
+
 function stampListForSort(items, previousItems, keyField) {
   if (!Array.isArray(items)) return items;
   keyField = keyField || "title";
@@ -107,6 +131,7 @@ function applyCmsFile(site, filename, data) {
       break;
     case "gallery.json":
       site.gallery = data;
+      mergeGalleryBulkImages(site.gallery);
       break;
     case "highlight.json":
       site.highlights = data;
@@ -258,8 +283,23 @@ function normalizeSiteForEmit(site, previous) {
     site.activity.items = stampListForSort(site.activity.items, prevAct);
   }
   if (site.gallery && Array.isArray(site.gallery.items)) {
+    mergeGalleryBulkImages(site.gallery);
     var prevGal = (previous && previous.gallery && previous.gallery.items) || [];
-    site.gallery.items = stampListForSort(site.gallery.items, prevGal);
+    site.gallery.items = stampListForSort(
+      site.gallery.items.map(function (it, idx) {
+        if (!it || typeof it !== "object") return it;
+        return Object.assign({}, it, {
+          title: String(it.title || "").trim() || String(it.image || "").trim() || "photo-" + idx,
+        });
+      }),
+      prevGal.map(function (it, idx) {
+        if (!it || typeof it !== "object") return it;
+        return Object.assign({}, it, {
+          title: String(it.title || "").trim() || String(it.image || "").trim() || "photo-" + idx,
+        });
+      }),
+      "title"
+    );
   }
   if (site.highlights && Array.isArray(site.highlights.items)) {
     var prevHi = (previous && previous.highlights && previous.highlights.items) || [];

@@ -1452,24 +1452,36 @@
             else if (len >= 3 && idx === len - 2) figId = ' id="marathi-1"';
             else if (len >= 2 && idx === len - 1 && idx > 0) figId = ' id="marathi-2"';
             var src = mediaSrc(it.image);
+            var title = (it.title || "").trim();
+            var category = (it.category || "").trim();
+            var alt = title || category || "Campus photo";
+            var lightboxCaption = title && category ? title + " — " + category : title || category || alt;
+            var captionHtml =
+              title || category
+                ? '<figcaption class="p-4">' +
+                  (category
+                    ? '<span class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
+                      esc(category) +
+                      "</span>"
+                    : "") +
+                  (title ? '<h3 class="font-display font-semibold text-mes-primary">' + esc(title) + "</h3>" : "") +
+                  "</figcaption>"
+                : "";
             return (
               "<figure" +
               figId +
               ' data-reveal class="group scroll-mt-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
               '<div class="aspect-[4/3] overflow-hidden">' +
-              galleryLightboxButton(src, it.title, it.title + " — " + it.category) +
+              galleryLightboxButton(src, alt, lightboxCaption) +
               '<img src="' +
               esc(src) +
               '" alt="' +
-              esc(it.title) +
+              esc(alt) +
               '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
               galleryLightboxClose() +
               "</div>" +
-              '<figcaption class="p-4"><span class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
-              esc(it.category) +
-              '</span><h3 class="font-display font-semibold text-mes-primary">' +
-              esc(it.title) +
-              "</h3></figcaption></figure>"
+              captionHtml +
+              "</figure>"
             );
           })
           .join("") +
