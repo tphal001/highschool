@@ -15,28 +15,27 @@ function todayIsoDate() {
 }
 
 /** Sort-only timestamp; strips CMS date fields from public content. */
-/** Append bulkImages rows into gallery.items (title/category optional). */
+/** Append bulkImages rows into gallery.items; strip CMS-only gallery fields. */
 function mergeGalleryBulkImages(gallery) {
   if (!gallery || typeof gallery !== "object") return;
   var bulk = gallery.bulkImages;
-  if (!Array.isArray(bulk) || !bulk.length) {
-    delete gallery.bulkImages;
-    return;
+  if (Array.isArray(bulk) && bulk.length) {
+    gallery.items = Array.isArray(gallery.items) ? gallery.items.slice() : [];
+    bulk.forEach(function (row) {
+      var img =
+        typeof row === "string"
+          ? row
+          : row && typeof row === "object"
+            ? row.image || row.url || ""
+            : "";
+      img = String(img || "").trim();
+      if (img) {
+        gallery.items.push({ title: "", category: "", image: img });
+      }
+    });
   }
-  gallery.items = Array.isArray(gallery.items) ? gallery.items.slice() : [];
-  bulk.forEach(function (row) {
-    var img =
-      typeof row === "string"
-        ? row
-        : row && typeof row === "object"
-          ? row.image || row.url || ""
-          : "";
-    img = String(img || "").trim();
-    if (img) {
-      gallery.items.push({ title: "", category: "", image: img });
-    }
-  });
   delete gallery.bulkImages;
+  delete gallery.galleryBulkTrigger;
 }
 
 function stampListForSort(items, previousItems, keyField) {

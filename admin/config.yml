@@ -214,11 +214,11 @@ collections:
         file: content/cms/gallery.json
         fields:
           - { label: Intro, name: intro, widget: string }
-          - label: Bulk add photos
-            name: bulkImages
-            widget: galleryBulkPicker
+          - label: Add multiple photos
+            name: galleryBulkTrigger
+            widget: galleryBulkToolbar
             required: false
-            hint: "Upload or pick multiple photos at once (Ctrl/Shift in Media). Photos appear in Photo items below immediately. Publish to save to the site."
+            hint: "Photos go directly into Photo items below. Confirm the Photo items count increases before you Publish."
             media_library:
               config:
                 multiple: true
