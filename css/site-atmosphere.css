@@ -294,6 +294,16 @@ body.site-body[data-page="home"] #announcements {
   border-top-color: rgba(8, 145, 178, 0.06);
 }
 
+/* Home — About our school: extra-light band */
+body.site-body[data-page="home"] .home-about-band {
+  background: linear-gradient(
+    180deg,
+    var(--site-cream-pale) 0%,
+    var(--site-cream-light) 100%
+  ) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
 /* Inline action links — View all news →, Read more →, footer contact */
 .site-action-link {
   color: var(--site-link);
@@ -501,18 +511,18 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   width: 100%;
   height: 100%;
   min-height: 0;
-  padding: 0.5rem 0.55rem;
+  padding: 0.35rem 0.4rem;
   overflow: hidden;
 }
 
 .site-header-info-card__title {
   margin: 0;
-  font-size: 0.625rem;
-  font-weight: 700;
-  line-height: 1.25;
-  letter-spacing: 0.04em;
+  font-size: 0.6875rem;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
-  color: #1e293b;
+  color: #0f172a;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -520,11 +530,11 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 }
 
 .site-header-info-card__text {
-  margin: 0.25rem 0 0;
-  font-size: 0.625rem;
+  margin: 0.2rem 0 0;
+  font-size: 0.5625rem;
   font-weight: 400;
-  line-height: 1.35;
-  color: #475569;
+  line-height: 1.3;
+  color: #64748b;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
@@ -533,12 +543,15 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 
 @media (min-width: 640px) {
   .site-header-info-card {
-    padding: 0.55rem 0.65rem;
+    padding: 0.4rem 0.45rem;
   }
 
-  .site-header-info-card__title,
+  .site-header-info-card__title {
+    font-size: 0.75rem;
+  }
+
   .site-header-info-card__text {
-    font-size: 0.6875rem;
+    font-size: 0.6rem;
   }
 }
 
@@ -861,9 +874,11 @@ announcement-card .announcement-card__media,
   width: 100%;
 }
 
-/* News ticker — light strip under nav; readable text, nav still dominant above */
+/* News ticker — light strip under nav */
 #site-news-ticker {
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 2px 8px -2px rgba(12, 74, 110, 0.1);
 }
 
 #site-news-ticker .site-news-ticker-label {

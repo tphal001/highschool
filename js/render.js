@@ -620,10 +620,10 @@
         '<div class="grid gap-12 lg:grid-cols-2 lg:items-center">' +
         '<div data-reveal>' +
         '<div class="border-b border-slate-200 pb-2">' +
-        '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-20 after:bg-mes-red">' +
+        '<h2 class="font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl">' +
         esc(b.title) +
         "</h2></div>" +
-        '<p class="mt-4 text-lg font-medium text-mes-accent">' +
+        '<p class="mt-4 text-lg font-medium text-mes-primaryDark">' +
         esc(b.subtitle) +
         "</p>" +
         b.paragraphs
@@ -637,7 +637,7 @@
         esc(b.linkLabel) +
         " →</a>" +
         "</div>" +
-        '<div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-200 shadow-2xl ring-1 ring-white/60 site-card-3d" data-reveal>' +
+        '<div class="relative aspect-[4/3] overflow-hidden rounded-2xl bg-slate-200 shadow-2xl ring-1 ring-slate-200/80 site-card-3d" data-reveal>' +
         '<img src="' +
         esc(C.home.hero.image) +
         '" alt="" class="h-full w-full object-cover" loading="lazy"/>' +
@@ -921,7 +921,7 @@
     return (
       '<section id="history" class="scroll-mt-52" data-reveal>' +
       '<h2 class="font-display text-3xl font-bold text-mes-primary">Our history</h2>' +
-      '<p class="mt-2 text-lg text-mes-accent">Since <strong>' +
+      '<p class="mt-2 text-lg text-mes-primaryDark">Since <strong>' +
       esc(String(a.history.sinceYear)) +
       "</strong> - more than 60 years of excellence.</p>" +
       '<div class="mt-8 space-y-4 text-lg leading-relaxed text-slate-700">' +
@@ -1386,6 +1386,16 @@
     }
 
     var subEvents = getPageSub("");
+    if (subEvents === "notices") {
+      setInnerPageHeader("news", { title: "Notices", hideLead: true });
+      el.innerHTML =
+        '<div id="notices" class="scroll-mt-52 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal>' +
+        '<h2 class="font-display text-xl font-bold text-mes-primary">Notices</h2><ul class="mt-4">' +
+        sortCmsList(n.notices || []).map(itemRow).join("") +
+        "</ul></div>";
+      return;
+    }
+
     if (isSectionOnlySub("news", subEvents, ctx)) {
       var singleEvent = findEventBySub(subEvents);
       if (singleEvent) {

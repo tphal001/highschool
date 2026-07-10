@@ -128,7 +128,7 @@
               '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-cyan-500"></span>' +
               inner +
               "</div>";
-        return '<li class="site-header-info-boxes__item min-w-0 flex-1 sm:max-w-[10.5rem] lg:max-w-[11.5rem]">' + wrap + "</li>";
+        return '<li class="site-header-info-boxes__item min-w-0 flex-1 sm:max-w-[8.75rem] lg:max-w-[9.25rem]">' + wrap + "</li>";
       })
       .join("");
     return (
@@ -435,7 +435,7 @@
         buildNavMobileBar() +
         buildNavMobilePanel(links) +
         "</div>" +
-        '<div id="site-news-ticker" class="hidden border-t border-slate-300/90 bg-white/90 px-3 sm:px-8 lg:px-10" aria-live="polite"></div>' +
+        '<div id="site-news-ticker" class="hidden border border-slate-200/80 border-t-slate-300/90 bg-white/90 px-3 shadow-[0_2px_8px_-2px_rgba(12,74,110,0.12)] sm:px-8 lg:px-10" aria-live="polite"></div>' +
         "</header>" +
         floatingSocialRail();
     }

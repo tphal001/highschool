@@ -132,7 +132,7 @@ window.SITE_CONFIG = {
       id: "events",
       label: "Events",
       href: "news.html?ctx=events",
-      children: [{ label: "Notices", href: "news.html?ctx=events#notices" }],
+      children: [{ label: "Notices", href: "news.html?ctx=events&sub=notices" }],
       dynamicChildren: "events",
     },
     {
