@@ -90,7 +90,7 @@ tailwind.config = {
 
           /** Main nav background — darker aqua bar */
 
-          nav: "#0c6e87",
+          nav: "#0a5d72",
 
           /** Nav underline & hairlines (kept as goldLine token) */
 
@@ -104,7 +104,7 @@ tailwind.config = {
 
         school: {
 
-          navy: "#0c6e87",
+          navy: "#0a5d72",
 
           slate: "#334155",
 
