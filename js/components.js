@@ -487,19 +487,26 @@
       var contactBlock =
         '<div><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Contact us</p>' +
         (address ? '<p class="mt-2 text-xs leading-relaxed text-slate-600">' + esc(address) + "</p>" : "") +
-        (phone
-          ? '<p class="mt-1.5 text-xs"><a href="tel:' +
-            esc(phoneTel(phone)) +
-            '" class="site-action-link hover:underline">' +
-            esc(phoneDisplay(phone)) +
-            "</a></p>"
-          : "") +
-        (email
-          ? '<p class="mt-1 text-xs"><a href="mailto:' +
-            esc(email) +
-            '" class="site-action-link hover:underline">' +
-            esc(email) +
-            "</a></p>"
+        (phone || email
+          ? '<p class="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs">' +
+            (phone
+              ? '<a href="tel:' +
+                esc(phoneTel(phone)) +
+                '" class="site-action-link inline-flex items-center gap-1 hover:underline"><span aria-hidden="true">📞</span>' +
+                esc(phoneDisplay(phone)) +
+                "</a>"
+              : "") +
+            (phone && email
+              ? '<span class="text-slate-300" aria-hidden="true">|</span>'
+              : "") +
+            (email
+              ? '<a href="mailto:' +
+                esc(email) +
+                '" class="site-action-link inline-flex items-center gap-1 hover:underline"><span aria-hidden="true">✉️</span>' +
+                esc(email) +
+                "</a>"
+              : "") +
+            "</p>"
           : "") +
         '<div class="mt-3 flex gap-2">' +
         (cfg.socialLinks || [])

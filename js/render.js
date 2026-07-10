@@ -1051,7 +1051,7 @@
       '<h3 class="mt-4 w-full text-center font-display text-xl font-bold leading-snug text-slate-900 md:text-left">' +
       esc(a.principal.name) +
       "</h3>" +
-      '<p class="mt-1 w-full text-center text-base font-medium text-mes-accent md:text-left">' +
+      '<p class="mt-1 w-full text-center text-base font-medium text-mes-primaryDark md:text-left">' +
       esc(a.principal.title) +
       "</p>" +
       "</div>" +

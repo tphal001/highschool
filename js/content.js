@@ -125,7 +125,9 @@ window.SITE_CONTENT = {
       "name": "Dr. Gadagkar Atul Shashikant",
       "role": "अध्यक्ष",
       "photo": "images/img-20260710-wa0058.jpg",
-      "message": []
+      "message": [
+        "Standing by our students, teachers, and staff to promote education at its absolute best while creating an environment of excellence and innovation, instilling strong social and moral values and wishing every student reaches their highest potential and contributes utmost to our society"
+      ]
     },
     "principal": {
       "name": "Mr. Satish P. Zanjurne",
