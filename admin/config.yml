@@ -219,9 +219,10 @@ collections:
             widget: list
             summary: "{{fields.title}}"
             label_singular: photo
-            hint: "Add photo + → Choose an image → tick the checkboxes on photos in Media → Choose selected. Newest photos show first on the site after Publish."
+            add_to_top: true
+            hint: "1) Add photo + → Choose an image. 2) On Media, tick photos (top-left checkboxes). 3) Click blue bar Add ticked photos to Gallery. 4) Publish."
             fields:
-              - { label: Title (optional), name: title, widget: string, required: false }
+              - { label: Title (optional), name: title, widget: string, required: false, default: "Photo" }
               - { label: Category (optional), name: category, widget: string, required: false }
               - { label: Photo, name: image, widget: image, choose_url: false }
           - { label: Video gallery note, name: videoNote, widget: text, required: false }
