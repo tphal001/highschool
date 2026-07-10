@@ -398,7 +398,7 @@
           esc(schoolName) +
           '" class="site-logo-mark__img" />' +
           "</span>"
-        : '<div class="site-logo-mark site-logo-mark--initials flex items-center justify-center text-base font-bold text-mes-primary sm:text-lg">' +
+        : '<div class="site-logo-mark site-logo-mark--initials flex items-center justify-center text-lg font-bold text-mes-primary sm:text-xl">' +
           esc(initials) +
           "</div>";
 
@@ -459,7 +459,7 @@
             return (
               '<li><a href="' +
               esc(item.href) +
-              '" class="text-xs text-slate-700 transition hover:text-mes-accent">' +
+              '" class="text-xs text-slate-700 transition hover:text-mes-primaryDark">' +
               esc(item.label) +
               "</a></li>"
             );
@@ -490,14 +490,14 @@
         (phone
           ? '<p class="mt-1.5 text-xs"><a href="tel:' +
             esc(phoneTel(phone)) +
-            '" class="text-mes-accent hover:underline">' +
+            '" class="site-action-link hover:underline">' +
             esc(phoneDisplay(phone)) +
             "</a></p>"
           : "") +
         (email
           ? '<p class="mt-1 text-xs"><a href="mailto:' +
             esc(email) +
-            '" class="text-mes-accent hover:underline">' +
+            '" class="site-action-link hover:underline">' +
             esc(email) +
             "</a></p>"
           : "") +
@@ -542,7 +542,7 @@
         (cfg.cmsShowFooterLink && (cfg.cmsAdminPath || "").trim()
           ? '<span class="mx-2 text-slate-300" aria-hidden="true">|</span><a href="' +
             esc((cfg.cmsAdminPath || "admin/index.html").replace(/^\//, "")) +
-            '" class="text-slate-400 hover:text-mes-accent">Staff content</a>'
+            '" class="text-slate-400 hover:text-mes-primaryDark">Staff content</a>'
           : "") +
         "</p>" +
         "</footer>";
@@ -585,7 +585,7 @@
         "</p>" +
         '<a href="' +
         esc(href) +
-        '" class="mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300 transition-colors duration-200 group-hover:text-mes-primary group-hover:decoration-mes-accent">' +
+        '" class="mt-auto inline-flex pt-4 text-sm font-semibold site-action-link underline decoration-slate-300 transition-colors duration-200 group-hover:decoration-mes-primary/50">' +
         esc(readLabel) +
         "</a>" +
         "</div>" +

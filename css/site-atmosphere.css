@@ -5,11 +5,15 @@
 :root {
   /* Soft ice blue — sky/cyan family, one step darker than sky-50 */
   --site-cream: #e0f2fe;
+  --site-cream-light: #f0f9ff;
+  --site-cream-pale: #f8fdff;
   --site-cream-deep: #bae6fd;
   --site-rose: #7dd3fc;
   --site-rose-deep: #67d8f7;
   --site-aqua-glow: rgba(8, 145, 178, 0.16);
   --site-cyan-glow: rgba(34, 211, 238, 0.18);
+  --site-link: #155e75;
+  --site-link-hover: #0e7490;
   --site-card-border: rgba(14, 116, 144, 0.34);
   --site-card-shadow:
     0 1px 0 rgba(255, 255, 255, 0.95) inset,
@@ -274,6 +278,36 @@ body.site-body main {
   border-top: 1px solid rgba(8, 145, 178, 0.08);
 }
 
+/* Home — Highlights & Quick announcements: lighter ice-blue bands */
+body.site-body[data-page="home"] #home-highlight-section,
+body.site-body[data-page="home"] #announcements {
+  background: linear-gradient(
+    180deg,
+    var(--site-cream-pale) 0%,
+    var(--site-cream-light) 100%
+  ) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.92);
+}
+
+body.site-body[data-page="home"] #home-highlight-section + .site-legacy-band,
+body.site-body[data-page="home"] #announcements {
+  border-top-color: rgba(8, 145, 178, 0.06);
+}
+
+/* Inline action links — View all news →, Read more →, footer contact */
+.site-action-link {
+  color: var(--site-link);
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
+}
+
+.site-action-link:hover {
+  color: var(--site-link-hover);
+}
+
+.group:hover .site-action-link {
+  color: var(--site-link-hover);
+}
+
 /* Maroon legacy strip — full bleed like the nav */
 .site-legacy-band {
   border-top: 1px solid rgba(0, 0, 0, 0.15);
@@ -418,8 +452,8 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 /* Circular logo — blends PNG white box into header gradient */
 .site-logo-mark {
   display: flex;
-  height: 3.5rem;
-  width: 3.5rem;
+  height: 4rem;
+  width: 4rem;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -445,8 +479,8 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 
 @media (min-width: 640px) {
   .site-logo-mark {
-    height: 4rem;
-    width: 4rem;
+    height: 4.75rem;
+    width: 4.75rem;
   }
 }
 

@@ -347,7 +347,7 @@
       idxAttr +
       ' class="' +
       openBtnClass +
-      ' mt-auto inline-flex pt-4 text-sm font-semibold text-slate-500 underline decoration-slate-300 transition-colors duration-200 group-hover:text-mes-primary group-hover:decoration-mes-accent">' +
+      ' mt-auto inline-flex pt-4 text-sm font-semibold site-action-link underline decoration-slate-300 transition-colors duration-200 group-hover:decoration-mes-primary/50">' +
       esc(readLabel) +
       "</button></div></article>"
     );
@@ -573,7 +573,7 @@
         "</span>" +
         "<span>" +
         esc(fr.footerLine || "") +
-        '</span></div><p class="mt-3 shrink-0 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
+        '</span></div><p class="site-action-link mt-3 shrink-0 text-xs font-semibold group-hover:underline">View full appeal →</p>' +
         "</div></a></aside></div></div>";
     }
 
@@ -633,7 +633,7 @@
           .join("") +
         '<a href="' +
         esc(b.linkHref) +
-        '" class="mt-8 inline-flex font-semibold text-mes-accent hover:underline">' +
+        '" class="site-action-link mt-8 inline-flex font-semibold hover:underline">' +
         esc(b.linkLabel) +
         " →</a>" +
         "</div>" +
@@ -1673,7 +1673,7 @@
         ? '<span class="font-normal text-slate-400" aria-hidden="true">|</span>' +
           '<a href="' +
           esc(linkedIn) +
-          '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-0.5 font-sans text-sm font-semibold text-mes-primary hover:text-mes-accent hover:underline"><span aria-hidden="true">🔗</span> LinkedIn</a>'
+          '" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-0.5 font-sans text-sm font-semibold text-mes-primary hover:text-mes-primaryDark hover:underline"><span aria-hidden="true">🔗</span> LinkedIn</a>'
         : "") +
       "</p>" +
       '<p class="mt-1 inline-flex rounded-full border border-mes-accent/35 bg-mes-accent/10 px-2 py-0.5 text-[11px] font-semibold text-mes-primary">' +
@@ -1685,7 +1685,7 @@
       (phone
         ? '<p class="mt-2 text-xs"><a href="tel:' +
           esc(phoneTel) +
-          '" class="font-semibold text-mes-primary hover:text-mes-accent hover:underline">' +
+          '" class="font-semibold text-mes-primary hover:text-mes-primaryDark hover:underline">' +
           esc(phoneDisplay) +
           "</a></p>"
         : "") +
@@ -1749,7 +1749,7 @@
       '<span class="min-w-0 break-words">' +
       esc(footer) +
       "</span></div>" +
-      '<p class="mt-2 text-xs font-semibold text-mes-accent group-hover:underline">View full appeal →</p>' +
+      '<p class="site-action-link mt-2 text-xs font-semibold group-hover:underline">View full appeal →</p>' +
       "</div></a>"
     );
   }
@@ -1946,7 +1946,7 @@
               return (
                 '<li class="min-w-0"><a href="' +
                 esc(href) +
-                '" class="site-sidebar-link block break-words text-sm font-semibold leading-snug text-mes-primary transition hover:text-mes-accent hover:underline">' +
+                '" class="site-sidebar-link block break-words text-sm font-semibold leading-snug text-mes-primary transition hover:text-mes-primaryDark hover:underline">' +
                 esc(l.label) +
                 "</a></li>"
               );
