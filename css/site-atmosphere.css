@@ -458,13 +458,13 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   }
 }
 
-/* Header info boxes — stretch to match logo + title + tagline block */
+/* Header info boxes — vertically centered in the title strip */
 .site-header-brand-row {
-  align-items: stretch;
+  align-items: center;
 }
 
 .site-header-brand-link {
-  align-self: stretch;
+  align-self: center;
 }
 
 /* Circular logo — blends PNG white box into header gradient */
@@ -503,12 +503,12 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 }
 
 .site-header-info-boxes {
-  align-self: stretch;
+  align-self: center;
 }
 
 .site-header-info-boxes__item {
   display: flex;
-  align-items: stretch;
+  align-items: center;
 }
 
 .site-header-info-card {
