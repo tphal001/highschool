@@ -225,7 +225,8 @@ collections:
           - label: Photo items
             name: items
             widget: list
-            summary: "{{#if fields.title}}{{fields.title}}{{#if fields.category}} · {{fields.category}}{{/if}}{{else}}{{#if fields.category}}{{fields.category}}{{else}}Photo{{/if}}{{/if}}"
+            summary: "{{fields.title}}"
+            label_singular: photo
             hint: "Newest photos appear first after you publish. Title and category are optional."
             fields:
               - { label: Title (optional), name: title, widget: string, required: false }
