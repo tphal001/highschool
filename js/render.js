@@ -208,14 +208,6 @@
     return (cfg.formsInboxEmail || cfg.contactEmail || "").trim();
   }
 
-  function formDeliveryNoteHtml() {
-    var mail = formsInboxEmail();
-    if (!mail) return "";
-    return (
-      '<span class="ml-2 text-sm text-slate-500">Delivered to ' + esc(mail) + ".</span>"
-    );
-  }
-
   /** Hidden fields for Web3Forms (replaces FormSubmit.co — that service often errors or is unreachable). */
   function web3FormHiddenFields(subjectLine) {
     if (!web3formsEnabled()) return "";
@@ -864,9 +856,7 @@
           '<div><label class="block text-sm font-medium" for="in-phone">Phone</label><input id="in-phone" name="phone" type="tel" required class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-email">Email</label><input id="in-email" name="email" type="email" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium" for="in-msg">Message</label><textarea id="in-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-accent px-8 py-3 font-semibold text-mes-primaryDark hover:bg-mes-accentLight">Submit inquiry</button>' +
-          formDeliveryNoteHtml() +
-          "</div>" +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-accent px-8 py-3 font-semibold text-mes-primaryDark hover:bg-mes-accentLight">Submit inquiry</button></div>' +
           "</form>"
         : '<div class="mt-6">' + web3FormsSetupNoticeHtml() + "</div>") +
       "</section>"
@@ -1506,9 +1496,7 @@
           '<div><label class="block text-sm font-medium text-slate-700" for="alumni-phone">Phone</label><input id="alumni-phone" name="phone" type="tel" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-profession">Profession / organisation</label><input id="alumni-profession" name="profession" type="text" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"/></div>' +
           '<div class="sm:col-span-2"><label class="block text-sm font-medium text-slate-700" for="alumni-msg">Message / Success Story</label><textarea id="alumni-msg" name="message" rows="3" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2.5"></textarea></div>' +
-          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white transition hover:bg-mes-primaryDark">Submit registration</button>' +
-          formDeliveryNoteHtml() +
-          "</div>" +
+          '<div class="sm:col-span-2"><button type="submit" class="rounded-full bg-mes-primary px-8 py-3 font-semibold text-white transition hover:bg-mes-primaryDark">Submit registration</button></div>' +
           "</form>"
         : web3FormsSetupNoticeHtml()) +
       "</section></div>";
@@ -1573,9 +1561,7 @@
       '<div><label class="block text-sm font-medium" for="cf-subject">Subject</label><input id="cf-subject" name="topic" class="mt-1 w-full rounded-lg border border-slate-300 px-4 py-2"/></div>' +
       "</div>" +
       '<div class="flex min-h-0 flex-1 flex-col"><label class="block text-sm font-medium" for="cf-msg">Message</label><textarea id="cf-msg" name="message" rows="3" required class="mt-1 min-h-[4.5rem] w-full flex-1 rounded-lg border border-slate-300 px-4 py-2"></textarea></div>' +
-      '<div class="mt-auto pt-1"><button type="submit" class="rounded-full bg-mes-primary px-8 py-2.5 font-semibold text-white hover:bg-mes-primaryDark">Send message</button>' +
-      formDeliveryNoteHtml() +
-      "</div></form>"
+      '<div class="mt-auto pt-1"><button type="submit" class="rounded-full bg-mes-primary px-8 py-2.5 font-semibold text-white hover:bg-mes-primaryDark">Send message</button></div></form>'
     );
   }
 

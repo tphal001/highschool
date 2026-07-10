@@ -5,11 +5,11 @@
  * Deploy: push to GitHub → Vercel runs npm run build → site updates.
  *
  * FORMS (Contact, Admissions, Alumni) — Web3Forms:
- *   1. Go to https://web3forms.com and sign in with ghschool63@gmail.com (school inbox).
- *   2. Create one form (e.g. “School website”) and copy the Access Key.
- *   3. Paste it into web3formsAccessKey below.
- *   4. Add your live domain under Allowed domains in the Web3Forms dashboard.
- *   5. Push to GitHub and redeploy Vercel.
+ *   The access key is tied to ONE inbox. Create it while signed in as ghschool63@gmail.com.
+ *   1. Go to https://web3forms.com → Create Access Key → enter ghschool63@gmail.com
+ *   2. Paste the new key into web3formsAccessKey below (replace any old key from another email).
+ *   3. Add your live domain under Allowed domains in the Web3Forms dashboard.
+ *   4. Push to GitHub and redeploy Vercel.
  */
 window.SITE_CONFIG = {
   schoolName: "Dr. Gadagkar High School, Satararoad",
@@ -181,8 +181,8 @@ window.SITE_CONFIG = {
     ],
   },
 
-  /** REQUIRED for forms. Get from https://web3forms.com - leave empty until set (forms show setup instructions). */
-  web3formsAccessKey: "0fcbbf69-3552-4c1e-9f97-bba9b7e3daeb",
+  /** REQUIRED for forms. Create at https://web3forms.com using ghschool63@gmail.com only. */
+  web3formsAccessKey: "",
 
   /** Optional: full https URL to thank-you.html after submit. Leave "" to auto from current site. */
   formThankYouUrl: "",
