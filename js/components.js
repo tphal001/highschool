@@ -428,7 +428,7 @@
         "</div></a>" +
         infoBoxes +
         "</div></div>" +
-        '<div id="site-main-nav" class="border-b-2 border-mes-goldLine bg-mes-nav overflow-visible shadow-[0_2px_10px_rgba(8,145,178,0.18)]">' +
+        '<div id="site-main-nav" class="border-b-2 border-mes-goldLine bg-mes-nav overflow-visible shadow-[0_4px_14px_rgba(12,74,110,0.35)]">' +
         '<div class="hidden lg:block">' +
         buildNavDesktop(links) +
         "</div>" +
