@@ -900,7 +900,7 @@
             '<div class="min-w-0"><p class="font-semibold text-mes-primary">' +
             esc(m.name) +
             "</p>" +
-            (m.role ? '<p class="text-sm text-mes-accent">' + esc(m.role) + "</p>" : "") +
+            (m.role ? '<p class="text-sm text-mes-primaryDark">' + esc(m.role) + "</p>" : "") +
             (opts.department && m.department
               ? '<p class="mt-1 text-sm text-slate-600">' + esc(m.department) + "</p>"
               : "") +

@@ -419,9 +419,9 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   max-width: 28rem;
   font-size: 0.8125rem;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 600;
   line-height: 1.45;
-  color: #64748b;
+  color: #1e293b;
 }
 
 @media (min-width: 640px) {
