@@ -81,10 +81,6 @@ function applyCmsFile(site, filename, data) {
   site.news = site.news || {};
 
   switch (filename) {
-    case "management.json":
-      if (data.mission) site.about.mission = data.mission;
-      if (data.vision) site.about.vision = data.vision;
-      break;
     case "board.json":
       site.about.board = data;
       break;
@@ -121,9 +117,6 @@ function applyCmsFile(site, filename, data) {
     case "latestUpdates.json":
       site.home = site.home || {};
       if (data.items) site.home.quickNews = data.items;
-      break;
-    case "circulars.json":
-      if (data.items) site.news.circulars = data.items;
       break;
     case "notices.json":
       if (data.items) site.news.notices = data.items;
@@ -206,6 +199,9 @@ function normalizeSiteForEmit(site, previous) {
   if (site.about && site.about.principal && Array.isArray(site.about.principal.message)) {
     site.about.principal.message = mapStrList(site.about.principal.message, "p");
   }
+  if (site.about && site.about.chairman && Array.isArray(site.about.chairman.message)) {
+    site.about.chairman.message = mapStrList(site.about.chairman.message, "p").filter(Boolean);
+  }
   if (site.admissions) {
     if (Array.isArray(site.admissions.process)) {
       site.admissions.process = mapStrList(site.admissions.process, "step");
@@ -230,9 +226,6 @@ function normalizeSiteForEmit(site, previous) {
         if (!e || typeof e !== "object") return e;
         return Object.assign({}, e, { image: normalizeImageField(e.image) || e.image || "" });
       });
-    }
-    if (Array.isArray(site.news.circulars)) {
-      site.news.circulars = stampListForSort(site.news.circulars, prevNews.circulars);
     }
     if (Array.isArray(site.news.notices)) {
       site.news.notices = stampListForSort(site.news.notices, prevNews.notices);

@@ -13,13 +13,6 @@ import {
 
 const CMS_SEEDS = [
   {
-    file: "management.json",
-    data: (d) => ({
-      mission: d.about.mission,
-      vision: d.about.vision,
-    }),
-  },
-  {
     file: "board.json",
     data: (d) => d.about.board || { intro: "", members: [] },
   },
@@ -94,10 +87,6 @@ const CMS_SEEDS = [
     data: (d) => ({
       items: (d.home && d.home.quickNews) || [],
     }),
-  },
-  {
-    file: "circulars.json",
-    data: (d) => ({ items: (d.news && d.news.circulars) || [] }),
   },
   {
     file: "notices.json",

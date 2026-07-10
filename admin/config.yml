@@ -14,23 +14,6 @@ collections:
   - name: staff_content
     label: School content (staff)
     files:
-      - label: Mission and Vision
-        name: management
-        file: content/cms/management.json
-        fields:
-          - label: Mission
-            name: mission
-            widget: object
-            fields:
-              - { label: Title, name: title, widget: string }
-              - { label: Text, name: text, widget: text }
-          - label: Vision
-            name: vision
-            widget: object
-            fields:
-              - { label: Title, name: title, widget: string }
-              - { label: Text, name: text, widget: text }
-
       - label: Board and Governing Body Members
         name: board
         file: content/cms/board.json
@@ -169,19 +152,6 @@ collections:
               - { label: Candidate name, name: name, widget: string }
               - { label: Summary, name: summary, widget: text }
               - { label: Photo (optional), name: image, widget: image, required: false }
-
-      - label: Circulars
-        name: circulars
-        file: content/cms/circulars.json
-        fields:
-          - label: Circular items
-            name: items
-            widget: list
-            summary: "{{fields.title}}"
-            hint: "Newest circulars appear first after you publish."
-            fields:
-              - { label: Title, name: title, widget: string }
-              - { label: Summary, name: summary, widget: text }
 
       - label: Notices
         name: notices

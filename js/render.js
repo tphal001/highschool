@@ -897,7 +897,7 @@
           return (
             '<li class="flex gap-4 rounded-xl border border-slate-200 bg-white p-4">' +
             photoHtml +
-            '<div class="min-w-0"><p class="font-semibold text-mes-primary">' +
+            '<div class="min-w-0"><p class="font-semibold text-slate-900">' +
             esc(m.name) +
             "</p>" +
             (m.role ? '<p class="text-sm text-mes-primaryDark">' + esc(m.role) + "</p>" : "") +
@@ -931,6 +931,76 @@
         })
         .join("") +
       "</div></section>"
+    );
+  }
+
+  function buildAboutChairmanSection(a) {
+    var c = a.chairman;
+    if (!c || !(c.name || "").trim()) return "";
+    var heading = (c.heading || "The Heart of Our Institution").trim();
+    var photo = (c.photo || "").trim();
+    var messages = Array.isArray(c.message) ? c.message : [];
+    var messageHtml = messages
+      .filter(function (p) {
+        return (p || "").trim();
+      })
+      .map(function (p) {
+        return "<p>" + esc(p) + "</p>";
+      })
+      .join("");
+    var photoClass = messageHtml
+      ? "h-48 w-48 rounded-2xl object-cover object-top shadow-sm"
+      : "h-40 w-40 rounded-2xl object-cover object-top shadow-sm sm:h-44 sm:w-44";
+    var photoBlock = photo
+      ? '<img src="' +
+        esc(mediaSrc(photo)) +
+        '" alt="' +
+        esc(c.name) +
+        '" class="' +
+        photoClass +
+        '" loading="lazy"/>'
+      : '<div class="flex h-40 w-40 items-center justify-center rounded-2xl bg-mes-primary/10 text-3xl font-bold text-mes-primary sm:h-44 sm:w-44">' +
+        esc((c.name || "?").charAt(0)) +
+        "</div>";
+    if (!messageHtml) {
+      return (
+        '<section id="chairman" class="scroll-mt-52" data-reveal>' +
+        '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
+        esc(heading) +
+        "</h2>" +
+        '<div class="mt-8 flex flex-col items-center gap-6 rounded-2xl border border-slate-200 bg-white p-6 sm:flex-row sm:items-center sm:gap-10 sm:p-8">' +
+        photoBlock +
+        '<div class="min-w-0 text-center sm:text-left">' +
+        '<h3 class="font-display text-xl font-bold leading-snug text-slate-900 sm:text-2xl">' +
+        esc(c.name) +
+        "</h3>" +
+        (c.role
+          ? '<p class="mt-2 text-base font-medium text-mes-primaryDark">' + esc(c.role) + "</p>"
+          : "") +
+        "</div></div></section>"
+      );
+    }
+    return (
+      '<section id="chairman" class="scroll-mt-52" data-reveal>' +
+      '<h2 class="font-display text-2xl font-bold text-mes-primary">' +
+      esc(heading) +
+      "</h2>" +
+      '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
+      '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
+      photoBlock +
+      '<h3 class="mt-4 w-full text-center font-display text-xl font-bold leading-snug text-slate-900 md:text-left">' +
+      esc(c.name) +
+      "</h3>" +
+      (c.role
+        ? '<p class="mt-1 w-full text-center text-base font-medium text-mes-primaryDark md:text-left">' +
+          esc(c.role) +
+          "</p>"
+        : "") +
+      "</div>" +
+      '<div class="min-w-0 flex-1 border-t border-slate-100 pt-6 md:border-l md:border-t-0 md:pl-10 md:pt-0 lg:pl-12">' +
+      '<div class="space-y-3 text-lg leading-relaxed text-slate-600">' +
+      messageHtml +
+      "</div></div></div></section>"
     );
   }
 
@@ -978,7 +1048,7 @@
       '" alt="' +
       esc(a.principal.name) +
       '" class="h-48 w-48 rounded-2xl object-cover shadow-sm" loading="lazy"/>' +
-      '<h3 class="mt-4 w-full text-center font-display text-xl font-bold leading-snug text-mes-primary md:text-left">' +
+      '<h3 class="mt-4 w-full text-center font-display text-xl font-bold leading-snug text-slate-900 md:text-left">' +
       esc(a.principal.name) +
       "</h3>" +
       '<p class="mt-1 w-full text-center text-base font-medium text-mes-accent md:text-left">' +
@@ -1036,8 +1106,12 @@
     }
 
     setInnerPageHeader("about", { title: "About", hideLead: false });
+    var chairmanHtml = buildAboutChairmanSection(a);
     el.innerHTML =
       buildAboutHistorySection(a) +
+      (chairmanHtml
+        ? chairmanHtml.replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"')
+        : "") +
       buildAboutMissionSection(a).replace('class="scroll-mt-52 grid', 'class="mt-16 scroll-mt-52 grid') +
       buildAboutBoardSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
       buildAboutPrincipalSection(a).replace('class="scroll-mt-52"', 'class="mt-16 scroll-mt-52"') +
@@ -1337,7 +1411,7 @@
     el.innerHTML =
       '<div id="events" class="scroll-mt-52"></div>' +
       optionalIntroParagraph(n.intro, "text-xl text-slate-600") +
-      '<div class="mt-12 grid gap-10 lg:grid-cols-3" data-reveal-stagger>' +
+      '<div class="mt-12 grid gap-10 lg:grid-cols-2" data-reveal-stagger>' +
       '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Events</h2><ul class="mt-4">' +
       sortCmsList(n.events || [])
         .map(function (x) {
@@ -1346,10 +1420,7 @@
         })
         .join("") +
       "</ul></div>" +
-      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Circulars</h2><ul class="mt-4">' +
-      sortCmsList(n.circulars || []).map(itemRow).join("") +
-      "</ul></div>" +
-      '<div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Notices</h2><ul class="mt-4">' +
+      '<div id="notices" class="scroll-mt-52 rounded-2xl border border-slate-200 bg-white p-6 shadow-sm" data-reveal><h2 class="font-display text-xl font-bold text-mes-primary">Notices</h2><ul class="mt-4">' +
       sortCmsList(n.notices || []).map(itemRow).join("") +
       "</ul></div></div>";
   }

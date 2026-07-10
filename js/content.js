@@ -120,6 +120,13 @@ window.SITE_CONTENT = {
       "title": "Vision",
       "text": "To be a leading school where every learner is inspired to excel, innovate, and serve with compassion."
     },
+    "chairman": {
+      "heading": "The Heart of Our Institution",
+      "name": "Dr. Gadagkar Atul Shashikant",
+      "role": "अध्यक्ष",
+      "photo": "images/img-20260710-wa0058.jpg",
+      "message": []
+    },
     "principal": {
       "name": "Mr. Satish P. Zanjurne",
       "title": "Principal",
@@ -186,16 +193,6 @@ window.SITE_CONTENT = {
         "summary": "Highlights and updates from the campus spotlight.",
         "anchorId": "evt-virangana",
         "showInNav": true
-      }
-    ],
-    "circulars": [
-      {
-        "title": "Fee payment window — Term II",
-        "summary": "Online and offline options; deadline April 15."
-      },
-      {
-        "title": "Uniform vendor update",
-        "summary": "Approved vendor list for summer uniforms."
       }
     ],
     "notices": [
