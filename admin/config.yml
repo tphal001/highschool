@@ -219,17 +219,11 @@ collections:
             widget: list
             summary: "{{fields.title}}"
             label_singular: photo
-            hint: "Click Add photo +, then Choose an image. In Media you can tick several photos and click Choose selected. Publish to save. Newest photos show first on the site."
+            hint: "Add photo + → Choose an image → tick the checkboxes on photos in Media → Choose selected. Newest photos show first on the site after Publish."
             fields:
               - { label: Title (optional), name: title, widget: string, required: false }
               - { label: Category (optional), name: category, widget: string, required: false }
-              - label: Photo
-                name: image
-                widget: image
-                choose_url: false
-                media_library:
-                  config:
-                    multiple: true
+              - { label: Photo, name: image, widget: image, choose_url: false }
           - { label: Video gallery note, name: videoNote, widget: text, required: false }
 
       - label: Highlights (posters & popup)
