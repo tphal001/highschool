@@ -51,6 +51,7 @@
 
   function patchInput(input) {
     if (!input || input.getAttribute("data-bulk-patched")) return;
+    if (input.getAttribute("data-site-gallery-input")) return;
     input.setAttribute("data-bulk-patched", "1");
     input.setAttribute("multiple", "multiple");
 
@@ -114,7 +115,9 @@
   }
 
   function scan(root) {
-    root.querySelectorAll('input[type="file"]').forEach(patchInput);
+    root.querySelectorAll('input[type="file"]').forEach(function (input) {
+      if (!input.getAttribute("data-site-gallery-input")) patchInput(input);
+    });
   }
 
   function init() {
@@ -123,8 +126,9 @@
       mutations.forEach(function (m) {
         m.addedNodes.forEach(function (node) {
           if (node.nodeType !== 1) return;
-          if (node.matches && node.matches('input[type="file"]')) patchInput(node);
-          else scan(node);
+          if (node.matches && node.matches('input[type="file"]')) {
+            if (!node.getAttribute("data-site-gallery-input")) patchInput(node);
+          } else scan(node);
         });
       });
     }).observe(document.body, { childList: true, subtree: true });

@@ -1,17 +1,17 @@
 /**
  * Gallery: "Choose images" uses the same upload path as Media → Upload.
- * v20260711i
+ * v20260711j
  */
 (function () {
   "use strict";
 
-  var VERSION = "20260711i";
+  var VERSION = "20260711j";
   var UPLOAD_GAP_MS =
     (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.UPLOAD_GAP_MS) || 2000;
   var PICKER_MARK = "data-site-gallery-picker";
+  var INPUT_MARK = "data-site-gallery-input";
   var started = false;
   var lastOpenPayload = null;
-  var clickHooked = false;
 
   function getStore() {
     if (!window.CMS) return null;
@@ -96,7 +96,6 @@
       .filter(Boolean);
   }
 
-  /** Same actions Decap runs when you click Media → Upload */
   function persistFileLikeUpload(file, field) {
     var store = getStore();
     if (!store) return null;
@@ -132,7 +131,21 @@
     return payload.field.get("name") === "videos" ? "videos" : "images";
   }
 
-  function findBatchIndex(batches, mediaKey, currentPaths, titleHint) {
+  function batchIndexFromElement(el) {
+    if (!el || !el.closest) return -1;
+    var listRoot = el.closest('[class*="ListControl"], [class*="listWidget"], .nc-listWidget');
+    if (!listRoot) return -1;
+    var item = el.closest('[class*="ListItem"]');
+    if (!item) return -1;
+    var items = listRoot.querySelectorAll('[class*="ListItem"]');
+    for (var i = 0; i < items.length; i++) {
+      if (items[i] === item) return i;
+    }
+    return -1;
+  }
+
+  function findBatchIndex(batches, mediaKey, currentPaths, titleHint, domIndex) {
+    if (domIndex >= 0 && domIndex < batches.length) return domIndex;
     if (titleHint) {
       for (var i = 0; i < batches.length; i++) {
         if ((batches[i].title || "").trim() === titleHint) return i;
@@ -143,7 +156,7 @@
       var sortedBatch = mediaPaths(batches[j][mediaKey]).slice().sort().join("|");
       if (sortedBatch === sortedCurrent) return j;
     }
-    return 0;
+    return domIndex >= 0 ? domIndex : 0;
   }
 
   function albumTitleNear(el) {
@@ -161,31 +174,48 @@
     return "";
   }
 
-  function applyFiles(files, payload, titleHint) {
+  function finishUpload(batches, idx, batchField, mediaKey, merged, titleHint) {
+    batches[idx][mediaKey] = merged;
+    if (titleHint) batches[idx].title = titleHint;
+    setBatches(batchField, batches);
+
+    var store = getStore();
+    if (!store) return;
+
+    if (lastOpenPayload && lastOpenPayload.controlID) {
+      store.dispatch({
+        type: "MEDIA_INSERT",
+        payload: { mediaPath: merged.slice() },
+      });
+    }
+    store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
+  }
+
+  function applyFiles(files, payload, anchorEl) {
     if (!files || !files.length || !getStore()) return;
+
     var batchField = fieldNameFromPayload(payload);
     var mediaKey = mediaKeyFromPayload(payload);
     var currentPaths = toPathList(payload && payload.value);
     var batches = getBatches(batchField);
-    var idx = findBatchIndex(batches, mediaKey, currentPaths, titleHint);
-    if (!batches[idx]) batches[idx] = { title: titleHint || "", images: [], videos: [] };
+    var titleHint = albumTitleNear(anchorEl);
+    var domIndex = batchIndexFromElement(anchorEl);
+    var idx = findBatchIndex(batches, mediaKey, currentPaths, titleHint, domIndex);
+
+    if (!batches[idx]) {
+      batches[idx] = { title: titleHint || "", images: [], videos: [] };
+    }
+    if (!batches[idx].images) batches[idx].images = [];
+    if (!batches[idx].videos) batches[idx].videos = [];
+
     var merged = mediaPaths(batches[idx][mediaKey]).slice();
     var queue = Array.from(files);
-    var field = payload && payload.field;
+    var field = (payload && payload.field) || (lastOpenPayload && lastOpenPayload.field);
     var i = 0;
 
     function next() {
       if (i >= queue.length) {
-        batches[idx][mediaKey] = merged;
-        if (titleHint) batches[idx].title = titleHint;
-        setBatches(batchField, batches);
-        if (lastOpenPayload && lastOpenPayload.controlID) {
-          getStore().dispatch({
-            type: "MEDIA_INSERT",
-            payload: { mediaPath: merged.slice() },
-          });
-          getStore().dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
-        }
+        finishUpload(batches, idx, batchField, mediaKey, merged, titleHint);
         return;
       }
       var file = queue[i++];
@@ -208,21 +238,25 @@
     };
   }
 
-  /** Identical to Media library Upload: hidden input[type=file] with multiple */
-  function openUploadPicker(payload, anchorEl) {
-    var accept =
-      payload && payload.field && payload.field.get("name") === "videos" ? "video/*" : "image/*";
+  function createGalleryInput(accept) {
     var input = document.createElement("input");
     input.type = "file";
     input.multiple = true;
     input.accept = accept;
+    input.setAttribute(INPUT_MARK, "1");
     input.style.cssText = "position:fixed;left:-9999px;width:1px;height:1px;opacity:0;";
+    return input;
+  }
+
+  function openUploadPicker(payload, anchorEl) {
+    var accept =
+      payload && payload.field && payload.field.get("name") === "videos" ? "video/*" : "image/*";
+    var input = createGalleryInput(accept);
     document.body.appendChild(input);
-    if (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.patchInput) {
-      window.SiteCmsBulkUpload.patchInput(input);
-    }
     input.addEventListener("change", function () {
-      applyFiles(input.files, payload || lastOpenPayload, albumTitleNear(anchorEl));
+      if (input.files && input.files.length) {
+        applyFiles(input.files, payload || lastOpenPayload, anchorEl);
+      }
       input.remove();
     });
     input.click();
@@ -243,10 +277,11 @@
         isGalleryMediaField(action.payload.field)
       ) {
         lastOpenPayload = action.payload;
+        var result = orig(action);
         window.setTimeout(function () {
           openUploadPicker(lastOpenPayload, null);
         }, 0);
-        return orig({ type: "MEDIA_LIBRARY_CLOSE" });
+        return result;
       }
       return orig(action);
     };
@@ -257,40 +292,6 @@
     return (
       /^choose\s+(an?\s+)?images?/.test(text) ||
       /^choose\s+(a?\s+)?files?/.test(text)
-    );
-  }
-
-  function isChooseClickTarget(el) {
-    if (!el || !el.closest) return false;
-    if (el.closest('[class*="MediaLibrary"]') || el.closest('[role="dialog"]')) return false;
-    if (el.closest("#site-gallery-top-picker")) return false;
-    if (el.closest("[" + PICKER_MARK + "]")) return false;
-    var hit = el.closest("button, a, label, [role='button']");
-    if (!hit) return false;
-    return isChooseLabel(hit.textContent);
-  }
-
-  function interceptClicks() {
-    if (clickHooked) return;
-    clickHooked = true;
-    document.addEventListener(
-      "click",
-      function (e) {
-        if (!isGalleryRoute()) return;
-        if (!isChooseClickTarget(e.target)) return;
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        var hit = e.target.closest("button, a, label, [role='button']");
-        var isVideo =
-          (hit &&
-            (hit.closest("[class*='video']") ||
-              (hit.textContent || "").toLowerCase().indexOf("file") >= 0)) ||
-          false;
-        openUploadPicker(makePayload(isVideo ? "videos" : "images"), hit);
-        return false;
-      },
-      true
     );
   }
 
@@ -325,18 +326,14 @@
         "display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;";
       label.textContent = btn.textContent.replace(/\s+/g, " ").trim() || "Choose images";
 
-      var input = document.createElement("input");
-      input.type = "file";
-      input.multiple = true;
-      var ctx = (host.textContent || "").toLowerCase();
-      input.accept = ctx.indexOf("video") >= 0 ? "video/*" : "image/*";
+      var input = createGalleryInput(
+        (host.textContent || "").toLowerCase().indexOf("video") >= 0 ? "video/*" : "image/*"
+      );
       input.style.cssText = "display:none;";
-      if (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.patchInput) {
-        window.SiteCmsBulkUpload.patchInput(input);
-      }
       input.addEventListener("change", function () {
+        if (!input.files || !input.files.length) return;
         var mediaKey = input.accept.indexOf("video") >= 0 ? "videos" : "images";
-        applyFiles(input.files, makePayload(mediaKey), albumTitleNear(wrap));
+        applyFiles(input.files, makePayload(mediaKey), wrap);
         input.value = "";
       });
 
@@ -352,7 +349,6 @@
       var txt = modal.textContent || "";
       if (txt.indexOf("Choose selected") < 0 && txt.indexOf("Upload") < 0) return;
       modal.style.setProperty("display", "none", "important");
-      getStore() && getStore().dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
     });
   }
 
@@ -372,35 +368,34 @@
       "margin:12px 16px;padding:14px 16px;background:#ecfdf5;border:2px solid #0d9488;border-radius:8px;font-family:system-ui,sans-serif;font-size:14px;line-height:1.5;";
     box.innerHTML =
       '<strong style="color:#0f766e;">Pick files from your computer</strong> ' +
-      '<span style="color:#334155;">(same as Media → Upload, v' +
+      '<span style="color:#334155;">(v' +
       VERSION +
       ")</span>" +
       '<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:10px;">' +
-      '<label style="display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;">Choose photos<input type="file" id="site-gallery-top-photos" multiple accept="image/*" style="display:none;"></label>' +
-      '<label style="display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;">Choose videos<input type="file" id="site-gallery-top-videos" multiple accept="video/*" style="display:none;"></label>' +
+      '<label style="display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;">Choose photos<input type="file" id="site-gallery-top-photos" multiple accept="image/*" ' +
+      INPUT_MARK +
+      '="1" style="display:none;"></label>' +
+      '<label style="display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;">Choose videos<input type="file" id="site-gallery-top-videos" multiple accept="video/*" ' +
+      INPUT_MARK +
+      '="1" style="display:none;"></label>' +
       "</div>" +
-      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add upload + and Title first. Then use these buttons — not the grey Choose images button.</p>';
+      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add upload + and Title first, then pick files for that album.</p>';
 
     root.insertBefore(box, root.firstChild);
 
-    var photoInput = document.getElementById("site-gallery-top-photos");
-    var videoInput = document.getElementById("site-gallery-top-videos");
-    if (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.patchInput) {
-      window.SiteCmsBulkUpload.patchInput(photoInput);
-      window.SiteCmsBulkUpload.patchInput(videoInput);
-    }
-
-    photoInput.addEventListener("change", function (e) {
+    document.getElementById("site-gallery-top-photos").addEventListener("change", function (e) {
+      if (!e.target.files || !e.target.files.length) return;
       var batches = getBatches("photoBatches");
       var title = batches[0] && batches[0].title ? batches[0].title : albumTitleNear(box);
-      applyFiles(e.target.files, makePayload("images", batches[0] && batches[0].images), title);
+      applyFiles(e.target.files, makePayload("images", batches[0] && batches[0].images), box);
       e.target.value = "";
     });
 
-    videoInput.addEventListener("change", function (e) {
+    document.getElementById("site-gallery-top-videos").addEventListener("change", function (e) {
+      if (!e.target.files || !e.target.files.length) return;
       var batches = getBatches("videoBatches");
       var title = batches[0] && batches[0].title ? batches[0].title : albumTitleNear(box);
-      applyFiles(e.target.files, makePayload("videos", batches[0] && batches[0].videos), title);
+      applyFiles(e.target.files, makePayload("videos", batches[0] && batches[0].videos), box);
       e.target.value = "";
     });
   }
@@ -420,7 +415,6 @@
   }
 
   function start() {
-    interceptClicks();
     if (!getStore()) {
       window.setTimeout(start, 300);
       return;
@@ -453,5 +447,4 @@
   }
 
   window.SiteGalleryLocalFiles = { start: start, version: VERSION };
-  interceptClicks();
 })();
