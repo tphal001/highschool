@@ -219,24 +219,32 @@ collections:
             summary: "{{fields.title}}"
             label_singular: upload
             add_to_top: true
+            hint: "Add upload + → Title → Choose images → Upload (top) → select all files from computer → Choose selected → Publish."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Images from your computer
                 name: images
-                widget: multi_upload
-                media_type: image
+                widget: image
+                choose_url: false
+                media_library:
+                  config:
+                    multiple: true
           - label: Upload videos
             name: videoBatches
             widget: list
             summary: "{{fields.title}}"
             label_singular: upload
             add_to_top: true
+            hint: "Add upload + → Title → Choose files → Upload (top) → select all videos → Choose selected → Publish."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Videos from your computer
                 name: videos
-                widget: multi_upload
-                media_type: video
+                widget: file
+                choose_url: false
+                media_library:
+                  config:
+                    multiple: true
           - {
               label: Page intro,
               name: intro,

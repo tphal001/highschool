@@ -15,6 +15,22 @@ function todayIsoDate() {
 }
 
 /** Sort-only timestamp; strips CMS date fields from public content. */
+function normalizeBatchMedia(list, key) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map(function (item) {
+      if (!item) return null;
+      if (typeof item === "string") {
+        var o = {};
+        o[key] = item;
+        return o;
+      }
+      if (item[key]) return item;
+      return null;
+    })
+    .filter(Boolean);
+}
+
 /** Migrate legacy flat gallery.items to photoBatches / videoBatches. */
 function normalizeGallery(gallery) {
   if (!gallery || typeof gallery !== "object") return gallery;
@@ -25,6 +41,14 @@ function normalizeGallery(gallery) {
     delete gallery.galleryBulkTrigger;
     if (!Array.isArray(gallery.photoBatches)) gallery.photoBatches = [];
     if (!Array.isArray(gallery.videoBatches)) gallery.videoBatches = [];
+    gallery.photoBatches = gallery.photoBatches.map(function (b) {
+      if (!b || typeof b !== "object") return b;
+      return Object.assign({}, b, { images: normalizeBatchMedia(b.images, "image") });
+    });
+    gallery.videoBatches = gallery.videoBatches.map(function (b) {
+      if (!b || typeof b !== "object") return b;
+      return Object.assign({}, b, { videos: normalizeBatchMedia(b.videos, "video") });
+    });
     return gallery;
   }
   var groups = {};
