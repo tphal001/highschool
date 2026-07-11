@@ -1,17 +1,16 @@
 /**
- * Gallery: "Choose images" opens local file picker (blocks Media modal).
- * v20260711k
+ * Gallery: local file picker + Decap MEDIA_INSERT so thumbnails appear.
+ * v20260711l
  */
 (function () {
   "use strict";
 
-  var VERSION = "20260711k";
+  var VERSION = "20260711l";
   var UPLOAD_GAP_MS =
     (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.UPLOAD_GAP_MS) || 2000;
   var PICKER_MARK = "data-site-gallery-picker";
   var INPUT_MARK = "data-site-gallery-input";
   var started = false;
-  var clickHooked = false;
   var lastOpenPayload = null;
 
   function getStore() {
@@ -35,6 +34,10 @@
     if (!raw) return [];
     if (Array.isArray(raw)) return raw.map(String);
     return [String(raw)];
+  }
+
+  function cloneData(val) {
+    return JSON.parse(JSON.stringify(val));
   }
 
   function isGalleryRoute() {
@@ -67,7 +70,7 @@
     var entry = store.getState().entryDraft && store.getState().entryDraft.get("entry");
     if (!entry) return [];
     var raw = entry.getIn(["data", fieldName]);
-    return Array.isArray(toJs(raw)) ? toJs(raw) : [];
+    return Array.isArray(toJs(raw)) ? cloneData(toJs(raw)) : [];
   }
 
   function setBatches(fieldName, batches) {
@@ -77,7 +80,7 @@
     if (!field) return;
     store.dispatch({
       type: "DRAFT_CHANGE_FIELD",
-      payload: { field: field, value: fromJs(batches), metadata: {}, entries: [] },
+      payload: { field: field, value: fromJs(cloneData(batches)), metadata: {}, entries: [] },
     });
   }
 
@@ -134,11 +137,11 @@
 
   function batchIndexFromElement(el) {
     if (!el || !el.closest) return -1;
-    var listRoot = el.closest('[class*="ListControl"], [class*="listWidget"], .nc-listWidget');
-    if (!listRoot) return -1;
-    var item = el.closest('[class*="ListItem"]');
+    var item = el.closest('[class*="listControlItem"], [class*="ListItem"]');
     if (!item) return -1;
-    var items = listRoot.querySelectorAll('[class*="ListItem"]');
+    var listRoot = item.closest('[class*="ListControl"], [class*="listWidget"], .nc-listWidget');
+    if (!listRoot) return -1;
+    var items = listRoot.querySelectorAll('[class*="listControlItem"], [class*="ListItem"]');
     for (var i = 0; i < items.length; i++) {
       if (items[i] === item) return i;
     }
@@ -146,16 +149,18 @@
   }
 
   function findBatchIndex(batches, mediaKey, currentPaths, titleHint, domIndex) {
+    var sortedCurrent = currentPaths.slice().sort().join("|");
+    if (sortedCurrent) {
+      for (var k = 0; k < batches.length; k++) {
+        var sortedBatch = mediaPaths(batches[k][mediaKey]).slice().sort().join("|");
+        if (sortedBatch === sortedCurrent) return k;
+      }
+    }
     if (domIndex >= 0 && domIndex < batches.length) return domIndex;
     if (titleHint) {
       for (var i = 0; i < batches.length; i++) {
         if ((batches[i].title || "").trim() === titleHint) return i;
       }
-    }
-    var sortedCurrent = currentPaths.slice().sort().join("|");
-    for (var j = 0; j < batches.length; j++) {
-      var sortedBatch = mediaPaths(batches[j][mediaKey]).slice().sort().join("|");
-      if (sortedBatch === sortedCurrent) return j;
     }
     return domIndex >= 0 ? domIndex : 0;
   }
@@ -163,12 +168,17 @@
   function albumTitleNear(el) {
     var walk = el && el.parentElement;
     var n = 0;
-    while (walk && walk !== document.body && n < 35) {
-      var inputs = walk.querySelectorAll('input[type="text"]');
-      for (var i = 0; i < inputs.length; i++) {
-        var v = (inputs[i].value || "").trim();
-        if (v) return v;
+    while (walk && walk !== document.body && n < 40) {
+      var labels = walk.querySelectorAll("label, [class*='Label']");
+      for (var l = 0; l < labels.length; l++) {
+        if ((labels[l].textContent || "").toLowerCase().indexOf("title") < 0) continue;
+        var inp =
+          labels[l].parentElement &&
+          labels[l].parentElement.querySelector('input[type="text"]');
+        if (inp && inp.value) return inp.value.trim();
       }
+      var inputs = walk.querySelectorAll('input[type="text"]');
+      if (inputs.length === 1 && inputs[0].value) return inputs[0].value.trim();
       walk = walk.parentElement;
       n++;
     }
@@ -176,19 +186,29 @@
   }
 
   function finishUpload(batches, idx, batchField, mediaKey, merged, titleHint) {
-    batches[idx][mediaKey] = merged;
+    batches[idx][mediaKey] = merged.slice();
     if (titleHint) batches[idx].title = titleHint;
     setBatches(batchField, batches);
+
     var store = getStore();
-    if (store) store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
+    if (!store) return;
+
+    if (lastOpenPayload && lastOpenPayload.controlID) {
+      store.dispatch({
+        type: "MEDIA_INSERT",
+        payload: { mediaPath: merged.slice() },
+      });
+    }
+    store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
   }
 
   function applyFiles(files, payload, anchorEl) {
     if (!files || !files.length || !getStore()) return;
 
-    var batchField = fieldNameFromPayload(payload);
-    var mediaKey = mediaKeyFromPayload(payload);
-    var currentPaths = toPathList(payload && payload.value);
+    var activePayload = payload || lastOpenPayload || makePayload("images");
+    var batchField = fieldNameFromPayload(activePayload);
+    var mediaKey = mediaKeyFromPayload(activePayload);
+    var currentPaths = toPathList(activePayload.value);
     var batches = getBatches(batchField);
     var titleHint = albumTitleNear(anchorEl);
     var domIndex = batchIndexFromElement(anchorEl);
@@ -202,7 +222,7 @@
 
     var merged = mediaPaths(batches[idx][mediaKey]).slice();
     var queue = Array.from(files);
-    var field = (payload && payload.field) || (lastOpenPayload && lastOpenPayload.field);
+    var field = activePayload.field;
     var i = 0;
 
     function next() {
@@ -269,10 +289,12 @@
         isGalleryMediaField(action.payload.field)
       ) {
         lastOpenPayload = action.payload;
+        orig(action);
+        orig({ type: "MEDIA_LIBRARY_CLOSE" });
         window.setTimeout(function () {
           openUploadPicker(lastOpenPayload, null);
         }, 0);
-        return orig({ type: "MEDIA_LIBRARY_CLOSE" });
+        return;
       }
       return orig(action);
     };
@@ -283,40 +305,6 @@
     return (
       /^choose\s+(an?\s+)?images?/.test(text) ||
       /^choose\s+(a?\s+)?files?/.test(text)
-    );
-  }
-
-  function isChooseClickTarget(el) {
-    if (!el || !el.closest) return false;
-    if (el.closest('[class*="MediaLibrary"]') || el.closest('[role="dialog"]')) return false;
-    if (el.closest("#site-gallery-top-picker")) return false;
-    if (el.closest("[" + PICKER_MARK + "]")) return false;
-    var hit = el.closest("button, a, label, [role='button']");
-    if (!hit) return false;
-    return isChooseLabel(hit.textContent);
-  }
-
-  function interceptClicks() {
-    if (clickHooked) return;
-    clickHooked = true;
-    document.addEventListener(
-      "click",
-      function (e) {
-        if (!isGalleryRoute()) return;
-        if (!isChooseClickTarget(e.target)) return;
-        e.preventDefault();
-        e.stopPropagation();
-        e.stopImmediatePropagation();
-        var hit = e.target.closest("button, a, label, [role='button']");
-        var isVideo =
-          (hit &&
-            (hit.closest("[class*='video']") ||
-              (hit.textContent || "").toLowerCase().indexOf("file") >= 0)) ||
-          false;
-        openUploadPicker(makePayload(isVideo ? "videos" : "images"), hit);
-        return false;
-      },
-      true
     );
   }
 
@@ -376,13 +364,6 @@
       modal.style.setProperty("display", "none", "important");
       var store = getStore();
       if (store) store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
-      if (!window.__siteGalleryModalKillOnce) {
-        window.__siteGalleryModalKillOnce = true;
-        window.setTimeout(function () {
-          window.__siteGalleryModalKillOnce = false;
-          openUploadPicker(lastOpenPayload || makePayload("images"), null);
-        }, 50);
-      }
     });
   }
 
@@ -445,7 +426,6 @@
   }
 
   function start() {
-    interceptClicks();
     if (!getStore()) {
       window.setTimeout(start, 300);
       return;
@@ -478,5 +458,4 @@
   }
 
   window.SiteGalleryLocalFiles = { start: start, version: VERSION };
-  interceptClicks();
 })();
