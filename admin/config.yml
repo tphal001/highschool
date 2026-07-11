@@ -218,16 +218,14 @@ collections:
               name: intro,
               widget: text,
               required: false,
-              hint: "Shown at the top of the gallery page on the website.",
             }
-          - label: Image albums
+          - label: Upload images
             name: photoBatches
             widget: list
             summary: "{{fields.title}}"
             label_singular: album
             add_to_top: true
-            collapsed: true
-            hint: "Managed by Upload Images above. Expand only to edit or remove albums."
+            hint: "Add album → enter Title → under Photos click Add photo + → click Choose a file → select MULTIPLE images at once (Ctrl+click) → Publish."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Photos
@@ -235,18 +233,17 @@ collections:
                 widget: list
                 label_singular: photo
                 field:
-                  label: Photo file
+                  label: Photo
                   name: image
-                  widget: image
+                  widget: file
                   choose_url: false
-          - label: Video albums
+          - label: Upload videos
             name: videoBatches
             widget: list
             summary: "{{fields.title}}"
             label_singular: album
             add_to_top: true
-            collapsed: true
-            hint: "Managed by Upload Videos above. Expand only to edit or remove albums."
+            hint: "Add album → enter Title → under Videos click Add video + → click Choose a file → select MULTIPLE videos at once → Publish."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Videos
@@ -254,7 +251,7 @@ collections:
                 widget: list
                 label_singular: video
                 field:
-                  label: Video file
+                  label: Video
                   name: video
                   widget: file
                   choose_url: false
