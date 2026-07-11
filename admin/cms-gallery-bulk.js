@@ -1,5 +1,6 @@
 /**
- * Decap CMS — Gallery: Ctrl+click multi-select in Media + Choose selected adds photo rows.
+ * Decap CMS — Gallery: Ctrl+click multi-select in Media, Choose selected adds rows.
+ * Normal click = Decap's built-in single select (Choose selected works as usual).
  */
 (function () {
   "use strict";
@@ -9,19 +10,21 @@
   var PENDING_PATHS_KEY = "siteGalleryPendingPaths";
   var ITEMS_BACKUP_KEY = "siteGalleryItemsBackup";
   var PUBLIC_FOLDER = "/images";
-  var selected = Object.create(null);
+  var multiSelected = Object.create(null);
 
   function boot() {
     if (!window.CMS) return;
     registerPreSave();
     injectStyles();
-    replaceImageWidgetLabels();
+    replaceChooseImageLabels();
+    markChooseMediaButtons();
+    hideInsertFromUrl();
     document.addEventListener("click", onDocumentClick, true);
     window.addEventListener("hashchange", onRouteChange);
     waitForStore(function () {
       patchStore();
       onRouteChange();
-      window.setInterval(tick, 250);
+      window.setInterval(tick, 300);
       watchDom();
     });
   }
@@ -85,11 +88,9 @@
     return sessionStorage.getItem(PICK_KEY) === "1";
   }
 
-  function shouldEnhanceMediaUi() {
+  function shouldUseGalleryMulti() {
     if (!isMediaSurface()) return false;
-    if (isPickSessionActive() || sessionStorage.getItem(PENDING_PATHS_KEY)) return true;
-    if (getGalleryDraftEntry()) return true;
-    return false;
+    return isPickSessionActive() || !!getGalleryDraftEntry();
   }
 
   function toJs(val) {
@@ -136,53 +137,11 @@
     }
   }
 
-  function pathsFromImage(val) {
-    if (!val) return [];
-    if (typeof val === "string") return val.trim() ? [val.trim()] : [];
-    if (!Array.isArray(val)) return [];
-    return val
-      .map(function (row) {
-        if (typeof row === "string") return row.trim();
-        if (row && typeof row === "object") return String(row.image || row.url || "").trim();
-        return "";
-      })
-      .filter(Boolean);
-  }
-
-  function expandItems(items) {
-    var out = [];
-    var changed = false;
-    (items || []).forEach(function (item) {
-      var paths = pathsFromImage(item && item.image);
-      if (paths.length > 1) {
-        changed = true;
-        paths.forEach(function (path) {
-          out.push({ title: item.title || "", category: item.category || "", image: path });
-        });
-        return;
-      }
-      out.push({
-        title: item.title || "",
-        category: item.category || "",
-        image: paths.length === 1 ? paths[0] : (item && item.image) || "",
-      });
-    });
-    return { items: out, changed: changed };
-  }
-
   function registerPreSave() {
     if (!CMS.registerEventListener) return;
     CMS.registerEventListener({
       name: "preSave",
-      handler: function (args) {
-        var entry = args && args.entry;
-        if (!isGalleryEntry(entry)) return;
-        var data = entry.get("data");
-        if (!data) return;
-        var result = expandItems(toJs(data.get("items")));
-        if (!result.changed) return;
-        if (data.merge) return entry.set("data", data.merge({ items: fromJs(result.items) }));
-      },
+      handler: function () {},
     });
   }
 
@@ -245,33 +204,35 @@
     return true;
   }
 
-  function replaceImageWidgetLabels() {
+  function replaceChooseImageLabels() {
+    var pairs = [
+      ["Choose an image", "Choose Media"],
+      ["Choose images", "Choose Media"],
+      ["Choose image", "Choose Media"],
+    ];
     document.querySelectorAll("button, a, span, label, p").forEach(function (el) {
-      if (el.children.length > 0) return;
-      var t = (el.textContent || "").trim();
-      if (t === "Choose an image" || t === "Choose images" || t === "Choose image") {
-        el.textContent = "Choose media";
-      } else if (t === "Choose different image") {
-        el.textContent = "Choose different media";
+      pairs.forEach(function (pair) {
+        if ((el.textContent || "").trim() === pair[0]) el.textContent = pair[1];
+      });
+      var walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null);
+      var node;
+      while ((node = walker.nextNode())) {
+        var text = node.textContent;
+        var next = text;
+        pairs.forEach(function (pair) {
+          if (next.indexOf(pair[0]) >= 0) next = next.split(pair[0]).join(pair[1]);
+        });
+        if (next !== text) node.textContent = next;
       }
     });
+  }
 
-    var pairs = [
-      ["Choose an image", "Choose media"],
-      ["Choose images", "Choose media"],
-      ["Choose image", "Choose media"],
-    ];
-    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
-    var node;
-    while ((node = walker.nextNode())) {
-      var text = node.textContent;
-      if (!text) continue;
-      var next = text;
-      pairs.forEach(function (pair) {
-        if (next.indexOf(pair[0]) >= 0) next = next.split(pair[0]).join(pair[1]);
-      });
-      if (next !== text) node.textContent = next;
-    }
+  function hideInsertFromUrl() {
+    var hide = ["Insert from URL", "Replace with URL"];
+    document.querySelectorAll("button, a").forEach(function (el) {
+      var t = (el.textContent || "").trim();
+      if (hide.indexOf(t) >= 0) el.style.setProperty("display", "none", "important");
+    });
   }
 
   function injectStyles() {
@@ -279,25 +240,20 @@
     var style = document.createElement("style");
     style.id = "site-gallery-media-css";
     style.textContent =
-      ".site-gallery-selected{outline:4px solid #047857!important;outline-offset:-3px;box-shadow:0 0 0 2px #fff inset!important;}" +
-      ".site-gallery-hint{position:fixed;bottom:3.5rem;left:50%;transform:translateX(-50%);z-index:2147483000;padding:0.5rem 0.85rem;border-radius:0.5rem;background:#0f172a;color:#fff;font-size:0.75rem;font-weight:600;max-width:94vw;text-align:center;pointer-events:none;}";
+      ".site-gallery-multi-selected{outline:4px solid #047857!important;outline-offset:-3px!important;}" +
+      "button.site-choose-media-btn{color:transparent!important;}" +
+      "button.site-choose-media-btn *{visibility:hidden!important;}" +
+      "button.site-choose-media-btn::after{content:'Choose Media';visibility:visible;color:#1666b8;font-size:0.8125rem;}";
     document.head.appendChild(style);
   }
 
-  function showHint() {
-    if (!shouldEnhanceMediaUi()) {
-      var old = document.getElementById("site-gallery-hint");
-      if (old) old.remove();
-      return;
-    }
-    var el = document.getElementById("site-gallery-hint");
-    if (!el) {
-      el = document.createElement("div");
-      el.id = "site-gallery-hint";
-      el.className = "site-gallery-hint";
-      document.body.appendChild(el);
-    }
-    el.textContent = "Hold Ctrl (or Cmd on Mac), click photos to select several, then Choose selected.";
+  function markChooseMediaButtons() {
+    document.querySelectorAll("button").forEach(function (btn) {
+      var t = (btn.textContent || "").trim();
+      if (t === "Choose an image" || t === "Choose images" || t === "Choose image") {
+        btn.classList.add("site-choose-media-btn");
+      }
+    });
   }
 
   function showToast(msg) {
@@ -317,40 +273,21 @@
     }, 7000);
   }
 
-  function publicPath(name, url) {
-    name = String(name || "").trim();
-    if (!name && url) {
-      var parts = String(url).split("/");
-      name = parts[parts.length - 1].split("?")[0];
-    }
-    if (!name) return "";
-    if (name.indexOf("/") === 0) return name;
-    if (name.indexOf("images/") === 0) return "/" + name;
-    if (name.indexOf("media/") === 0) return "/" + name;
-    return PUBLIC_FOLDER + "/" + name.replace(/^\/+/, "");
-  }
-
-  function filenameFromCard(card, img) {
-    if (!card) return "";
-    var input = card.querySelector("input");
-    if (input && input.value && /\.(jpe?g|png|gif|webp|svg)$/i.test(input.value)) {
-      return input.value.trim();
-    }
-    var children = card.querySelectorAll("span, p, label, div, button");
-    for (var i = 0; i < children.length; i++) {
-      var t = (children[i].textContent || "").trim();
-      if (t && t.length < 80 && /\.(jpe?g|png|gif|webp|svg)$/i.test(t) && children[i] !== card) {
-        return t;
-      }
-    }
-    return publicPath("", img && img.src);
+  function publicPathFromFile(file) {
+    if (!file) return "";
+    var path = file.path || "";
+    if (path.indexOf("/") === 0) return path;
+    if (path.indexOf("images/") === 0) return "/" + path;
+    return PUBLIC_FOLDER + "/" + String(path).replace(/^\/+/, "");
   }
 
   function cardFromTarget(target) {
     var root = getMediaRoot();
-    if (!root) return null;
-    var img = target.closest ? target.closest("img") : null;
-    if (!img || !root.contains(img)) return null;
+    if (!root || !target || !target.closest) return null;
+    if (!root.contains(target)) return null;
+
+    var img = target.closest("img");
+    if (!img) return null;
 
     var card = img.parentElement;
     var walk = img.parentElement;
@@ -359,99 +296,126 @@
       walk = walk.parentElement;
     }
 
-    var path = filenameFromCard(card, img);
-    if (!path) path = publicPath("", img.src);
-    if (!path) return null;
-
-    return { card: card, path: path, img: img };
-  }
-
-  function clearSelection() {
-    Object.keys(selected).forEach(function (path) {
-      var el = selected[path];
-      if (el && el.classList) el.classList.remove("site-gallery-selected");
-    });
-    selected = Object.create(null);
-  }
-
-  function setSingleSelection(hit) {
-    clearSelection();
-    selected[hit.path] = hit.card;
-    hit.card.classList.add("site-gallery-selected");
-  }
-
-  function toggleSelection(hit) {
-    if (selected[hit.path]) {
-      hit.card.classList.remove("site-gallery-selected");
-      delete selected[hit.path];
-      return;
+    var name = "";
+    var children = card.querySelectorAll("span, p, label, div, button, input");
+    for (var i = 0; i < children.length; i++) {
+      var t = (children[i].textContent || "").trim();
+      if (t && t.length < 80 && /\.(jpe?g|png|gif|webp|svg)$/i.test(t)) {
+        name = t;
+        break;
+      }
     }
-    selected[hit.path] = hit.card;
-    hit.card.classList.add("site-gallery-selected");
+
+    var path = name ? PUBLIC_FOLDER + "/" + name : "";
+    if (!path && img.src) {
+      var parts = img.src.split("/");
+      path = PUBLIC_FOLDER + "/" + parts[parts.length - 1].split("?")[0];
+    }
+
+    var key = name || path;
+    return { card: card, path: path, key: key, file: { path: path.replace(/^\//, "images/"), name: name } };
   }
 
-  function getSelectedPaths() {
-    return Object.keys(selected).filter(Boolean);
+  function clearMultiSelection() {
+    Object.keys(multiSelected).forEach(function (key) {
+      var el = multiSelected[key].card;
+      if (el && el.classList) el.classList.remove("site-gallery-multi-selected");
+    });
+    multiSelected = Object.create(null);
+    syncChooseSelectedButton();
+  }
+
+  function toggleMultiSelection(hit) {
+    if (multiSelected[hit.key]) {
+      hit.card.classList.remove("site-gallery-multi-selected");
+      delete multiSelected[hit.key];
+    } else {
+      multiSelected[hit.key] = hit;
+      hit.card.classList.add("site-gallery-multi-selected");
+    }
+    syncChooseSelectedButton();
+  }
+
+  function getMultiPaths() {
+    return Object.keys(multiSelected).map(function (k) {
+      return multiSelected[k].path;
+    });
+  }
+
+  function findChooseSelectedButton() {
+    var buttons = document.querySelectorAll("button");
+    for (var i = 0; i < buttons.length; i++) {
+      var t = (buttons[i].textContent || "").trim().toLowerCase();
+      if (t === "choose selected" || t.indexOf("choose selected") >= 0) return buttons[i];
+    }
+    return null;
+  }
+
+  function syncChooseSelectedButton() {
+    var btn = findChooseSelectedButton();
+    if (!btn) return;
+    var count = Object.keys(multiSelected).length;
+    if (count > 0) {
+      btn.disabled = false;
+      btn.removeAttribute("disabled");
+    }
   }
 
   function startPickSession() {
     sessionStorage.setItem(PICK_KEY, "1");
     backupGalleryItems();
-    showHint();
+    clearMultiSelection();
   }
 
   function isChooseSelectedButton(node) {
     if (!node) return false;
-    var text = (node.textContent || "").trim().toLowerCase();
-    if (text === "choose selected" || text.indexOf("choose selected") >= 0) return true;
-    var label = (node.getAttribute("aria-label") || "").trim().toLowerCase();
-    return label.indexOf("choose selected") >= 0;
+    var t = (node.textContent || "").trim().toLowerCase();
+    return t === "choose selected" || t.indexOf("choose selected") >= 0;
   }
 
   function onDocumentClick(e) {
-    if (shouldEnhanceMediaUi()) {
-      var hit = cardFromTarget(e.target);
-      if (hit && !isChooseSelectedButton(e.target.closest && e.target.closest("button"))) {
-        if (e.ctrlKey || e.metaKey) {
-          e.preventDefault();
-          e.stopImmediatePropagation();
-          toggleSelection(hit);
-          return;
+    if (!shouldUseGalleryMulti()) {
+      if (isGalleryHash() || getGalleryDraftEntry()) {
+        var node = e.target.closest ? e.target.closest("button, a, span, label") : null;
+        if (!node) return;
+        var text = (node.textContent || "").trim().toLowerCase();
+        if (
+          text.indexOf("choose media") >= 0 ||
+          text.indexOf("choose an image") >= 0 ||
+          text.indexOf("choose image") >= 0
+        ) {
+          startPickSession();
         }
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        setSingleSelection(hit);
-        return;
       }
+      return;
     }
 
-    var node = e.target.closest ? e.target.closest("button, a, span, label") : null;
-    if (!node) return;
-    var text = (node.textContent || "").trim().toLowerCase();
-
-    if (isGalleryHash() || getGalleryDraftEntry()) {
-      if (
-        text.indexOf("choose media") >= 0 ||
-        text.indexOf("choose an image") >= 0 ||
-        text.indexOf("choose image") >= 0 ||
-        text.indexOf("insert from media") >= 0
-      ) {
-        startPickSession();
-        return;
-      }
-    }
-
-    if (!shouldEnhanceMediaUi()) return;
-
-    if (isChooseSelectedButton(node)) {
-      var paths = getSelectedPaths();
-      if (!paths.length) {
-        showToast("Select photos first (Ctrl+click each one), then Choose selected.");
-        return;
-      }
+    var hit = cardFromTarget(e.target);
+    if (hit && (e.ctrlKey || e.metaKey)) {
       e.preventDefault();
       e.stopImmediatePropagation();
-      addSelectedToGallery();
+      toggleMultiSelection(hit);
+      return;
+    }
+
+    if (isChooseSelectedButton(e.target.closest ? e.target.closest("button") : null)) {
+      var paths = getMultiPaths();
+      if (!paths.length) return;
+
+      e.preventDefault();
+      e.stopImmediatePropagation();
+
+      if (appendPhotosViaStore(paths)) {
+        sessionStorage.removeItem(PICK_KEY);
+        clearMultiSelection();
+        showToast(paths.length + " photos added to Gallery.");
+        closeMediaModal();
+      } else {
+        sessionStorage.setItem(PENDING_PATHS_KEY, JSON.stringify(paths));
+        showToast(paths.length + " photos queued…");
+        closeMediaModal();
+        window.setTimeout(applyPendingPaths, 600);
+      }
     }
   }
 
@@ -466,35 +430,9 @@
     }
   }
 
-  function addSelectedToGallery() {
-    var paths = getSelectedPaths();
-    if (!paths.length) {
-      showToast("Select photos first (Ctrl+click each one), then Choose selected.");
-      return;
-    }
-
-    if (appendPhotosViaStore(paths)) {
-      sessionStorage.removeItem(PICK_KEY);
-      sessionStorage.removeItem(PENDING_PATHS_KEY);
-      clearSelection();
-      showToast(paths.length + " photo(s) added to Gallery.");
-      closeMediaModal();
-      var hint = document.getElementById("site-gallery-hint");
-      if (hint) hint.remove();
-      return;
-    }
-
-    sessionStorage.setItem(PENDING_PATHS_KEY, JSON.stringify(paths));
-    sessionStorage.removeItem(PICK_KEY);
-    showToast(paths.length + " photo(s) queued — returning to Gallery…");
-    closeMediaModal();
-    window.setTimeout(applyPendingPaths, 600);
-  }
-
   function applyPendingPaths() {
     var raw = sessionStorage.getItem(PENDING_PATHS_KEY);
     if (!raw) return;
-
     var paths;
     try {
       paths = JSON.parse(raw);
@@ -502,11 +440,6 @@
       sessionStorage.removeItem(PENDING_PATHS_KEY);
       return;
     }
-    if (!paths || !paths.length) {
-      sessionStorage.removeItem(PENDING_PATHS_KEY);
-      return;
-    }
-
     if (appendPhotosViaStore(paths)) {
       sessionStorage.removeItem(PENDING_PATHS_KEY);
       showToast(paths.length + " photo(s) added to Gallery.");
@@ -521,22 +454,16 @@
 
     store.dispatch = function (action) {
       if (action && action.type === "MEDIA_LIBRARY_OPEN") {
-        var payload = action.payload || {};
-        if (getGalleryDraftEntry() && payload.forImage !== false) {
-          clearSelection();
+        if (getGalleryDraftEntry() && action.payload && action.payload.forImage !== false) {
+          clearMultiSelection();
           startPickSession();
         }
       }
-
       var result = orig(action);
-
       if (action && action.type === "MEDIA_LIBRARY_CLOSE") {
         sessionStorage.removeItem(PICK_KEY);
-        clearSelection();
-        var hint = document.getElementById("site-gallery-hint");
-        if (hint) hint.remove();
+        clearMultiSelection();
       }
-
       return result;
     };
   }
@@ -545,25 +472,25 @@
     if (watchDom._on) return;
     watchDom._on = true;
     var obs = new MutationObserver(function () {
-      replaceImageWidgetLabels();
-      showHint();
+      replaceChooseImageLabels();
+      markChooseMediaButtons();
+      hideInsertFromUrl();
+      syncChooseSelectedButton();
     });
     obs.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
   function onRouteChange() {
-    if (isMediaHash() && getGalleryDraftEntry()) startPickSession();
-    replaceImageWidgetLabels();
-    showHint();
+    replaceChooseImageLabels();
     if (isGalleryHash()) applyPendingPaths();
   }
 
   function tick() {
-    replaceImageWidgetLabels();
-    showHint();
-    if (isGalleryHash() && sessionStorage.getItem(PENDING_PATHS_KEY)) {
-      applyPendingPaths();
-    }
+    replaceChooseImageLabels();
+    markChooseMediaButtons();
+    hideInsertFromUrl();
+    syncChooseSelectedButton();
+    if (isGalleryHash() && sessionStorage.getItem(PENDING_PATHS_KEY)) applyPendingPaths();
   }
 
   boot();

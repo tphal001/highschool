@@ -27,7 +27,7 @@ collections:
             fields:
               - { label: Name, name: name, widget: string }
               - { label: Role / designation, name: role, widget: string }
-              - { label: Photo (optional), name: photo, widget: image, required: false }
+              - { label: Photo (optional), name: photo, widget: image, choose_url: false, required: false }
 
       - label: Principal Desk
         name: principal
@@ -35,7 +35,7 @@ collections:
         fields:
           - { label: Name, name: name, widget: string }
           - { label: Title, name: title, widget: string }
-          - { label: Photo, name: photo, widget: image }
+          - { label: Photo, name: photo, widget: image, choose_url: false }
           - label: Message paragraphs
             name: message
             widget: list
@@ -55,7 +55,7 @@ collections:
               - { label: Name, name: name, widget: string }
               - { label: Role, name: role, widget: string }
               - { label: Department / subject (optional), name: department, widget: string, required: false }
-              - { label: Photo (optional), name: photo, widget: image, required: false }
+              - { label: Photo (optional), name: photo, widget: image, choose_url: false, required: false }
 
       - label: Admissions
         name: admissions
@@ -90,7 +90,7 @@ collections:
             fields:
               - { label: Title, name: title, widget: string }
               - { label: Summary, name: summary, widget: text }
-              - { label: Photo (optional), name: image, widget: image, required: false }
+              - { label: Photo (optional), name: image, widget: image, choose_url: false, required: false }
               - {
                   label: Show in main menu,
                   name: showInNav,
@@ -117,7 +117,7 @@ collections:
             fields:
               - { label: Title, name: title, widget: string }
               - { label: Summary, name: summary, widget: text }
-              - { label: Photo (optional), name: image, widget: image, required: false }
+              - { label: Photo (optional), name: image, widget: image, choose_url: false, required: false }
               - {
                   label: Anchor ID (optional — auto-generated from title if empty),
                   name: anchorId,
@@ -151,7 +151,7 @@ collections:
             fields:
               - { label: Candidate name, name: name, widget: string }
               - { label: Summary, name: summary, widget: text }
-              - { label: Photo (optional), name: image, widget: image, required: false }
+              - { label: Photo (optional), name: image, widget: image, choose_url: false, required: false }
 
       - label: Notices
         name: notices
@@ -182,7 +182,7 @@ collections:
               - { label: Name, name: name, widget: string }
               - { label: Role / class line, name: role, widget: string }
               - { label: Initials (optional), name: initials, widget: string, required: false }
-              - { label: Photo (optional), name: photo, widget: image, required: false }
+              - { label: Photo (optional), name: photo, widget: image, choose_url: false, required: false }
           - label: Stats (optional)
             name: stats
             widget: list
@@ -206,7 +206,7 @@ collections:
             hint: "Newest activities appear first after you publish."
             fields:
               - { label: Title, name: title, widget: string }
-              - { label: Photo, name: image, widget: image }
+              - { label: Photo, name: image, widget: image, choose_url: false }
               - { label: Caption (optional), name: caption, widget: text, required: false }
 
       - label: Gallery
@@ -220,11 +220,16 @@ collections:
             summary: "{{fields.title}}"
             label_singular: photo
             add_to_top: true
-            hint: "1) Add photo + → Choose media. 2) Hold Ctrl and click photos to select several. 3) Click Choose selected. 4) Publish."
+            hint: "Add photo + → Choose Media. One photo: click it, then Choose selected. Several photos: hold Ctrl and click each, then Choose selected. Publish when done."
             fields:
-              - { label: Title (optional), name: title, widget: string, required: false, default: "Photo" }
-              - { label: Category (optional), name: category, widget: string, required: false }
-              - { label: Photo, name: image, widget: image, choose_url: false }
+              - { label: Title, name: title, widget: string, required: false, default: "Photo" }
+              - { label: Category, name: category, widget: string, required: false }
+              - label: Photo
+                name: image
+                widget: image, choose_url: false
+                media_library:
+                  config:
+                    multiple: true
           - { label: Video gallery note, name: videoNote, widget: text, required: false }
 
       - label: Highlights (posters & popup)
@@ -273,7 +278,7 @@ collections:
               - { label: Headline, name: headline, widget: string }
               - { label: Student / achiever name, name: studentName, widget: string, required: false }
               - { label: Accomplishment text, name: accomplishment, widget: text }
-              - { label: Poster photo, name: posterImage, widget: image }
+              - { label: Poster photo, name: posterImage, widget: image, choose_url: false }
               - {
                   label: View button label,
                   name: linkLabel,
@@ -322,7 +327,7 @@ collections:
                   required: false,
                   hint: "Shown when visitors click Read more. Leave blank to use the short summary only.",
                 }
-              - { label: Poster / image (optional), name: image, widget: image, required: false }
+              - { label: Poster / image (optional), name: image, widget: image, choose_url: false, required: false }
               - {
                   label: Optional link,
                   name: href,
