@@ -226,7 +226,8 @@ collections:
               - { label: Category, name: category, widget: string, required: false }
               - label: Photo
                 name: image
-                widget: image, choose_url: false
+                widget: image
+                choose_url: false
                 media_library:
                   config:
                     multiple: true
