@@ -1,11 +1,12 @@
 /**
- * Gallery: "Choose images" opens local multi-file picker (same as Decap Media → Upload).
+ * Gallery: clicking "Choose images" opens local multi-file picker (like Media → Upload).
  */
 (function () {
   "use strict";
 
   var MARK = "data-site-choose-bound";
   var UPLOAD_GAP_MS = 2000;
+  var started = false;
 
   function getStore() {
     if (!window.CMS) return null;
@@ -27,6 +28,15 @@
     return (window.location.hash || "").toLowerCase().indexOf("entries/gallery") >= 0;
   }
 
+  function isInsideMediaModal(el) {
+    if (!el || !el.closest) return false;
+    return !!(
+      el.closest('[class*="MediaLibrary"]') ||
+      el.closest('[class*="media-library"]') ||
+      el.closest('[role="dialog"]')
+    );
+  }
+
   function getGalleryField(state, name) {
     try {
       var collection = state.collections.get("staff_content");
@@ -45,8 +55,7 @@
   function getBatches(fieldName) {
     var store = getStore();
     if (!store) return [];
-    var draft = store.getState().entryDraft;
-    var entry = draft && draft.get("entry");
+    var entry = store.getState().entryDraft && store.getState().entryDraft.get("entry");
     if (!entry) return [];
     return Array.isArray(toJs(entry.getIn(["data", fieldName]))) ? toJs(entry.getIn(["data", fieldName])) : [];
   }
@@ -92,12 +101,24 @@
     });
   }
 
+  function ancestorText(node, maxUp) {
+    var parts = [];
+    var walk = node;
+    var n = 0;
+    while (walk && walk !== document.body && n < (maxUp || 20)) {
+      parts.push((walk.textContent || "").toLowerCase());
+      walk = walk.parentElement;
+      n++;
+    }
+    return parts.join(" ");
+  }
+
   function fieldContext(btn) {
-    var block = btn.closest("div");
-    var text = ((block && block.textContent) || "").toLowerCase();
-    var isVideo = text.indexOf("video") >= 0 && text.indexOf("from your computer") >= 0 && text.indexOf("image") < 0;
-    if (!isVideo && text.indexOf("videos from your computer") >= 0) isVideo = true;
-    if (!isVideo && text.indexOf("images from your computer") >= 0) isVideo = false;
+    var text = ancestorText(btn, 25);
+    var isVideo =
+      text.indexOf("upload videos") >= 0 ||
+      text.indexOf("videos from your computer") >= 0 ||
+      (text.indexOf("choose files") >= 0 && text.indexOf("upload images") < 0);
     return {
       fieldName: isVideo ? "videoBatches" : "photoBatches",
       mediaKey: isVideo ? "videos" : "images",
@@ -106,11 +127,16 @@
   }
 
   function albumTitle(btn) {
-    var root = btn.closest(".nc-listWidget-item") || btn.closest('[class*="ListItem"]') || btn.parentElement;
-    while (root && root !== document.body) {
-      var input = root.querySelector('input[type="text"]');
-      if (input && input.value && input.value.trim()) return input.value.trim();
-      root = root.parentElement;
+    var walk = btn.parentElement;
+    var n = 0;
+    while (walk && walk !== document.body && n < 30) {
+      var inputs = walk.querySelectorAll('input[type="text"]');
+      for (var i = 0; i < inputs.length; i++) {
+        var v = (inputs[i].value || "").trim();
+        if (v) return v;
+      }
+      walk = walk.parentElement;
+      n++;
     }
     return "";
   }
@@ -132,7 +158,6 @@
     var idx = batchIndex(batches, title);
     if (!batches[idx]) batches[idx] = { title: title || "", images: [], videos: [] };
     var current = mediaPaths(batches[idx][ctx.mediaKey]);
-
     var queue = Array.from(files);
     var i = 0;
 
@@ -153,9 +178,11 @@
     next();
   }
 
-  function isChooseButton(btn) {
-    if (!btn || btn.tagName !== "BUTTON") return false;
-    var t = (btn.textContent || "").trim().toLowerCase();
+  function isChooseButton(el) {
+    if (!el) return false;
+    var node = el.closest ? el.closest("button, a") : el;
+    if (!node) return false;
+    var t = (node.textContent || "").trim().toLowerCase();
     return (
       t === "choose images" ||
       t === "choose image" ||
@@ -172,68 +199,52 @@
     input.type = "file";
     input.multiple = true;
     input.accept = ctx.accept;
-    input.style.cssText = "position:fixed;left:-9999px;top:-9999px;opacity:0;";
+    input.style.cssText = "position:fixed;left:-9999px;width:1px;height:1px;opacity:0;";
     document.body.appendChild(input);
-    input.addEventListener(
-      "change",
-      function () {
-        applyFilesToField(input.files, btn);
-        input.remove();
-      },
-      { once: true }
-    );
+    input.addEventListener("change", function () {
+      applyFilesToField(input.files, btn);
+      input.remove();
+    });
     input.click();
   }
 
-  function onClick(e) {
-    if (!isGalleryRoute() || !getStore()) return;
-    var btn = e.target.closest && e.target.closest("button");
-    if (!btn || !isChooseButton(btn)) return;
+  function hijackButton(btn) {
+    if (!btn || btn.getAttribute(MARK)) return;
+    if (!isGalleryRoute() || isInsideMediaModal(btn) || !isChooseButton(btn)) return;
 
-    var parentText = ((btn.closest("div") && btn.closest("div").textContent) || "").toLowerCase();
-    if (parentText.indexOf("from your computer") < 0 && parentText.indexOf("images") < 0 && parentText.indexOf("videos") < 0) {
-      return;
+    btn.setAttribute(MARK, "1");
+
+    function blockAndPick(e) {
+      e.preventDefault();
+      e.stopPropagation();
+      e.stopImmediatePropagation();
+      openLocalPicker(btn);
+      return false;
     }
 
-    e.preventDefault();
-    e.stopImmediatePropagation();
-    openLocalPicker(btn);
+    btn.addEventListener("click", blockAndPick, true);
+    btn.addEventListener("mousedown", blockAndPick, true);
+    btn.addEventListener("pointerdown", blockAndPick, true);
   }
 
-  function bindButtons() {
-    if (!isGalleryRoute()) return;
-    document.querySelectorAll("button").forEach(function (btn) {
-      if (!isChooseButton(btn) || btn.getAttribute(MARK)) return;
-      var area = btn.closest("div");
-      if (!area || (area.textContent || "").toLowerCase().indexOf("from your computer") < 0) return;
-      btn.setAttribute(MARK, "1");
+  function scan() {
+    if (!isGalleryRoute() || !getStore()) return;
+    document.querySelectorAll("button, a").forEach(function (el) {
+      if (isChooseButton(el)) hijackButton(el.closest("button, a") || el);
     });
   }
 
-  function boot() {
-    document.addEventListener("click", onClick, true);
-    bindButtons();
-    window.addEventListener("hashchange", bindButtons);
-    new MutationObserver(bindButtons).observe(document.body, { childList: true, subtree: true });
-  }
-
-  function waitForCms() {
-    if (window.CMS && CMS.init) {
-      if (!window.__siteGalleryChooseReady) {
-        window.__siteGalleryChooseReady = true;
-        var init = CMS.init;
-        CMS.init = function () {
-          var out = init.apply(this, arguments);
-          window.setTimeout(boot, 400);
-          return out;
-        };
-      }
-      if (getStore()) boot();
-      else window.setTimeout(waitForCms, 250);
+  function start() {
+    if (started) {
+      scan();
       return;
     }
-    window.setTimeout(waitForCms, 200);
+    started = true;
+    scan();
+    window.setInterval(scan, 500);
+    window.addEventListener("hashchange", scan);
+    new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
   }
 
-  waitForCms();
+  window.SiteGalleryLocalFiles = { start: start, scan: scan };
 })();
