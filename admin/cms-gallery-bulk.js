@@ -1,5 +1,5 @@
 /**
- * Decap CMS — Gallery: checkbox multi-select in Media modal + add each photo as a list row.
+ * Decap CMS — Gallery: Ctrl+click multi-select in Media + Choose selected adds photo rows.
  */
 (function () {
   "use strict";
@@ -9,22 +9,19 @@
   var PENDING_PATHS_KEY = "siteGalleryPendingPaths";
   var ITEMS_BACKUP_KEY = "siteGalleryItemsBackup";
   var PUBLIC_FOLDER = "/images";
+  var selected = Object.create(null);
 
   function boot() {
     if (!window.CMS) return;
-    var oldBar = document.getElementById("site-gallery-media-bar");
-    if (oldBar) oldBar.remove();
     registerPreSave();
     injectStyles();
     replaceImageWidgetLabels();
     document.addEventListener("click", onDocumentClick, true);
     window.addEventListener("hashchange", onRouteChange);
-    window.addEventListener("scroll", repositionCheckboxOverlays, true);
-    window.addEventListener("resize", repositionCheckboxOverlays);
     waitForStore(function () {
       patchStore();
       onRouteChange();
-      window.setInterval(tick, 400);
+      window.setInterval(tick, 250);
       watchDom();
     });
   }
@@ -249,16 +246,31 @@
   }
 
   function replaceImageWidgetLabels() {
-    var map = {
-      "Choose an image": "Choose media",
-      "Choose images": "Choose media",
-      "Choose different image": "Choose different media",
-    };
+    document.querySelectorAll("button, a, span, label, p").forEach(function (el) {
+      if (el.children.length > 0) return;
+      var t = (el.textContent || "").trim();
+      if (t === "Choose an image" || t === "Choose images" || t === "Choose image") {
+        el.textContent = "Choose media";
+      } else if (t === "Choose different image") {
+        el.textContent = "Choose different media";
+      }
+    });
+
+    var pairs = [
+      ["Choose an image", "Choose media"],
+      ["Choose images", "Choose media"],
+      ["Choose image", "Choose media"],
+    ];
     var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
     var node;
     while ((node = walker.nextNode())) {
-      var trimmed = node.textContent.trim();
-      if (map[trimmed]) node.textContent = node.textContent.replace(trimmed, map[trimmed]);
+      var text = node.textContent;
+      if (!text) continue;
+      var next = text;
+      pairs.forEach(function (pair) {
+        if (next.indexOf(pair[0]) >= 0) next = next.split(pair[0]).join(pair[1]);
+      });
+      if (next !== text) node.textContent = next;
     }
   }
 
@@ -267,10 +279,25 @@
     var style = document.createElement("style");
     style.id = "site-gallery-media-css";
     style.textContent =
-      ".site-media-check-wrap{position:fixed;z-index:2147483000;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#0e7490;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;}" +
-      ".site-media-check{width:22px;height:22px;cursor:pointer;margin:0;accent-color:#fff;pointer-events:auto;}" +
-      ".site-media-check-wrap.is-checked{background:#047857;}";
+      ".site-gallery-selected{outline:4px solid #047857!important;outline-offset:-3px;box-shadow:0 0 0 2px #fff inset!important;}" +
+      ".site-gallery-hint{position:fixed;bottom:3.5rem;left:50%;transform:translateX(-50%);z-index:2147483000;padding:0.5rem 0.85rem;border-radius:0.5rem;background:#0f172a;color:#fff;font-size:0.75rem;font-weight:600;max-width:94vw;text-align:center;pointer-events:none;}";
     document.head.appendChild(style);
+  }
+
+  function showHint() {
+    if (!shouldEnhanceMediaUi()) {
+      var old = document.getElementById("site-gallery-hint");
+      if (old) old.remove();
+      return;
+    }
+    var el = document.getElementById("site-gallery-hint");
+    if (!el) {
+      el = document.createElement("div");
+      el.id = "site-gallery-hint";
+      el.className = "site-gallery-hint";
+      document.body.appendChild(el);
+    }
+    el.textContent = "Hold Ctrl (or Cmd on Mac), click photos to select several, then Choose selected.";
   }
 
   function showToast(msg) {
@@ -319,139 +346,58 @@
     return publicPath("", img && img.src);
   }
 
-  function isMediaThumb(img, root) {
-    if (!img || !img.src || img.src.indexOf("data:") === 0) return false;
-    if (!root || !root.contains(img)) return false;
-    if (img.closest(".site-media-check-wrap")) return false;
-    var rect = img.getBoundingClientRect();
-    if (rect.width >= 40 && rect.height >= 40) return true;
-    if (rect.width === 0 && rect.height === 0 && /\.(jpe?g|png|gif|webp|svg)/i.test(img.src)) return true;
-    return false;
-  }
-
-  function imgKey(img) {
-    return img.src + "|" + Math.round(img.getBoundingClientRect().top) + "|" + Math.round(img.getBoundingClientRect().left);
-  }
-
-  function collectMediaThumbs() {
-    var items = [];
-    var seen = {};
+  function cardFromTarget(target) {
     var root = getMediaRoot();
-    if (!root) return items;
+    if (!root) return null;
+    var img = target.closest ? target.closest("img") : null;
+    if (!img || !root.contains(img)) return null;
 
-    root.querySelectorAll("img").forEach(function (img) {
-      if (!isMediaThumb(img, root)) return;
-      var key = imgKey(img);
-      if (seen[key]) return;
-      seen[key] = true;
-
-      var card = img;
-      var walk = img.parentElement;
-      while (walk && walk !== root) {
-        if (walk.querySelectorAll("img").length === 1) card = walk;
-        walk = walk.parentElement;
-      }
-
-      var path = filenameFromCard(card, img);
-      if (!path) path = publicPath("", img.src);
-      if (!path) return;
-
-      items.push({ img: img, path: path });
-    });
-
-    return items;
-  }
-
-  function repositionCheckboxOverlays() {
-    document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (wrap) {
-      var img = wrap._linkedImg;
-      if (!img || !img.isConnected) {
-        wrap.remove();
-        return;
-      }
-      var rect = img.getBoundingClientRect();
-      if (rect.width < 20 || rect.height < 20) {
-        wrap.style.display = "none";
-        return;
-      }
-      wrap.style.display = "flex";
-      wrap.style.top = rect.top + 6 + "px";
-      wrap.style.left = rect.left + 6 + "px";
-    });
-  }
-
-  function stopCardClick(e) {
-    e.preventDefault();
-    e.stopPropagation();
-    e.stopImmediatePropagation();
-  }
-
-  function injectCheckboxes() {
-    if (!shouldEnhanceMediaUi()) {
-      document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (el) {
-        el.remove();
-      });
-      return;
+    var card = img.parentElement;
+    var walk = img.parentElement;
+    while (walk && walk !== root) {
+      if (walk.getElementsByTagName("img").length === 1) card = walk;
+      walk = walk.parentElement;
     }
 
-    var existing = {};
-    document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (wrap) {
-      if (wrap._imgKey) existing[wrap._imgKey] = wrap;
+    var path = filenameFromCard(card, img);
+    if (!path) path = publicPath("", img.src);
+    if (!path) return null;
+
+    return { card: card, path: path, img: img };
+  }
+
+  function clearSelection() {
+    Object.keys(selected).forEach(function (path) {
+      var el = selected[path];
+      if (el && el.classList) el.classList.remove("site-gallery-selected");
     });
+    selected = Object.create(null);
+  }
 
-    collectMediaThumbs().forEach(function (item) {
-      var key = imgKey(item.img);
-      if (existing[key]) {
-        existing[key]._linkedImg = item.img;
-        repositionCheckboxOverlays();
-        return;
-      }
+  function setSingleSelection(hit) {
+    clearSelection();
+    selected[hit.path] = hit.card;
+    hit.card.classList.add("site-gallery-selected");
+  }
 
-      var wrap = document.createElement("div");
-      wrap.className = "site-media-check-wrap";
-      wrap.setAttribute("data-for-img", "1");
-      wrap._imgKey = key;
-      wrap._linkedImg = item.img;
-      wrap.title = "Select for gallery";
+  function toggleSelection(hit) {
+    if (selected[hit.path]) {
+      hit.card.classList.remove("site-gallery-selected");
+      delete selected[hit.path];
+      return;
+    }
+    selected[hit.path] = hit.card;
+    hit.card.classList.add("site-gallery-selected");
+  }
 
-      var cb = document.createElement("input");
-      cb.type = "checkbox";
-      cb.className = "site-media-check";
-      cb.setAttribute("data-path", item.path);
-      cb.setAttribute("aria-label", "Select " + item.path);
-
-      ["pointerdown", "mousedown", "click", "mouseup"].forEach(function (evt) {
-        wrap.addEventListener(evt, stopCardClick, true);
-        cb.addEventListener(evt, function (e) {
-          e.stopPropagation();
-        }, true);
-      });
-
-      cb.addEventListener("change", function () {
-        wrap.classList.toggle("is-checked", cb.checked);
-      });
-
-      wrap.appendChild(cb);
-      document.body.appendChild(wrap);
-      repositionCheckboxOverlays();
-    });
-
-    var root = getMediaRoot() || document.body;
-    root.querySelectorAll("img").forEach(function (img) {
-      if (img.getAttribute("data-site-gallery-load")) return;
-      img.setAttribute("data-site-gallery-load", "1");
-      img.addEventListener("load", injectCheckboxes, { once: true });
-    });
-
-    repositionCheckboxOverlays();
+  function getSelectedPaths() {
+    return Object.keys(selected).filter(Boolean);
   }
 
   function startPickSession() {
     sessionStorage.setItem(PICK_KEY, "1");
     backupGalleryItems();
-    window.setTimeout(injectCheckboxes, 50);
-    window.setTimeout(injectCheckboxes, 300);
-    window.setTimeout(injectCheckboxes, 1000);
+    showHint();
   }
 
   function isChooseSelectedButton(node) {
@@ -463,7 +409,21 @@
   }
 
   function onDocumentClick(e) {
-    if (e.target.closest && e.target.closest(".site-media-check-wrap")) return;
+    if (shouldEnhanceMediaUi()) {
+      var hit = cardFromTarget(e.target);
+      if (hit && !isChooseSelectedButton(e.target.closest && e.target.closest("button"))) {
+        if (e.ctrlKey || e.metaKey) {
+          e.preventDefault();
+          e.stopImmediatePropagation();
+          toggleSelection(hit);
+          return;
+        }
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        setSingleSelection(hit);
+        return;
+      }
+    }
 
     var node = e.target.closest ? e.target.closest("button, a, span, label") : null;
     if (!node) return;
@@ -484,25 +444,15 @@
     if (!shouldEnhanceMediaUi()) return;
 
     if (isChooseSelectedButton(node)) {
-      var paths = getTickedPaths();
-      if (!paths.length) return;
+      var paths = getSelectedPaths();
+      if (!paths.length) {
+        showToast("Select photos first (Ctrl+click each one), then Choose selected.");
+        return;
+      }
       e.preventDefault();
       e.stopImmediatePropagation();
-      addTickedToGallery();
+      addSelectedToGallery();
     }
-  }
-
-  function getTickedPaths() {
-    var paths = [];
-    var seen = {};
-    document.querySelectorAll(".site-media-check:checked").forEach(function (cb) {
-      var p = String(cb.getAttribute("data-path") || "").trim();
-      if (p && !seen[p]) {
-        seen[p] = true;
-        paths.push(p);
-      }
-    });
-    return paths;
   }
 
   function closeMediaModal() {
@@ -516,23 +466,21 @@
     }
   }
 
-  function addTickedToGallery() {
-    var paths = getTickedPaths();
+  function addSelectedToGallery() {
+    var paths = getSelectedPaths();
     if (!paths.length) {
-      showToast("Tick at least one photo using the teal checkboxes on the images.");
+      showToast("Select photos first (Ctrl+click each one), then Choose selected.");
       return;
     }
 
     if (appendPhotosViaStore(paths)) {
       sessionStorage.removeItem(PICK_KEY);
       sessionStorage.removeItem(PENDING_PATHS_KEY);
-      document.querySelectorAll(".site-media-check:checked").forEach(function (cb) {
-        cb.checked = false;
-        var wrap = cb.closest(".site-media-check-wrap");
-        if (wrap) wrap.classList.remove("is-checked");
-      });
+      clearSelection();
       showToast(paths.length + " photo(s) added to Gallery.");
       closeMediaModal();
+      var hint = document.getElementById("site-gallery-hint");
+      if (hint) hint.remove();
       return;
     }
 
@@ -575,25 +523,18 @@
       if (action && action.type === "MEDIA_LIBRARY_OPEN") {
         var payload = action.payload || {};
         if (getGalleryDraftEntry() && payload.forImage !== false) {
+          clearSelection();
           startPickSession();
         }
       }
 
       var result = orig(action);
 
-      if (action && action.type === "MEDIA_INSERT" && (isPickSessionActive() || getGalleryDraftEntry())) {
-        window.setTimeout(function () {
-          var payload = action.payload || {};
-          var paths = pathsFromImage(payload.mediaPath);
-          if (paths.length > 1) appendPhotosViaStore(paths);
-        }, 300);
-      }
-
       if (action && action.type === "MEDIA_LIBRARY_CLOSE") {
         sessionStorage.removeItem(PICK_KEY);
-        document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (el) {
-          el.remove();
-        });
+        clearSelection();
+        var hint = document.getElementById("site-gallery-hint");
+        if (hint) hint.remove();
       }
 
       return result;
@@ -605,28 +546,21 @@
     watchDom._on = true;
     var obs = new MutationObserver(function () {
       replaceImageWidgetLabels();
-      if (shouldEnhanceMediaUi()) injectCheckboxes();
-      else {
-        document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (el) {
-          el.remove();
-        });
-      }
+      showHint();
     });
-    obs.observe(document.body, { childList: true, subtree: true });
+    obs.observe(document.body, { childList: true, subtree: true, characterData: true });
   }
 
   function onRouteChange() {
     if (isMediaHash() && getGalleryDraftEntry()) startPickSession();
-    if (shouldEnhanceMediaUi()) injectCheckboxes();
+    replaceImageWidgetLabels();
+    showHint();
     if (isGalleryHash()) applyPendingPaths();
   }
 
   function tick() {
     replaceImageWidgetLabels();
-    if (shouldEnhanceMediaUi()) {
-      injectCheckboxes();
-      repositionCheckboxOverlays();
-    }
+    showHint();
     if (isGalleryHash() && sessionStorage.getItem(PENDING_PATHS_KEY)) {
       applyPendingPaths();
     }
