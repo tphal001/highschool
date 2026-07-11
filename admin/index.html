@@ -20,15 +20,18 @@
 
     <script src="https://unpkg.com/decap-cms@^3.4.0/dist/decap-cms.js"></script>
 
-    <script src="/admin/cms-bulk-upload.js?v=20260711f"></script>
+    <script src="/admin/cms-bulk-upload.js?v=20260711g"></script>
 
-    <script src="/admin/cms-local-files.js?v=20260711f"></script>
+    <script src="/admin/cms-local-files.js?v=20260711g"></script>
 
     <script>
       if (window.CMS && CMS.init) CMS.init();
-      window.setTimeout(function () {
+      function bootGalleryPicker() {
         if (window.SiteGalleryLocalFiles) window.SiteGalleryLocalFiles.start();
-      }, 1000);
+        else window.setTimeout(bootGalleryPicker, 200);
+      }
+      window.setTimeout(bootGalleryPicker, 800);
+      window.setTimeout(bootGalleryPicker, 2500);
     </script>
 
   </body>

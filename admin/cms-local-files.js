@@ -1,12 +1,13 @@
 /**
- * Gallery: clicking "Choose images" opens local multi-file picker (like Media → Upload).
+ * Gallery: block Decap Media modal; use local multi-file picker instead.
  */
 (function () {
   "use strict";
 
-  var MARK = "data-site-choose-bound";
   var UPLOAD_GAP_MS = 2000;
+  var PICKER_MARK = "data-site-gallery-picker";
   var started = false;
+  var lastOpenPayload = null;
 
   function getStore() {
     if (!window.CMS) return null;
@@ -24,27 +25,30 @@
     return val.toJS ? val.toJS() : val;
   }
 
+  function toPathList(val) {
+    var raw = toJs(val);
+    if (!raw) return [];
+    if (Array.isArray(raw)) return raw.map(String);
+    return [String(raw)];
+  }
+
   function isGalleryRoute() {
     return (window.location.hash || "").toLowerCase().indexOf("entries/gallery") >= 0;
   }
 
-  function isInsideMediaModal(el) {
-    if (!el || !el.closest) return false;
-    return !!(
-      el.closest('[class*="MediaLibrary"]') ||
-      el.closest('[class*="media-library"]') ||
-      el.closest('[role="dialog"]')
-    );
+  function isGalleryMediaField(field) {
+    if (!field || !field.get) return false;
+    var n = field.get("name");
+    return n === "images" || n === "videos";
   }
 
   function getGalleryField(state, name) {
     try {
       var collection = state.collections.get("staff_content");
-      var files = collection && collection.get("files");
-      var galleryFile = files && files.find(function (f) {
+      var galleryFile = collection.get("files").find(function (f) {
         return f.get("name") === "gallery";
       });
-      return galleryFile && galleryFile.get("fields").find(function (f) {
+      return galleryFile.get("fields").find(function (f) {
         return f.get("name") === name;
       });
     } catch (e) {
@@ -57,7 +61,8 @@
     if (!store) return [];
     var entry = store.getState().entryDraft && store.getState().entryDraft.get("entry");
     if (!entry) return [];
-    return Array.isArray(toJs(entry.getIn(["data", fieldName]))) ? toJs(entry.getIn(["data", fieldName])) : [];
+    var raw = entry.getIn(["data", fieldName]);
+    return Array.isArray(toJs(raw)) ? toJs(raw) : [];
   }
 
   function setBatches(fieldName, batches) {
@@ -101,35 +106,34 @@
     });
   }
 
-  function ancestorText(node, maxUp) {
-    var parts = [];
-    var walk = node;
-    var n = 0;
-    while (walk && walk !== document.body && n < (maxUp || 20)) {
-      parts.push((walk.textContent || "").toLowerCase());
-      walk = walk.parentElement;
-      n++;
+  function fieldNameFromPayload(payload) {
+    if (!payload || !payload.field) return "photoBatches";
+    return payload.field.get("name") === "videos" ? "videoBatches" : "photoBatches";
+  }
+
+  function mediaKeyFromPayload(payload) {
+    if (!payload || !payload.field) return "images";
+    return payload.field.get("name") === "videos" ? "videos" : "images";
+  }
+
+  function findBatchIndex(batches, mediaKey, currentPaths, titleHint) {
+    if (titleHint) {
+      for (var i = 0; i < batches.length; i++) {
+        if ((batches[i].title || "").trim() === titleHint) return i;
+      }
     }
-    return parts.join(" ");
+    var sortedCurrent = currentPaths.slice().sort().join("|");
+    for (var j = 0; j < batches.length; j++) {
+      var sortedBatch = mediaPaths(batches[j][mediaKey]).slice().sort().join("|");
+      if (sortedBatch === sortedCurrent) return j;
+    }
+    return 0;
   }
 
-  function fieldContext(btn) {
-    var text = ancestorText(btn, 25);
-    var isVideo =
-      text.indexOf("upload videos") >= 0 ||
-      text.indexOf("videos from your computer") >= 0 ||
-      (text.indexOf("choose files") >= 0 && text.indexOf("upload images") < 0);
-    return {
-      fieldName: isVideo ? "videoBatches" : "photoBatches",
-      mediaKey: isVideo ? "videos" : "images",
-      accept: isVideo ? "video/*" : "image/*",
-    };
-  }
-
-  function albumTitle(btn) {
-    var walk = btn.parentElement;
+  function albumTitleNear(el) {
+    var walk = el && el.parentElement;
     var n = 0;
-    while (walk && walk !== document.body && n < 30) {
+    while (walk && walk !== document.body && n < 35) {
       var inputs = walk.querySelectorAll('input[type="text"]');
       for (var i = 0; i < inputs.length; i++) {
         var v = (inputs[i].value || "").trim();
@@ -141,110 +145,162 @@
     return "";
   }
 
-  function batchIndex(batches, title) {
-    if (title) {
-      for (var i = 0; i < batches.length; i++) {
-        if ((batches[i].title || "").trim() === title) return i;
-      }
-    }
-    return 0;
-  }
-
-  function applyFilesToField(files, btn) {
+  function applyFiles(files, payload, titleHint) {
     if (!files || !files.length) return;
-    var ctx = fieldContext(btn);
-    var title = albumTitle(btn);
-    var batches = getBatches(ctx.fieldName);
-    var idx = batchIndex(batches, title);
-    if (!batches[idx]) batches[idx] = { title: title || "", images: [], videos: [] };
-    var current = mediaPaths(batches[idx][ctx.mediaKey]);
+    var batchField = fieldNameFromPayload(payload);
+    var mediaKey = mediaKeyFromPayload(payload);
+    var currentPaths = toPathList(payload && payload.value);
+    var batches = getBatches(batchField);
+    var idx = findBatchIndex(batches, mediaKey, currentPaths, titleHint);
+    if (!batches[idx]) batches[idx] = { title: titleHint || "", images: [], videos: [] };
+    var merged = mediaPaths(batches[idx][mediaKey]).slice();
     var queue = Array.from(files);
     var i = 0;
 
     function next() {
       if (i >= queue.length) {
-        batches[idx][ctx.mediaKey] = current;
-        if (title) batches[idx].title = title;
-        setBatches(ctx.fieldName, batches);
+        batches[idx][mediaKey] = merged;
+        if (titleHint) batches[idx].title = titleHint;
+        setBatches(batchField, batches);
         return;
       }
       var file = queue[i++];
       addAsset(file);
       var path = publicPath(file.name);
-      if (current.indexOf(path) < 0) current.push(path);
+      if (merged.indexOf(path) < 0) merged.push(path);
       window.setTimeout(next, UPLOAD_GAP_MS);
     }
 
     next();
   }
 
-  function isChooseButton(el) {
-    if (!el) return false;
-    var node = el.closest ? el.closest("button, a") : el;
-    if (!node) return false;
-    var t = (node.textContent || "").trim().toLowerCase();
-    return (
-      t === "choose images" ||
-      t === "choose image" ||
-      t === "choose files" ||
-      t === "choose file" ||
-      t.indexOf("choose images") === 0 ||
-      t.indexOf("choose files") === 0
-    );
-  }
-
-  function openLocalPicker(btn) {
-    var ctx = fieldContext(btn);
+  function openLocalPicker(payload, anchorEl) {
+    var accept = payload && payload.field && payload.field.get("name") === "videos" ? "video/*" : "image/*";
     var input = document.createElement("input");
     input.type = "file";
     input.multiple = true;
-    input.accept = ctx.accept;
+    input.accept = accept;
     input.style.cssText = "position:fixed;left:-9999px;width:1px;height:1px;opacity:0;";
     document.body.appendChild(input);
     input.addEventListener("change", function () {
-      applyFilesToField(input.files, btn);
+      applyFiles(input.files, payload || lastOpenPayload, albumTitleNear(anchorEl));
       input.remove();
     });
     input.click();
   }
 
-  function hijackButton(btn) {
-    if (!btn || btn.getAttribute(MARK)) return;
-    if (!isGalleryRoute() || isInsideMediaModal(btn) || !isChooseButton(btn)) return;
+  function patchStore() {
+    var store = getStore();
+    if (!store || store.__siteGalleryStorePatch) return;
+    store.__siteGalleryStorePatch = true;
+    var orig = store.dispatch.bind(store);
 
-    btn.setAttribute(MARK, "1");
-
-    function blockAndPick(e) {
-      e.preventDefault();
-      e.stopPropagation();
-      e.stopImmediatePropagation();
-      openLocalPicker(btn);
-      return false;
-    }
-
-    btn.addEventListener("click", blockAndPick, true);
-    btn.addEventListener("mousedown", blockAndPick, true);
-    btn.addEventListener("pointerdown", blockAndPick, true);
+    store.dispatch = function (action) {
+      if (
+        action &&
+        action.type === "MEDIA_LIBRARY_OPEN" &&
+        isGalleryRoute() &&
+        action.payload &&
+        isGalleryMediaField(action.payload.field)
+      ) {
+        lastOpenPayload = action.payload;
+        window.setTimeout(function () {
+          openLocalPicker(lastOpenPayload, null);
+        }, 0);
+        return orig({ type: "MEDIA_LIBRARY_CLOSE" });
+      }
+      return orig(action);
+    };
   }
 
-  function scan() {
+  function isChooseLabel(text) {
+    text = (text || "").trim().toLowerCase();
+    return (
+      text === "choose images" ||
+      text === "choose image" ||
+      text === "choose files" ||
+      text === "choose file"
+    );
+  }
+
+  function injectPickers() {
     if (!isGalleryRoute() || !getStore()) return;
-    document.querySelectorAll("button, a").forEach(function (el) {
-      if (isChooseButton(el)) hijackButton(el.closest("button, a") || el);
+
+    document.querySelectorAll("button").forEach(function (btn) {
+      if (!isChooseLabel(btn.textContent)) return;
+      if (btn.closest('[class*="MediaLibrary"]') || btn.closest('[role="dialog"]')) return;
+
+      var host = btn.parentElement;
+      if (!host || host.querySelector("[" + PICKER_MARK + "]")) return;
+
+      btn.style.setProperty("display", "none", "important");
+
+      var wrap = document.createElement("div");
+      wrap.setAttribute(PICKER_MARK, "1");
+      wrap.style.cssText = "margin:.5rem 0;";
+
+      var label = document.createElement("label");
+      label.style.cssText =
+        "display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;";
+      label.textContent = btn.textContent.trim() || "Choose images";
+
+      var input = document.createElement("input");
+      input.type = "file";
+      input.multiple = true;
+      input.accept =
+        (host.textContent || "").toLowerCase().indexOf("video") >= 0 ? "video/*" : "image/*";
+      input.style.cssText = "display:none;";
+      input.addEventListener("change", function () {
+        var payload = {
+          field: {
+            get: function (k) {
+              return k === "name"
+                ? input.accept.indexOf("video") >= 0
+                  ? "videos"
+                  : "images"
+                : "";
+            },
+          },
+          value: [],
+        };
+        applyFiles(input.files, payload, albumTitleNear(wrap));
+        input.value = "";
+      });
+
+      label.appendChild(input);
+      wrap.appendChild(label);
+      host.insertBefore(wrap, btn);
     });
   }
 
-  function start() {
-    if (started) {
-      scan();
-      return;
-    }
-    started = true;
-    scan();
-    window.setInterval(scan, 500);
-    window.addEventListener("hashchange", scan);
-    new MutationObserver(scan).observe(document.body, { childList: true, subtree: true });
+  function injectStyles() {
+    if (document.getElementById("site-gallery-picker-css")) return;
+    var s = document.createElement("style");
+    s.id = "site-gallery-picker-css";
+    s.textContent =
+      'body[data-site-gallery="1"] [class*="MediaLibrary"]{display:none!important;}';
+    document.head.appendChild(s);
   }
 
-  window.SiteGalleryLocalFiles = { start: start, scan: scan };
+  function start() {
+    if (!getStore()) {
+      window.setTimeout(start, 300);
+      return;
+    }
+    document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
+    injectStyles();
+    patchStore();
+    injectPickers();
+    if (!started) {
+      started = true;
+      window.setInterval(function () {
+        document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
+        injectPickers();
+      }, 600);
+      window.addEventListener("hashchange", injectPickers);
+      new MutationObserver(injectPickers).observe(document.body, { childList: true, subtree: true });
+    }
+  }
+
+  window.SiteGalleryLocalFiles = { start: start };
 })();
