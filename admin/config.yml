@@ -213,48 +213,37 @@ collections:
         name: gallery
         file: content/cms/gallery.json
         fields:
+          - label: Upload images
+            name: photoBatches
+            widget: list
+            summary: "{{fields.title}}"
+            label_singular: upload
+            add_to_top: true
+            fields:
+              - { label: Title, name: title, widget: string }
+              - label: Images from your computer
+                name: images
+                widget: multi_upload
+                media_type: image
+          - label: Upload videos
+            name: videoBatches
+            widget: list
+            summary: "{{fields.title}}"
+            label_singular: upload
+            add_to_top: true
+            fields:
+              - { label: Title, name: title, widget: string }
+              - label: Videos from your computer
+                name: videos
+                widget: multi_upload
+                media_type: video
           - {
               label: Page intro,
               name: intro,
               widget: text,
               required: false,
+              collapsed: true,
             }
-          - label: Upload images
-            name: photoBatches
-            widget: list
-            summary: "{{fields.title}}"
-            label_singular: album
-            add_to_top: true
-            hint: "Add album → enter Title → under Photos click Add photo + → click Choose a file → select MULTIPLE images at once (Ctrl+click) → Publish."
-            fields:
-              - { label: Title, name: title, widget: string }
-              - label: Photos
-                name: images
-                widget: list
-                label_singular: photo
-                field:
-                  label: Photo
-                  name: image
-                  widget: file
-                  choose_url: false
-          - label: Upload videos
-            name: videoBatches
-            widget: list
-            summary: "{{fields.title}}"
-            label_singular: album
-            add_to_top: true
-            hint: "Add album → enter Title → under Videos click Add video + → click Choose a file → select MULTIPLE videos at once → Publish."
-            fields:
-              - { label: Title, name: title, widget: string }
-              - label: Videos
-                name: videos
-                widget: list
-                label_singular: video
-                field:
-                  label: Video
-                  name: video
-                  widget: file
-                  choose_url: false
 
       - label: Highlights (posters & popup)
         name: highlight

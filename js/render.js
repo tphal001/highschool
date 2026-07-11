@@ -1470,6 +1470,15 @@
         .map(function (batch, batchIdx) {
           var title = (batch.title || "").trim() || (type === "video" ? "Videos" : "Photos");
           var mediaItems = type === "video" ? batch.videos || [] : batch.images || [];
+          mediaItems = mediaItems.map(function (item) {
+            if (!item) return item;
+            if (typeof item === "string") {
+              var o = {};
+              o[type === "video" ? "video" : "image"] = item;
+              return o;
+            }
+            return item;
+          });
           var anchorId = "";
           if (batchIdx === 0) anchorId = type === "video" ? ' id="video"' : ' id="photo"';
           var slides = mediaItems
