@@ -4,41 +4,41 @@
     {
       "title": "Photo",
       "images": [
-        { "image": "/images/1000888484.jpg" },
-        { "image": "/images/1000888482.jpg" },
-        { "image": "/images/1000888480.jpg" }
+        "/images/1000888484.jpg",
+        "/images/1000888482.jpg",
+        "/images/1000888480.jpg"
       ]
     },
     {
       "title": "Annual day",
-      "images": [{ "image": "/images/event.jpg" }]
+      "images": ["/images/event.jpg"]
     },
     {
       "title": "Science lab",
       "images": [
-        { "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80" }
+        "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
       ]
     },
     {
       "title": "Sports day",
       "images": [
-        { "image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80" }
+        "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80"
       ]
     },
     {
       "title": "Library",
-      "images": [{ "image": "/images/lib.png" }]
+      "images": ["/images/lib.png"]
     },
     {
       "title": "Art workshop",
       "images": [
-        { "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80" }
+        "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
       ]
     },
     {
       "title": "Assembly",
       "images": [
-        { "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80" }
+        "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
       ]
     }
   ],

@@ -26,9 +26,37 @@ function normalizeBatchMedia(list, key) {
         return o;
       }
       if (item[key]) return item;
+      if (key === "image" && item.image) return { image: item.image };
+      if (key === "video" && item.video) return { video: item.video };
       return null;
     })
     .filter(Boolean);
+}
+
+/** CMS image/file widgets with multiple:true store path strings, not {image: path} objects. */
+function cmsGalleryMediaPaths(list, key) {
+  if (!Array.isArray(list)) return [];
+  return list
+    .map(function (item) {
+      if (typeof item === "string") return item;
+      if (item && typeof item === "object") return item[key] || item.image || item.video || "";
+      return "";
+    })
+    .filter(Boolean);
+}
+
+function formatGalleryForCms(gallery) {
+  if (!gallery || typeof gallery !== "object") return gallery;
+  normalizeGallery(gallery);
+  gallery.photoBatches = (gallery.photoBatches || []).map(function (b) {
+    if (!b || typeof b !== "object") return b;
+    return Object.assign({}, b, { images: cmsGalleryMediaPaths(b.images, "image") });
+  });
+  gallery.videoBatches = (gallery.videoBatches || []).map(function (b) {
+    if (!b || typeof b !== "object") return b;
+    return Object.assign({}, b, { videos: cmsGalleryMediaPaths(b.videos, "video") });
+  });
+  return gallery;
 }
 
 /** Migrate legacy flat gallery.items to photoBatches / videoBatches. */
