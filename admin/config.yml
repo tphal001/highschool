@@ -214,7 +214,7 @@ collections:
         file: content/cms/gallery.json
         fields:
           - {
-              label: Page intro (optional),
+              label: Page intro,
               name: intro,
               widget: text,
               required: false,
@@ -227,7 +227,7 @@ collections:
             label_singular: album
             add_to_top: true
             collapsed: true
-            hint: "Use Upload Images above. Each album is one title with multiple photos."
+            hint: "Managed by Upload Images above. Expand only to edit or remove albums."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Photos
@@ -246,7 +246,7 @@ collections:
             label_singular: album
             add_to_top: true
             collapsed: true
-            hint: "Use Upload Videos above. Each album is one title with multiple videos."
+            hint: "Managed by Upload Videos above. Expand only to edit or remove albums."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Videos

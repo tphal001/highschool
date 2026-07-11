@@ -1,5 +1,5 @@
 /**
- * Decap CMS — Gallery: Upload Images / Upload Videos with title + multi-file from computer.
+ * Decap CMS — Gallery: Upload Images / Upload Videos (title + multi-file from computer).
  */
 (function () {
   "use strict";
@@ -25,17 +25,24 @@
   }
 
   function isGalleryRoute() {
-    return /\/collections\/staff_content\/entries\/gallery/i.test(window.location.hash || "");
+    var h = (window.location.hash || "").toLowerCase();
+    return h.indexOf("entries/gallery") >= 0;
   }
 
   function getGalleryDraftEntry() {
+    if (!isGalleryRoute()) return null;
     var store = getStore();
     if (!store) return null;
     var draft = store.getState().entryDraft;
     var entry = draft && draft.get && draft.get("entry");
     if (!entry || !entry.get) return null;
-    if (entry.get("file") === GALLERY_FILE || entry.get("slug") === "gallery") return entry;
-    return null;
+
+    var file = String(entry.get("file") || entry.get("path") || "");
+    var slug = String(entry.get("slug") || entry.get("name") || "");
+    if (slug === "gallery" || file.indexOf("gallery.json") >= 0 || file === GALLERY_FILE) {
+      return entry;
+    }
+    return entry;
   }
 
   function getGalleryField(state, name) {
@@ -59,7 +66,8 @@
     var entry = getGalleryDraftEntry();
     if (!entry) return [];
     var raw = entry.getIn(["data", fieldName]);
-    return Array.isArray(toJs(raw)) ? toJs(raw) : [];
+    var list = toJs(raw);
+    return Array.isArray(list) ? list : [];
   }
 
   function setBatches(fieldName, batches) {
@@ -95,7 +103,7 @@
     style.textContent =
       "#" +
       PANEL_ID +
-      "{margin:0 0 1.5rem;padding:1.25rem;border:2px solid #0d9488;border-radius:12px;background:#f0fdfa;}" +
+      "{margin:0 0 1.25rem;padding:1.25rem;border:2px solid #0d9488;border-radius:12px;background:#f0fdfa;}" +
       "#" +
       PANEL_ID +
       " .sg-tabs{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:1rem;}" +
@@ -115,7 +123,7 @@
       PANEL_ID +
       " .sg-field input[type=text],#" +
       PANEL_ID +
-      " .sg-field input[type=file]{width:100%;padding:.55rem .65rem;border:1px solid #99f6e4;border-radius:6px;background:#fff;}" +
+      " .sg-field input[type=file]{width:100%;padding:.55rem .65rem;border:1px solid #99f6e4;border-radius:6px;background:#fff;box-sizing:border-box;}" +
       "#" +
       PANEL_ID +
       " .sg-add{margin-top:.5rem;padding:.7rem 1.25rem;border:0;border-radius:8px;background:#0f766e;color:#fff;font-weight:700;cursor:pointer;}" +
@@ -127,8 +135,46 @@
       " .sg-hint{margin-top:.65rem;font-size:.8125rem;color:#115e59;}" +
       "#" +
       PANEL_ID +
-      " .sg-status{margin-top:.65rem;font-size:.8125rem;font-weight:600;color:#0f766e;}";
+      " .sg-status{margin-top:.65rem;font-size:.8125rem;font-weight:600;color:#0f766e;}" +
+      "body.site-gallery-cms-active .site-gallery-hide-default{display:none!important;}";
     document.head.appendChild(style);
+  }
+
+  function findGalleryEditorHost() {
+    var nodes = document.querySelectorAll("label, span, p, button, h2, h3");
+    var i;
+    for (i = 0; i < nodes.length; i++) {
+      var text = (nodes[i].textContent || "").trim().toUpperCase();
+      if (
+        text.indexOf("PAGE INTRO") === 0 ||
+        text.indexOf("IMAGE ALBUMS") === 0 ||
+        text.indexOf("IMAGE ALBUM") === 0
+      ) {
+        var block = nodes[i].closest("div");
+        if (block && block.parentElement) return block.parentElement;
+      }
+    }
+    return (
+      document.querySelector("[class*='EditorControlPane']") ||
+      document.querySelector("[class*='ControlPane']") ||
+      document.querySelector("main")
+    );
+  }
+
+  function hideDefaultAlbumLists() {
+    var nodes = document.querySelectorAll("label, span, p, button");
+    nodes.forEach(function (el) {
+      var text = (el.textContent || "").trim().toUpperCase();
+      if (text.indexOf("IMAGE ALBUMS") !== 0 && text.indexOf("VIDEO ALBUMS") !== 0) return;
+      var root = el;
+      var step;
+      for (step = 0; step < 12 && root; step++) {
+        if (root.classList && root.classList.contains("nc-listWidget")) break;
+        if (root.querySelector && root.querySelector(".nc-listWidget, [class*='ListControl']")) break;
+        root = root.parentElement;
+      }
+      if (root) root.classList.add("site-gallery-hide-default");
+    });
   }
 
   function clickListAdd(listRoot) {
@@ -163,23 +209,6 @@
     input.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
-  function findBatchListRoots(fieldName) {
-    var labels =
-      fieldName === "photoBatches"
-        ? ["image albums", "photos"]
-        : ["video albums", "videos"];
-    var roots = [];
-    document.querySelectorAll(".nc-listWidget, [class*='ListControl']").forEach(function (el) {
-      var text = (el.textContent || "").toLowerCase();
-      if (labels.some(function (l) {
-        return text.indexOf(l) >= 0;
-      })) {
-        roots.push(el);
-      }
-    });
-    return roots;
-  }
-
   function findInnerListForBatch(batchTitle, mediaLabel) {
     var lists = document.querySelectorAll(".nc-listWidget, [class*='ListControl']");
     var i;
@@ -209,7 +238,7 @@
         return;
       }
       var inner = findInnerListForBatch(title, mediaLabel);
-      if (!inner && attempt < 30) {
+      if (!inner && attempt < 40) {
         attempt++;
         window.setTimeout(tryUpload, 400);
         return;
@@ -240,54 +269,58 @@
     if (el) el.textContent = msg || "";
   }
 
+  function buildPanel() {
+    var panel = document.createElement("div");
+    panel.id = PANEL_ID;
+    panel.innerHTML =
+      '<div class="sg-tabs">' +
+      '<button type="button" class="sg-tab is-active" data-mode="images">Upload Images</button>' +
+      '<button type="button" class="sg-tab" data-mode="videos">Upload Videos</button>' +
+      "</div>" +
+      '<div class="sg-field"><label for="site-gallery-cms-title">Title</label>' +
+      '<input id="site-gallery-cms-title" type="text" placeholder="e.g. Annual day 2026" /></div>' +
+      '<div class="sg-field"><label for="site-gallery-cms-files">Files from your computer</label>' +
+      '<input id="site-gallery-cms-files" type="file" multiple accept="image/*" /></div>' +
+      '<button type="button" class="sg-add" id="site-gallery-cms-add">Add</button>' +
+      '<p class="sg-hint">Select one or many files, then click <strong>Add</strong>. Files go to Media and <code>/images/</code> when you publish.</p>' +
+      '<p class="sg-status" id="site-gallery-cms-status"></p>';
+
+    panel.addEventListener("click", function (e) {
+      var tab = e.target.closest && e.target.closest(".sg-tab");
+      if (!tab) return;
+      panel.querySelectorAll(".sg-tab").forEach(function (t) {
+        t.classList.remove("is-active");
+      });
+      tab.classList.add("is-active");
+      var mode = tab.getAttribute("data-mode");
+      var fileInput = document.getElementById("site-gallery-cms-files");
+      if (fileInput) fileInput.accept = mode === "videos" ? "video/*" : "image/*";
+      setStatus("");
+    });
+
+    document.getElementById("site-gallery-cms-add").addEventListener("click", onAddClick);
+    return panel;
+  }
+
   function mountPanel() {
-    if (!isGalleryRoute() || !getGalleryDraftEntry()) {
+    if (!isGalleryRoute()) {
       document.body.classList.remove("site-gallery-cms-active");
-      var old = document.getElementById(PANEL_ID);
-      if (old) old.remove();
+      var gone = document.getElementById(PANEL_ID);
+      if (gone) gone.remove();
       return;
     }
 
+    if (!getStore()) return;
+
     document.body.classList.add("site-gallery-cms-active");
-    var host =
-      document.querySelector("[class*='EditorControlPane']") ||
-      document.querySelector("[class*='ScrollContainer']") ||
-      document.querySelector("main");
-    if (!host) return;
+    hideDefaultAlbumLists();
 
     var panel = document.getElementById(PANEL_ID);
     if (!panel) {
-      panel = document.createElement("div");
-      panel.id = PANEL_ID;
+      panel = buildPanel();
+      var host = findGalleryEditorHost();
+      if (!host) return;
       host.insertBefore(panel, host.firstChild);
-      panel.innerHTML =
-        '<div class="sg-tabs">' +
-        '<button type="button" class="sg-tab is-active" data-mode="images">Upload Images</button>' +
-        '<button type="button" class="sg-tab" data-mode="videos">Upload Videos</button>' +
-        "</div>" +
-        '<div class="sg-field"><label for="site-gallery-cms-title">Title</label>' +
-        '<input id="site-gallery-cms-title" type="text" placeholder="e.g. Annual day 2026" /></div>' +
-        '<div class="sg-field"><label for="site-gallery-cms-files">Files from your computer</label>' +
-        '<input id="site-gallery-cms-files" type="file" multiple accept="image/*" /></div>' +
-        '<button type="button" class="sg-add" id="site-gallery-cms-add">Add</button>' +
-        '<p class="sg-hint">Select one or many files, then click <strong>Add</strong>. Files are saved to Media and <code>/images/</code> when you publish.</p>' +
-        '<p class="sg-status" id="site-gallery-cms-status"></p>';
-
-      panel.addEventListener("click", function (e) {
-        var tab = e.target.closest && e.target.closest(".sg-tab");
-        if (tab) {
-          panel.querySelectorAll(".sg-tab").forEach(function (t) {
-            t.classList.remove("is-active");
-          });
-          tab.classList.add("is-active");
-          var mode = tab.getAttribute("data-mode");
-          var fileInput = document.getElementById("site-gallery-cms-files");
-          if (fileInput) fileInput.accept = mode === "videos" ? "video/*" : "image/*";
-          setStatus("");
-        }
-      });
-
-      document.getElementById("site-gallery-cms-add").addEventListener("click", onAddClick);
     }
   }
 
@@ -320,7 +353,7 @@
     setStatus("Adding " + files.length + " file(s)…");
 
     if (!prependBatch(fieldName, title)) {
-      setStatus("Could not update gallery. Try refreshing the page.");
+      setStatus("Could not update gallery. Wait a moment and try again.");
       if (addBtn) addBtn.disabled = false;
       return;
     }
@@ -332,12 +365,12 @@
       if (ok) {
         setStatus(
           files.length +
-            " file(s) added under \"" +
+            ' file(s) added under "' +
             title +
-            "\". Click Publish to save to the website."
+            '". Click Publish to save to the website.'
         );
       } else {
-        setStatus("Album created, but some uploads may need a retry. Check the album below, then Publish.");
+        setStatus("Album created — expand Image albums below if any file is missing, then Publish.");
       }
     });
   }
@@ -346,17 +379,27 @@
     mountPanel();
   }
 
-  function boot() {
-    if (!window.CMS) return;
-    injectStyles();
-    tick();
-    window.setInterval(tick, 800);
-    window.addEventListener("hashchange", tick);
+  function waitForStore(fn, n) {
+    n = n || 0;
+    if (getStore()) {
+      fn();
+      return;
+    }
+    if (n > 100) return;
+    window.setTimeout(function () {
+      waitForStore(fn, n + 1);
+    }, 200);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", boot);
-  } else {
-    boot();
+  function start() {
+    injectStyles();
+    waitForStore(function () {
+      tick();
+      window.setInterval(tick, 600);
+    });
+    window.addEventListener("hashchange", tick);
+    new MutationObserver(tick).observe(document.body, { childList: true, subtree: true });
   }
+
+  window.SiteGalleryCms = { start: start };
 })();
