@@ -169,15 +169,27 @@
     if (!wrap || !img || wrap.getAttribute("data-gallery-preview") !== "1") return;
 
     var C = window.SITE_CONTENT || {};
-    var items = (C.gallery && C.gallery.items) || [];
     var slides = [];
-    for (var i = 0; i < items.length; i++) {
-      var raw = items[i] && items[i].image;
-      if (!raw) continue;
-      if (typeof raw === "string") {
-        if (raw.trim()) slides.push(raw.trim());
-      } else if (raw.url) {
-        slides.push(String(raw.url).trim());
+    var g = C.gallery || {};
+    var batches = g.photoBatches || [];
+    var i;
+    var j;
+    for (i = 0; i < batches.length; i++) {
+      var images = (batches[i] && batches[i].images) || [];
+      for (j = 0; j < images.length; j++) {
+        var raw = images[j] && images[j].image;
+        if (!raw) continue;
+        if (typeof raw === "string" && raw.trim()) slides.push(raw.trim());
+        else if (raw && raw.url) slides.push(String(raw.url).trim());
+      }
+    }
+    if (!slides.length) {
+      var legacy = g.items || [];
+      for (i = 0; i < legacy.length; i++) {
+        var leg = legacy[i] && legacy[i].image;
+        if (!leg) continue;
+        if (typeof leg === "string" && leg.trim()) slides.push(leg.trim());
+        else if (leg && leg.url) slides.push(String(leg.url).trim());
       }
     }
     if (slides.length <= 1) return;
@@ -698,6 +710,50 @@
     }
   }
 
+  function initGalleryBatchSlideshow() {
+    var tracks = document.querySelectorAll(".gallery-batch-track");
+    if (!tracks.length) return;
+    var prefersReducedMotion =
+      typeof window.matchMedia === "function" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (prefersReducedMotion) return;
+
+    tracks.forEach(function (track) {
+      var slides = track.querySelectorAll(".gallery-batch-slide");
+      if (slides.length <= 1) return;
+      var idx = 0;
+      var timerId = null;
+
+      function scrollToSlide(next) {
+        var slide = slides[next];
+        if (!slide) return;
+        var left = slide.offsetLeft - track.offsetLeft;
+        track.scrollTo({ left: left, behavior: "smooth" });
+      }
+
+      function start() {
+        stop();
+        timerId = window.setInterval(function () {
+          idx = (idx + 1) % slides.length;
+          scrollToSlide(idx);
+        }, 4500);
+      }
+
+      function stop() {
+        if (timerId) {
+          window.clearInterval(timerId);
+          timerId = null;
+        }
+      }
+
+      start();
+      track.addEventListener("mouseenter", stop);
+      track.addEventListener("mouseleave", start);
+      track.addEventListener("focusin", stop);
+      track.addEventListener("focusout", start);
+    });
+  }
+
   function initGalleryLightbox() {
     var modal = document.getElementById("gallery-lightbox");
     if (!modal) {
@@ -1054,6 +1110,7 @@
     initAnnouncementModal();
     initVimpNewsModal();
     initGalleryLightbox();
+    initGalleryBatchSlideshow();
     initMobileNav();
     initCopyPageUrl();
     initHeaderScroll();

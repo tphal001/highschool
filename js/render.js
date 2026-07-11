@@ -93,15 +93,32 @@
   }
 
   /** Compact gallery preview for the home hero (replaces the old updates card). */
+  function galleryAllImageSrcs(gallery) {
+    var imgs = [];
+    var g = gallery || {};
+    var batches = g.photoBatches || [];
+    var i;
+    var j;
+    for (i = 0; i < batches.length; i++) {
+      var images = (batches[i] && batches[i].images) || [];
+      for (j = 0; j < images.length; j++) {
+        var src = mediaSrc(images[j] && images[j].image);
+        if (src) imgs.push(src);
+      }
+    }
+    if (!imgs.length) {
+      var legacy = g.items || [];
+      for (i = 0; i < legacy.length; i++) {
+        var legSrc = mediaSrc(legacy[i] && legacy[i].image);
+        if (legSrc) imgs.push(legSrc);
+      }
+    }
+    return imgs;
+  }
+
   function buildGalleryPreviewCardHtml() {
     var galleryHref = "gallery.html?ctx=gallery#photo";
-    var items = (C.gallery && C.gallery.items) || [];
-    var imgs = [];
-    var i;
-    for (i = 0; i < items.length; i++) {
-      var src = mediaSrc(items[i].image);
-      if (src) imgs.push(src);
-    }
+    var imgs = galleryAllImageSrcs(C.gallery);
     if (!imgs.length) {
       var he = C.home && C.home.hero;
       var slides = (he && he.slides && he.slides.length && he.slides) || [];
@@ -1440,53 +1457,67 @@
     if (!el) return;
     var ctx = getPageCtx("gallery");
 
-    function buildGalleryPhotoGrid(items) {
-      var sortedItems = sortCmsList(items || []);
-      var len = sortedItems.length;
-      return (
-        '<div class="mt-2 grid gap-6 sm:grid-cols-2 lg:grid-cols-3" data-reveal-stagger>' +
-        sortedItems
-          .map(function (it, idx) {
-            var figId = "";
-            if (idx === 0) figId = ' id="photo"';
-            else if (len >= 3 && idx === len - 2) figId = ' id="marathi-1"';
-            else if (len >= 2 && idx === len - 1 && idx > 0) figId = ' id="marathi-2"';
-            var src = mediaSrc(it.image);
-            var title = (it.title || "").trim();
-            var category = (it.category || "").trim();
-            var alt = title || category || "Campus photo";
-            var lightboxCaption = title && category ? title + " — " + category : title || category || alt;
-            var captionHtml =
-              title || category
-                ? '<figcaption class="p-4">' +
-                  (category
-                    ? '<span class="text-xs font-semibold uppercase tracking-wide text-mes-primary">' +
-                      esc(category) +
-                      "</span>"
-                    : "") +
-                  (title ? '<h3 class="font-display font-semibold text-mes-primary">' + esc(title) + "</h3>" : "") +
-                  "</figcaption>"
-                : "";
-            return (
-              "<figure" +
-              figId +
-              ' data-reveal class="group scroll-mt-32 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
-              '<div class="aspect-[4/3] overflow-hidden">' +
-              galleryLightboxButton(src, alt, lightboxCaption) +
-              '<img src="' +
-              esc(src) +
-              '" alt="' +
-              esc(alt) +
-              '" class="h-full w-full object-cover transition duration-500 group-hover:scale-105" loading="lazy"/>' +
-              galleryLightboxClose() +
-              "</div>" +
-              captionHtml +
-              "</figure>"
-            );
-          })
-          .join("") +
-        "</div>"
-      );
+    function buildGalleryBatchSections(batches, type) {
+      var sorted = sortCmsList(batches || []);
+      if (!sorted.length) {
+        return (
+          '<p class="mt-6 text-slate-600" data-reveal>No ' +
+          (type === "video" ? "videos" : "photos") +
+          " yet. Add some in the CMS.</p>"
+        );
+      }
+      return sorted
+        .map(function (batch, batchIdx) {
+          var title = (batch.title || "").trim() || (type === "video" ? "Videos" : "Photos");
+          var mediaItems = type === "video" ? batch.videos || [] : batch.images || [];
+          var anchorId = "";
+          if (batchIdx === 0) anchorId = type === "video" ? ' id="video"' : ' id="photo"';
+          var slides = mediaItems
+            .map(function (item, idx) {
+              var src = mediaSrc(type === "video" ? item.video : item.image);
+              if (!src) return "";
+              if (type === "video") {
+                return (
+                  '<figure class="gallery-batch-slide shrink-0 snap-start w-[min(88vw,360px)] overflow-hidden rounded-2xl border border-slate-200 bg-black shadow-sm">' +
+                  '<video src="' +
+                  esc(src) +
+                  '" controls playsinline preload="metadata" class="h-[min(52vw,220px)] w-full object-contain bg-black"></video>' +
+                  "</figure>"
+                );
+              }
+              var alt = title + " — " + (idx + 1);
+              return (
+                '<figure class="gallery-batch-slide shrink-0 snap-start w-[min(88vw,320px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
+                '<div class="aspect-[4/3] overflow-hidden">' +
+                galleryLightboxButton(src, alt, title) +
+                '<img src="' +
+                esc(src) +
+                '" alt="' +
+                esc(alt) +
+                '" class="h-full w-full object-cover transition duration-500 hover:scale-105" loading="lazy"/>' +
+                galleryLightboxClose() +
+                "</div></figure>"
+              );
+            })
+            .join("");
+          if (!slides) return "";
+          return (
+            '<section' +
+            anchorId +
+            ' class="gallery-batch mt-10 scroll-mt-32" data-reveal data-gallery-batch="' +
+            esc(type) +
+            '">' +
+            '<h2 class="font-display text-2xl font-bold text-mes-primary sm:text-3xl">' +
+            esc(title) +
+            "</h2>" +
+            '<div class="gallery-batch-track mt-4 flex gap-4 overflow-x-auto pb-3 snap-x snap-mandatory" tabindex="0" aria-label="' +
+            esc(title) +
+            ' slideshow">' +
+            slides +
+            "</div></section>"
+          );
+        })
+        .join("");
     }
 
     if (ctx === "activity") {
@@ -1528,15 +1559,12 @@
     if (isSectionOnlySub("gallery", sub, ctx)) {
       if (sub === "photo") {
         setInnerPageHeader("gallery", { title: "Photo Gallery", hideLead: true });
-        el.innerHTML = buildGalleryPhotoGrid(g.items || []);
+        el.innerHTML = buildGalleryBatchSections(g.photoBatches || [], "photo");
         return;
       }
       if (sub === "video") {
         setInnerPageHeader("gallery", { title: "Video Gallery", hideLead: true });
-        el.innerHTML =
-          '<p id="video" class="mt-2 scroll-mt-40 text-lg text-slate-600" data-reveal>' +
-          esc(g.videoNote || "Video gallery can be added here when ready.") +
-          "</p>";
+        el.innerHTML = buildGalleryBatchSections(g.videoBatches || [], "video");
         return;
       }
     }
@@ -1547,10 +1575,8 @@
       '<p class="text-xl text-slate-600" data-reveal>' +
       esc(g.intro) +
       "</p>" +
-      buildGalleryPhotoGrid(g.items || []).replace('class="mt-2 grid', 'class="mt-10 grid') +
-      '<p id="video" class="mt-10 scroll-mt-40 text-sm text-slate-500" data-reveal>' +
-      esc(g.videoNote || "Video gallery can be added here when ready.") +
-      "</p>";
+      buildGalleryBatchSections(g.photoBatches || [], "photo") +
+      buildGalleryBatchSections(g.videoBatches || [], "video");
   }
 
   function renderAlumniPage() {

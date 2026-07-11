@@ -213,25 +213,51 @@ collections:
         name: gallery
         file: content/cms/gallery.json
         fields:
-          - { label: Intro, name: intro, widget: string }
-          - label: Photo items
-            name: items
+          - {
+              label: Page intro (optional),
+              name: intro,
+              widget: text,
+              required: false,
+              hint: "Shown at the top of the gallery page on the website.",
+            }
+          - label: Image albums
+            name: photoBatches
             widget: list
             summary: "{{fields.title}}"
-            label_singular: photo
+            label_singular: album
             add_to_top: true
-            hint: "Add photo + → Choose Media. One photo: click it, then Choose selected. Several photos: hold Ctrl and click each, then Choose selected. Publish when done."
+            collapsed: true
+            hint: "Use Upload Images above. Each album is one title with multiple photos."
             fields:
-              - { label: Title, name: title, widget: string, required: false, default: "Photo" }
-              - { label: Category, name: category, widget: string, required: false }
-              - label: Photo
-                name: image
-                widget: image
-                choose_url: false
-                media_library:
-                  config:
-                    multiple: true
-          - { label: Video gallery note, name: videoNote, widget: text, required: false }
+              - { label: Title, name: title, widget: string }
+              - label: Photos
+                name: images
+                widget: list
+                label_singular: photo
+                field:
+                  label: Photo file
+                  name: image
+                  widget: image
+                  choose_url: false
+          - label: Video albums
+            name: videoBatches
+            widget: list
+            summary: "{{fields.title}}"
+            label_singular: album
+            add_to_top: true
+            collapsed: true
+            hint: "Use Upload Videos above. Each album is one title with multiple videos."
+            fields:
+              - { label: Title, name: title, widget: string }
+              - label: Videos
+                name: videos
+                widget: list
+                label_singular: video
+                field:
+                  label: Video file
+                  name: video
+                  widget: file
+                  choose_url: false
 
       - label: Highlights (posters & popup)
         name: highlight

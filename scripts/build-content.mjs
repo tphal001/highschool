@@ -15,12 +15,46 @@ function todayIsoDate() {
 }
 
 /** Sort-only timestamp; strips CMS date fields from public content. */
+/** Migrate legacy flat gallery.items to photoBatches / videoBatches. */
+function normalizeGallery(gallery) {
+  if (!gallery || typeof gallery !== "object") return gallery;
+  if (Array.isArray(gallery.photoBatches) || Array.isArray(gallery.videoBatches)) {
+    delete gallery.items;
+    delete gallery.videoNote;
+    delete gallery.bulkImages;
+    delete gallery.galleryBulkTrigger;
+    if (!Array.isArray(gallery.photoBatches)) gallery.photoBatches = [];
+    if (!Array.isArray(gallery.videoBatches)) gallery.videoBatches = [];
+    return gallery;
+  }
+  var groups = {};
+  (gallery.items || []).forEach(function (it) {
+    if (!it || typeof it !== "object") return;
+    var title = String(it.title || "").trim() || "Photos";
+    if (!groups[title]) groups[title] = [];
+    if (it.image) groups[title].push({ image: it.image });
+  });
+  var photoBatches = Object.keys(groups).map(function (title) {
+    return { title: title, images: groups[title] };
+  });
+  gallery.intro = gallery.intro || "";
+  gallery.photoBatches = photoBatches;
+  gallery.videoBatches = Array.isArray(gallery.videoBatches) ? gallery.videoBatches : [];
+  delete gallery.items;
+  delete gallery.videoNote;
+  delete gallery.bulkImages;
+  delete gallery.galleryBulkTrigger;
+  return gallery;
+}
+
 /** Append bulkImages rows into gallery.items; strip CMS-only gallery fields. */
 function mergeGalleryBulkImages(gallery) {
   if (!gallery || typeof gallery !== "object") return;
+  normalizeGallery(gallery);
   var bulk = gallery.bulkImages;
   if (Array.isArray(bulk) && bulk.length) {
-    gallery.items = Array.isArray(gallery.items) ? gallery.items.slice() : [];
+    if (!Array.isArray(gallery.photoBatches)) gallery.photoBatches = [];
+    var bulkBatch = { title: "Uploaded photos", images: [] };
     bulk.forEach(function (row) {
       var img =
         typeof row === "string"
@@ -29,10 +63,9 @@ function mergeGalleryBulkImages(gallery) {
             ? row.image || row.url || ""
             : "";
       img = String(img || "").trim();
-      if (img) {
-        gallery.items.push({ title: "", category: "", image: img });
-      }
+      if (img) bulkBatch.images.push({ image: img });
     });
+    if (bulkBatch.images.length) gallery.photoBatches.push(bulkBatch);
   }
   delete gallery.bulkImages;
   delete gallery.galleryBulkTrigger;
@@ -281,24 +314,46 @@ function normalizeSiteForEmit(site, previous) {
     var prevAct = (previous && previous.activity && previous.activity.items) || [];
     site.activity.items = stampListForSort(site.activity.items, prevAct);
   }
-  if (site.gallery && Array.isArray(site.gallery.items)) {
+  if (site.gallery) {
+    normalizeGallery(site.gallery);
     mergeGalleryBulkImages(site.gallery);
-    var prevGal = (previous && previous.gallery && previous.gallery.items) || [];
-    site.gallery.items = stampListForSort(
-      site.gallery.items.map(function (it, idx) {
-        if (!it || typeof it !== "object") return it;
-        return Object.assign({}, it, {
-          title: String(it.title || "").trim() || String(it.image || "").trim() || "photo-" + idx,
-        });
-      }),
-      prevGal.map(function (it, idx) {
-        if (!it || typeof it !== "object") return it;
-        return Object.assign({}, it, {
-          title: String(it.title || "").trim() || String(it.image || "").trim() || "photo-" + idx,
-        });
-      }),
-      "title"
-    );
+    var prevGal = (previous && previous.gallery) || {};
+    if (Array.isArray(site.gallery.photoBatches)) {
+      var prevPhoto = prevGal.photoBatches || [];
+      site.gallery.photoBatches = stampListForSort(
+        site.gallery.photoBatches.map(function (b, idx) {
+          if (!b || typeof b !== "object") return b;
+          return Object.assign({}, b, {
+            title: String(b.title || "").trim() || "album-" + idx,
+          });
+        }),
+        prevPhoto.map(function (b, idx) {
+          if (!b || typeof b !== "object") return b;
+          return Object.assign({}, b, {
+            title: String(b.title || "").trim() || "album-" + idx,
+          });
+        }),
+        "title"
+      );
+    }
+    if (Array.isArray(site.gallery.videoBatches)) {
+      var prevVid = prevGal.videoBatches || [];
+      site.gallery.videoBatches = stampListForSort(
+        site.gallery.videoBatches.map(function (b, idx) {
+          if (!b || typeof b !== "object") return b;
+          return Object.assign({}, b, {
+            title: String(b.title || "").trim() || "video-album-" + idx,
+          });
+        }),
+        prevVid.map(function (b, idx) {
+          if (!b || typeof b !== "object") return b;
+          return Object.assign({}, b, {
+            title: String(b.title || "").trim() || "video-album-" + idx,
+          });
+        }),
+        "title"
+      );
+    }
   }
   if (site.highlights && Array.isArray(site.highlights.items)) {
     var prevHi = (previous && previous.highlights && previous.highlights.items) || [];

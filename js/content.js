@@ -256,39 +256,57 @@ window.SITE_CONTENT = {
   ],
   "gallery": {
     "intro": "Moments from campus life—celebrations, learning, and everyday joy.",
-    "videoNote": "Video gallery can be added here when ready.",
-    "items": [
+    "photoBatches": [
       {
         "title": "Annual day",
-        "category": "Events",
-        "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+        "images": [
+          {
+            "image": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
       },
       {
         "title": "Science lab",
-        "category": "campus",
-        "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
+        "images": [
+          {
+            "image": "https://images.unsplash.com/photo-1532094349884-543bc11b234d?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
       },
       {
         "title": "Sports day",
-        "category": "Events",
-        "image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80"
+        "images": [
+          {
+            "image": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
       },
       {
         "title": "Library",
-        "category": "campus",
-        "image": "https://images.unsplash.com/photo-1521587760476-6c12a4b04090?auto=format&fit=crop&w=800&q=80"
+        "images": [
+          {
+            "image": "https://images.unsplash.com/photo-1521587760476-6c12a4b04090?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
       },
       {
         "title": "Art workshop",
-        "category": "activities",
-        "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
+        "images": [
+          {
+            "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
       },
       {
         "title": "Assembly",
-        "category": "Events",
-        "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
+        "images": [
+          {
+            "image": "https://images.unsplash.com/photo-1503676260728-1c00da094a0b?auto=format&fit=crop&w=800&q=80"
+          }
+        ]
       }
-    ]
+    ],
+    "videoBatches": []
   },
   "activity": {
     "intro": "Sports meets, cultural programs, science fairs, and inter-school competitions throughout the year.",
