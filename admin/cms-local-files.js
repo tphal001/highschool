@@ -1,17 +1,19 @@
 /**
- * Gallery: local file picker + Decap MEDIA_INSERT so thumbnails appear.
- * v20260711l
+ * Gallery: local file picker + thumbnails in the images panel.
+ * v20260711m
  */
 (function () {
   "use strict";
 
-  var VERSION = "20260711l";
+  var VERSION = "20260711m";
   var UPLOAD_GAP_MS =
     (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.UPLOAD_GAP_MS) || 2000;
   var PICKER_MARK = "data-site-gallery-picker";
   var INPUT_MARK = "data-site-gallery-input";
   var started = false;
+  var clickHooked = false;
   var lastOpenPayload = null;
+  var pickerBusy = false;
 
   function getStore() {
     if (!window.CMS) return null;
@@ -82,6 +84,29 @@
       type: "DRAFT_CHANGE_FIELD",
       payload: { field: field, value: fromJs(cloneData(batches)), metadata: {}, entries: [] },
     });
+  }
+
+  function setBatchImagesDirect(batchField, idx, mediaKey, paths, titleHint) {
+    var store = getStore();
+    if (!store) return;
+    var state = store.getState();
+    var field = getGalleryField(state, batchField);
+    if (!field) return;
+    var list = state.entryDraft.getIn(["entry", "data", batchField]);
+    if (list && list.setIn) {
+      var newList = list.setIn([idx, mediaKey], fromJs(paths.slice()));
+      if (titleHint) newList = newList.setIn([idx, "title"], titleHint);
+      store.dispatch({
+        type: "DRAFT_CHANGE_FIELD",
+        payload: { field: field, value: newList, metadata: {}, entries: [] },
+      });
+      return;
+    }
+    var batches = getBatches(batchField);
+    if (!batches[idx]) batches[idx] = { title: titleHint || "", images: [], videos: [] };
+    batches[idx][mediaKey] = paths.slice();
+    if (titleHint) batches[idx].title = titleHint;
+    setBatches(batchField, batches);
   }
 
   function publicPath(name) {
@@ -185,10 +210,8 @@
     return "";
   }
 
-  function finishUpload(batches, idx, batchField, mediaKey, merged, titleHint) {
-    batches[idx][mediaKey] = merged.slice();
-    if (titleHint) batches[idx].title = titleHint;
-    setBatches(batchField, batches);
+  function finishUpload(batchField, idx, mediaKey, merged, titleHint) {
+    setBatchImagesDirect(batchField, idx, mediaKey, merged, titleHint);
 
     var store = getStore();
     if (!store) return;
@@ -217,8 +240,6 @@
     if (!batches[idx]) {
       batches[idx] = { title: titleHint || "", images: [], videos: [] };
     }
-    if (!batches[idx].images) batches[idx].images = [];
-    if (!batches[idx].videos) batches[idx].videos = [];
 
     var merged = mediaPaths(batches[idx][mediaKey]).slice();
     var queue = Array.from(files);
@@ -227,7 +248,7 @@
 
     function next() {
       if (i >= queue.length) {
-        finishUpload(batches, idx, batchField, mediaKey, merged, titleHint);
+        finishUpload(batchField, idx, mediaKey, merged, titleHint);
         return;
       }
       var file = queue[i++];
@@ -261,16 +282,28 @@
   }
 
   function openUploadPicker(payload, anchorEl) {
+    if (pickerBusy) return;
+    pickerBusy = true;
+    window.__galleryPickerOpenedAt = Date.now();
+
     var accept =
       payload && payload.field && payload.field.get("name") === "videos" ? "video/*" : "image/*";
     var input = createGalleryInput(accept);
     document.body.appendChild(input);
     input.addEventListener("change", function () {
+      pickerBusy = false;
       if (input.files && input.files.length) {
         applyFiles(input.files, payload || lastOpenPayload, anchorEl);
       }
       input.remove();
     });
+    input.addEventListener("cancel", function () {
+      pickerBusy = false;
+      input.remove();
+    });
+    window.setTimeout(function () {
+      pickerBusy = false;
+    }, 1500);
     input.click();
   }
 
@@ -291,9 +324,10 @@
         lastOpenPayload = action.payload;
         orig(action);
         orig({ type: "MEDIA_LIBRARY_CLOSE" });
-        window.setTimeout(function () {
+        var recent = Date.now() - (window.__galleryPickerOpenedAt || 0) < 800;
+        if (!recent) {
           openUploadPicker(lastOpenPayload, null);
-        }, 0);
+        }
         return;
       }
       return orig(action);
@@ -305,6 +339,40 @@
     return (
       /^choose\s+(an?\s+)?images?/.test(text) ||
       /^choose\s+(a?\s+)?files?/.test(text)
+    );
+  }
+
+  function isChooseClickTarget(el) {
+    if (!el || !el.closest) return false;
+    if (el.closest('[class*="MediaLibrary"]') || el.closest('[role="dialog"]')) return false;
+    if (el.closest("#site-gallery-top-picker")) return false;
+    if (el.closest("[" + PICKER_MARK + "]")) return false;
+    var hit = el.closest("button, a, label, [role='button']");
+    if (!hit) return false;
+    return isChooseLabel(hit.textContent);
+  }
+
+  function interceptClicks() {
+    if (clickHooked) return;
+    clickHooked = true;
+    document.addEventListener(
+      "click",
+      function (e) {
+        if (!isGalleryRoute()) return;
+        if (!isChooseClickTarget(e.target)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        var hit = e.target.closest("button, a, label, [role='button']");
+        var isVideo =
+          (hit &&
+            (hit.closest("[class*='video']") ||
+              (hit.textContent || "").toLowerCase().indexOf("file") >= 0)) ||
+          false;
+        openUploadPicker(makePayload(isVideo ? "videos" : "images"), hit);
+        return false;
+      },
+      true
     );
   }
 
@@ -320,8 +388,7 @@
 
       var host = btn.parentElement;
       if (!host) return;
-      var existing = host.querySelector("[" + PICKER_MARK + "]");
-      if (existing) {
+      if (host.querySelector("[" + PICKER_MARK + "]")) {
         btn.style.setProperty("display", "none", "important");
         btn.setAttribute(PICKER_MARK, "1");
         return;
@@ -364,6 +431,10 @@
       modal.style.setProperty("display", "none", "important");
       var store = getStore();
       if (store) store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
+      var recent = Date.now() - (window.__galleryPickerOpenedAt || 0) < 800;
+      if (!recent) {
+        openUploadPicker(lastOpenPayload || makePayload("images"), null);
+      }
     });
   }
 
@@ -416,7 +487,7 @@
     var s = document.createElement("style");
     s.id = "site-gallery-picker-css";
     s.textContent =
-      'body[data-site-gallery="1"] [class*="MediaLibrary"]{display:none!important;visibility:hidden!important;}';
+      'body[data-site-gallery="1"] [class*="MediaLibrary"]{display:none!important;visibility:hidden!important;pointer-events:none!important;}';
     document.head.appendChild(s);
   }
 
@@ -426,6 +497,7 @@
   }
 
   function start() {
+    interceptClicks();
     if (!getStore()) {
       window.setTimeout(start, 300);
       return;
@@ -458,4 +530,5 @@
   }
 
   window.SiteGalleryLocalFiles = { start: start, version: VERSION };
+  interceptClicks();
 })();
