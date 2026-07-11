@@ -1,16 +1,17 @@
 /**
- * Gallery: "Choose images" uses the same upload path as Media → Upload.
- * v20260711j
+ * Gallery: "Choose images" opens local file picker (blocks Media modal).
+ * v20260711k
  */
 (function () {
   "use strict";
 
-  var VERSION = "20260711j";
+  var VERSION = "20260711k";
   var UPLOAD_GAP_MS =
     (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.UPLOAD_GAP_MS) || 2000;
   var PICKER_MARK = "data-site-gallery-picker";
   var INPUT_MARK = "data-site-gallery-input";
   var started = false;
+  var clickHooked = false;
   var lastOpenPayload = null;
 
   function getStore() {
@@ -178,17 +179,8 @@
     batches[idx][mediaKey] = merged;
     if (titleHint) batches[idx].title = titleHint;
     setBatches(batchField, batches);
-
     var store = getStore();
-    if (!store) return;
-
-    if (lastOpenPayload && lastOpenPayload.controlID) {
-      store.dispatch({
-        type: "MEDIA_INSERT",
-        payload: { mediaPath: merged.slice() },
-      });
-    }
-    store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
+    if (store) store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
   }
 
   function applyFiles(files, payload, anchorEl) {
@@ -277,11 +269,10 @@
         isGalleryMediaField(action.payload.field)
       ) {
         lastOpenPayload = action.payload;
-        var result = orig(action);
         window.setTimeout(function () {
           openUploadPicker(lastOpenPayload, null);
         }, 0);
-        return result;
+        return orig({ type: "MEDIA_LIBRARY_CLOSE" });
       }
       return orig(action);
     };
@@ -292,6 +283,40 @@
     return (
       /^choose\s+(an?\s+)?images?/.test(text) ||
       /^choose\s+(a?\s+)?files?/.test(text)
+    );
+  }
+
+  function isChooseClickTarget(el) {
+    if (!el || !el.closest) return false;
+    if (el.closest('[class*="MediaLibrary"]') || el.closest('[role="dialog"]')) return false;
+    if (el.closest("#site-gallery-top-picker")) return false;
+    if (el.closest("[" + PICKER_MARK + "]")) return false;
+    var hit = el.closest("button, a, label, [role='button']");
+    if (!hit) return false;
+    return isChooseLabel(hit.textContent);
+  }
+
+  function interceptClicks() {
+    if (clickHooked) return;
+    clickHooked = true;
+    document.addEventListener(
+      "click",
+      function (e) {
+        if (!isGalleryRoute()) return;
+        if (!isChooseClickTarget(e.target)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        var hit = e.target.closest("button, a, label, [role='button']");
+        var isVideo =
+          (hit &&
+            (hit.closest("[class*='video']") ||
+              (hit.textContent || "").toLowerCase().indexOf("file") >= 0)) ||
+          false;
+        openUploadPicker(makePayload(isVideo ? "videos" : "images"), hit);
+        return false;
+      },
+      true
     );
   }
 
@@ -349,6 +374,15 @@
       var txt = modal.textContent || "";
       if (txt.indexOf("Choose selected") < 0 && txt.indexOf("Upload") < 0) return;
       modal.style.setProperty("display", "none", "important");
+      var store = getStore();
+      if (store) store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
+      if (!window.__siteGalleryModalKillOnce) {
+        window.__siteGalleryModalKillOnce = true;
+        window.setTimeout(function () {
+          window.__siteGalleryModalKillOnce = false;
+          openUploadPicker(lastOpenPayload || makePayload("images"), null);
+        }, 50);
+      }
     });
   }
 
@@ -385,17 +419,13 @@
 
     document.getElementById("site-gallery-top-photos").addEventListener("change", function (e) {
       if (!e.target.files || !e.target.files.length) return;
-      var batches = getBatches("photoBatches");
-      var title = batches[0] && batches[0].title ? batches[0].title : albumTitleNear(box);
-      applyFiles(e.target.files, makePayload("images", batches[0] && batches[0].images), box);
+      applyFiles(e.target.files, makePayload("images"), box);
       e.target.value = "";
     });
 
     document.getElementById("site-gallery-top-videos").addEventListener("change", function (e) {
       if (!e.target.files || !e.target.files.length) return;
-      var batches = getBatches("videoBatches");
-      var title = batches[0] && batches[0].title ? batches[0].title : albumTitleNear(box);
-      applyFiles(e.target.files, makePayload("videos", batches[0] && batches[0].videos), box);
+      applyFiles(e.target.files, makePayload("videos"), box);
       e.target.value = "";
     });
   }
@@ -405,7 +435,7 @@
     var s = document.createElement("style");
     s.id = "site-gallery-picker-css";
     s.textContent =
-      'body[data-site-gallery="1"] [class*="MediaLibrary"]{display:none!important;}';
+      'body[data-site-gallery="1"] [class*="MediaLibrary"]{display:none!important;visibility:hidden!important;}';
     document.head.appendChild(s);
   }
 
@@ -415,6 +445,7 @@
   }
 
   function start() {
+    interceptClicks();
     if (!getStore()) {
       window.setTimeout(start, 300);
       return;
@@ -433,7 +464,7 @@
         injectTopBanner();
         injectPickers();
         killMediaModal();
-      }, 500);
+      }, 400);
       window.addEventListener("hashchange", function () {
         injectTopBanner();
         injectPickers();
@@ -447,4 +478,5 @@
   }
 
   window.SiteGalleryLocalFiles = { start: start, version: VERSION };
+  interceptClicks();
 })();
