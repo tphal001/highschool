@@ -16,6 +16,7 @@
     if (oldBar) oldBar.remove();
     registerPreSave();
     injectStyles();
+    replaceImageWidgetLabels();
     document.addEventListener("click", onDocumentClick, true);
     window.addEventListener("hashchange", onRouteChange);
     waitForStore(function () {
@@ -243,6 +244,20 @@
 
     sessionStorage.setItem(ITEMS_BACKUP_KEY, JSON.stringify(items));
     return true;
+  }
+
+  function replaceImageWidgetLabels() {
+    var map = {
+      "Choose an image": "Choose media",
+      "Choose images": "Choose media",
+      "Choose different image": "Choose different media",
+    };
+    var walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null);
+    var node;
+    while ((node = walker.nextNode())) {
+      var trimmed = node.textContent.trim();
+      if (map[trimmed]) node.textContent = node.textContent.replace(trimmed, map[trimmed]);
+    }
   }
 
   function injectStyles() {
@@ -557,6 +572,7 @@
     if (watchDom._on) return;
     watchDom._on = true;
     var obs = new MutationObserver(function () {
+      replaceImageWidgetLabels();
       if (shouldEnhanceMediaUi()) injectCheckboxes();
     });
     obs.observe(document.body, { childList: true, subtree: true });
@@ -569,6 +585,7 @@
   }
 
   function tick() {
+    replaceImageWidgetLabels();
     if (shouldEnhanceMediaUi()) injectCheckboxes();
     if (isGalleryHash() && sessionStorage.getItem(PENDING_PATHS_KEY)) {
       applyPendingPaths();
