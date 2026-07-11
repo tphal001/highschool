@@ -19,10 +19,12 @@
     replaceImageWidgetLabels();
     document.addEventListener("click", onDocumentClick, true);
     window.addEventListener("hashchange", onRouteChange);
+    window.addEventListener("scroll", repositionCheckboxOverlays, true);
+    window.addEventListener("resize", repositionCheckboxOverlays);
     waitForStore(function () {
       patchStore();
       onRouteChange();
-      window.setInterval(tick, 500);
+      window.setInterval(tick, 400);
       watchDom();
     });
   }
@@ -56,12 +58,12 @@
   }
 
   function getMediaRoot() {
-    return (
-      document.querySelector("[class*='MediaLibraryModal']") ||
-      document.querySelector("[class*='MediaLibrary']") ||
-      document.querySelector("[role='dialog']") ||
-      (isMediaHash() ? document.querySelector("main") : null)
-    );
+    var nodes = document.querySelectorAll("[class*='MediaLibrary'], [role='dialog']");
+    for (var i = nodes.length - 1; i >= 0; i--) {
+      if (nodes[i].querySelector("img")) return nodes[i];
+    }
+    if (isMediaHash()) return document.querySelector("main");
+    return null;
   }
 
   function isMediaSurface() {
@@ -265,9 +267,9 @@
     var style = document.createElement("style");
     style.id = "site-gallery-media-css";
     style.textContent =
-      ".site-media-check-wrap{position:absolute!important;top:8px!important;left:8px!important;z-index:100002!important;width:28px!important;height:28px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:6px!important;background:#0e7490!important;border:3px solid #fff!important;box-shadow:0 2px 6px rgba(0,0,0,0.45)!important;pointer-events:auto!important;}" +
-      ".site-media-check{width:20px!important;height:20px!important;cursor:pointer!important;margin:0!important;accent-color:#fff!important;}" +
-      ".site-media-card-target{position:relative!important;overflow:visible!important;}";
+      ".site-media-check-wrap{position:fixed;z-index:2147483000;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:6px;background:#0e7490;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,0.5);pointer-events:auto;cursor:pointer;}" +
+      ".site-media-check{width:22px;height:22px;cursor:pointer;margin:0;accent-color:#fff;pointer-events:auto;}" +
+      ".site-media-check-wrap.is-checked{background:#047857;}";
     document.head.appendChild(style);
   }
 
@@ -277,7 +279,7 @@
       el = document.createElement("div");
       el.id = "site-gallery-media-toast";
       el.style.cssText =
-        "position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:100001;padding:0.65rem 1rem;border-radius:0.5rem;background:#0f172a;color:#fff;font-size:0.8125rem;font-weight:600;max-width:92vw;text-align:center;";
+        "position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);z-index:2147483646;padding:0.65rem 1rem;border-radius:0.5rem;background:#0f172a;color:#fff;font-size:0.8125rem;font-weight:600;max-width:92vw;text-align:center;";
       document.body.appendChild(el);
     }
     el.textContent = msg;
@@ -317,73 +319,99 @@
     return publicPath("", img && img.src);
   }
 
-  function isMediaThumb(img) {
+  function isMediaThumb(img, root) {
     if (!img || !img.src || img.src.indexOf("data:") === 0) return false;
-    // Lazy-loaded thumbs often report 0×0 until decoded — still inject checkboxes.
-    var w = img.width || img.naturalWidth || 0;
-    var h = img.height || img.naturalHeight || 0;
-    if (w === 0 || h === 0) return true;
-    return w >= 32 && h >= 32;
+    if (!root || !root.contains(img)) return false;
+    if (img.closest(".site-media-check-wrap")) return false;
+    var rect = img.getBoundingClientRect();
+    if (rect.width >= 40 && rect.height >= 40) return true;
+    if (rect.width === 0 && rect.height === 0 && /\.(jpe?g|png|gif|webp|svg)/i.test(img.src)) return true;
+    return false;
   }
 
-  function smallestCardForImage(img, root) {
-    var best = img.parentElement;
-    var el = img.parentElement;
-    while (el && el !== root) {
-      var imgs = el.getElementsByTagName("img");
-      if (imgs.length === 1 && imgs[0] === img) {
-        best = el;
-        el = el.parentElement;
-        continue;
-      }
-      break;
-    }
-    return best || img.parentElement;
+  function imgKey(img) {
+    return img.src + "|" + Math.round(img.getBoundingClientRect().top) + "|" + Math.round(img.getBoundingClientRect().left);
   }
 
-  function collectMediaCards() {
-    var cards = [];
-    var seenImg = [];
-    var root = getMediaRoot() || document.body;
+  function collectMediaThumbs() {
+    var items = [];
+    var seen = {};
+    var root = getMediaRoot();
+    if (!root) return items;
 
     root.querySelectorAll("img").forEach(function (img) {
-      if (!isMediaThumb(img)) return;
-      if (seenImg.indexOf(img) >= 0) return;
-      seenImg.push(img);
+      if (!isMediaThumb(img, root)) return;
+      var key = imgKey(img);
+      if (seen[key]) return;
+      seen[key] = true;
 
-      var host = smallestCardForImage(img, root);
-      if (!host) return;
-
-      var outer = host;
-      var walk = host;
+      var card = img;
+      var walk = img.parentElement;
       while (walk && walk !== root) {
-        var oneImg = walk.getElementsByTagName("img");
-        if (oneImg.length === 1 && oneImg[0] === img) outer = walk;
-        else if (oneImg.length > 1) break;
+        if (walk.querySelectorAll("img").length === 1) card = walk;
         walk = walk.parentElement;
       }
 
-      var path = filenameFromCard(outer, img);
+      var path = filenameFromCard(card, img);
       if (!path) path = publicPath("", img.src);
       if (!path) return;
 
-      host.classList.add("site-media-card-target");
-      host.setAttribute("data-site-media-path", path);
-      cards.push({ host: host, path: path, img: img });
+      items.push({ img: img, path: path });
     });
 
-    return cards;
+    return items;
+  }
+
+  function repositionCheckboxOverlays() {
+    document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (wrap) {
+      var img = wrap._linkedImg;
+      if (!img || !img.isConnected) {
+        wrap.remove();
+        return;
+      }
+      var rect = img.getBoundingClientRect();
+      if (rect.width < 20 || rect.height < 20) {
+        wrap.style.display = "none";
+        return;
+      }
+      wrap.style.display = "flex";
+      wrap.style.top = rect.top + 6 + "px";
+      wrap.style.left = rect.left + 6 + "px";
+    });
+  }
+
+  function stopCardClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    e.stopImmediatePropagation();
   }
 
   function injectCheckboxes() {
-    if (!shouldEnhanceMediaUi()) return;
-    collectMediaCards().forEach(function (item) {
-      var host = item.host;
-      if (host.getAttribute("data-site-gallery-check") === item.path) return;
-      if (host.querySelector(".site-media-check-wrap")) host.querySelector(".site-media-check-wrap").remove();
+    if (!shouldEnhanceMediaUi()) {
+      document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (el) {
+        el.remove();
+      });
+      return;
+    }
+
+    var existing = {};
+    document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (wrap) {
+      if (wrap._imgKey) existing[wrap._imgKey] = wrap;
+    });
+
+    collectMediaThumbs().forEach(function (item) {
+      var key = imgKey(item.img);
+      if (existing[key]) {
+        existing[key]._linkedImg = item.img;
+        repositionCheckboxOverlays();
+        return;
+      }
 
       var wrap = document.createElement("div");
       wrap.className = "site-media-check-wrap";
+      wrap.setAttribute("data-for-img", "1");
+      wrap._imgKey = key;
+      wrap._linkedImg = item.img;
       wrap.title = "Select for gallery";
 
       var cb = document.createElement("input");
@@ -391,37 +419,39 @@
       cb.className = "site-media-check";
       cb.setAttribute("data-path", item.path);
       cb.setAttribute("aria-label", "Select " + item.path);
-      cb.addEventListener("click", function (e) {
-        e.stopPropagation();
+
+      ["pointerdown", "mousedown", "click", "mouseup"].forEach(function (evt) {
+        wrap.addEventListener(evt, stopCardClick, true);
+        cb.addEventListener(evt, function (e) {
+          e.stopPropagation();
+        }, true);
       });
-      cb.addEventListener("mousedown", function (e) {
-        e.stopPropagation();
+
+      cb.addEventListener("change", function () {
+        wrap.classList.toggle("is-checked", cb.checked);
       });
 
       wrap.appendChild(cb);
-      host.appendChild(wrap);
-      host.setAttribute("data-site-gallery-check", item.path);
+      document.body.appendChild(wrap);
+      repositionCheckboxOverlays();
     });
 
     var root = getMediaRoot() || document.body;
     root.querySelectorAll("img").forEach(function (img) {
-      if (img.complete || img.getAttribute("data-site-gallery-load")) return;
+      if (img.getAttribute("data-site-gallery-load")) return;
       img.setAttribute("data-site-gallery-load", "1");
-      img.addEventListener(
-        "load",
-        function () {
-          injectCheckboxes();
-        },
-        { once: true }
-      );
+      img.addEventListener("load", injectCheckboxes, { once: true });
     });
+
+    repositionCheckboxOverlays();
   }
 
   function startPickSession() {
     sessionStorage.setItem(PICK_KEY, "1");
     backupGalleryItems();
-    window.setTimeout(injectCheckboxes, 100);
-    window.setTimeout(injectCheckboxes, 600);
+    window.setTimeout(injectCheckboxes, 50);
+    window.setTimeout(injectCheckboxes, 300);
+    window.setTimeout(injectCheckboxes, 1000);
   }
 
   function isChooseSelectedButton(node) {
@@ -433,6 +463,8 @@
   }
 
   function onDocumentClick(e) {
+    if (e.target.closest && e.target.closest(".site-media-check-wrap")) return;
+
     var node = e.target.closest ? e.target.closest("button, a, span, label") : null;
     if (!node) return;
     var text = (node.textContent || "").trim().toLowerCase();
@@ -464,12 +496,7 @@
     var paths = [];
     var seen = {};
     document.querySelectorAll(".site-media-check:checked").forEach(function (cb) {
-      var p = cb.getAttribute("data-path") || "";
-      if (!p) {
-        var card = cb.closest("[data-site-media-path]");
-        p = card && card.getAttribute("data-site-media-path");
-      }
-      p = String(p || "").trim();
+      var p = String(cb.getAttribute("data-path") || "").trim();
       if (p && !seen[p]) {
         seen[p] = true;
         paths.push(p);
@@ -492,7 +519,7 @@
   function addTickedToGallery() {
     var paths = getTickedPaths();
     if (!paths.length) {
-      showToast("Tick at least one photo (teal checkbox on top-left of each image).");
+      showToast("Tick at least one photo using the teal checkboxes on the images.");
       return;
     }
 
@@ -501,6 +528,8 @@
       sessionStorage.removeItem(PENDING_PATHS_KEY);
       document.querySelectorAll(".site-media-check:checked").forEach(function (cb) {
         cb.checked = false;
+        var wrap = cb.closest(".site-media-check-wrap");
+        if (wrap) wrap.classList.remove("is-checked");
       });
       showToast(paths.length + " photo(s) added to Gallery.");
       closeMediaModal();
@@ -562,6 +591,9 @@
 
       if (action && action.type === "MEDIA_LIBRARY_CLOSE") {
         sessionStorage.removeItem(PICK_KEY);
+        document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (el) {
+          el.remove();
+        });
       }
 
       return result;
@@ -574,6 +606,11 @@
     var obs = new MutationObserver(function () {
       replaceImageWidgetLabels();
       if (shouldEnhanceMediaUi()) injectCheckboxes();
+      else {
+        document.querySelectorAll(".site-media-check-wrap[data-for-img]").forEach(function (el) {
+          el.remove();
+        });
+      }
     });
     obs.observe(document.body, { childList: true, subtree: true });
   }
@@ -586,7 +623,10 @@
 
   function tick() {
     replaceImageWidgetLabels();
-    if (shouldEnhanceMediaUi()) injectCheckboxes();
+    if (shouldEnhanceMediaUi()) {
+      injectCheckboxes();
+      repositionCheckboxOverlays();
+    }
     if (isGalleryHash() && sessionStorage.getItem(PENDING_PATHS_KEY)) {
       applyPendingPaths();
     }
