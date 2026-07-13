@@ -74,11 +74,11 @@ tailwind.config = {
 
           active: "#0e7490",
 
-          /** Bright aqua — links, buttons, highlights */
+          /** Muted teal — stats, links, buttons, highlights */
 
-          accent: "#06b6d4",
+          accent: "#14b8a6",
 
-          accentLight: "#22d3ee",
+          accentLight: "#2dd4bf",
 
           /** Soft ice-blue page fill */
 
@@ -94,11 +94,11 @@ tailwind.config = {
 
           /** Nav underline & hairlines (kept as goldLine token) */
 
-          goldLine: "#5eead4",
+          goldLine: "#2dd4bf",
 
           /** Section underline accent */
 
-          red: "#22d3ee",
+          red: "#14b8a6",
 
         },
 
@@ -108,7 +108,7 @@ tailwind.config = {
 
           slate: "#334155",
 
-          gold: "#06b6d4",
+          gold: "#14b8a6",
 
           cream: "#e0f2fe",
 
