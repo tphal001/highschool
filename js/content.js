@@ -64,12 +64,12 @@ window.SITE_CONTENT = {
           "value": "12k+"
         },
         {
-          "label": "Cities represented",
-          "value": "40+"
+          "label": "Experienced Faculty",
+          "value": "30+"
         },
         {
-          "label": "Next reunion",
-          "value": "Oct 2026"
+          "label": "Years of Excellence",
+          "value": "60+"
         }
       ],
       "linkLabel": "Explore alumni & register",

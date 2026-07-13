@@ -39,47 +39,6 @@
   var SEARCH_ICON =
     '<svg class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.2-5.2M17 10a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>';
 
-  function buildThemeToggleButton(extraClass) {
-    return (
-      '<button type="button" class="site-theme-toggle ' +
-      (extraClass || "") +
-      '" aria-pressed="false" aria-label="Switch to dark mode" title="Dark mode">' +
-      '<svg class="site-theme-toggle__moon h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>' +
-      '<svg class="site-theme-toggle__sun h-5 w-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2m0 14v2m9-9h-2M5 12H3m15.364 6.364l-1.414-1.414M7.05 7.05L5.636 5.636m12.728 0l-1.414 1.414M7.05 16.95l-1.414 1.414M12 8a4 4 0 100 8 4 4 0 000-8z"/></svg>' +
-      "</button>"
-    );
-  }
-
-  function syncThemeToggleUi() {
-    var dark = document.documentElement.classList.contains("dark");
-    document.querySelectorAll(".site-theme-toggle").forEach(function (btn) {
-      btn.setAttribute("aria-pressed", dark ? "true" : "false");
-      btn.setAttribute("aria-label", dark ? "Switch to light mode" : "Switch to dark mode");
-      btn.title = dark ? "Light mode" : "Dark mode";
-    });
-  }
-
-  function bindSiteThemeToggle() {
-    if (window.__siteThemeToggleBound) {
-      syncThemeToggleUi();
-      return;
-    }
-    window.__siteThemeToggleBound = true;
-    document.addEventListener("click", function (e) {
-      var btn = e.target.closest && e.target.closest(".site-theme-toggle");
-      if (!btn) return;
-      var dark = !document.documentElement.classList.contains("dark");
-      document.documentElement.classList.toggle("dark", dark);
-      try {
-        localStorage.setItem("site-theme", dark ? "dark" : "light");
-      } catch (err) {}
-      syncThemeToggleUi();
-    });
-    syncThemeToggleUi();
-  }
-
-  window.bindSiteThemeToggle = bindSiteThemeToggle;
-
   function phoneDisplay(phone) {
     return typeof window.formatContactPhoneDisplay === "function"
       ? window.formatContactPhoneDisplay(phone)
@@ -344,9 +303,6 @@
       '<button type="button" id="site-nav-mobile-toggle" class="inline-flex items-center gap-2 rounded-md border border-white/25 bg-white/10 px-3 py-2 text-sm font-bold text-white shadow-sm transition-all duration-200 hover:border-mes-goldLine/50 hover:bg-white/20 active:scale-[0.98] active:bg-white/25" aria-expanded="false" aria-controls="site-nav-mobile-panel">' +
       '<svg class="h-6 w-6 shrink-0" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>' +
       "<span>Menu</span></button>" +
-      buildThemeToggleButton(
-        "inline-flex items-center justify-center rounded-md border border-white/25 bg-white/10 p-2.5 text-white transition-all duration-200 hover:border-mes-goldLine/50 hover:bg-white/20"
-      ) +
       '<a href="' +
       esc(searchHref) +
       '" class="flex shrink-0 items-center justify-center rounded-md border border-white/25 bg-white/10 p-2.5 text-white transition-all duration-200 hover:scale-110 hover:border-mes-goldLine/40 hover:bg-white/20 active:bg-white/25" aria-label="Search">' +
@@ -388,9 +344,6 @@
       items +
       "</ul></nav>" +
       '<div class="flex shrink-0 items-stretch border-l border-white/25 pl-1 sm:pl-2">' +
-      buildThemeToggleButton(
-        "inline-flex min-h-[3.125rem] items-center justify-center rounded-md px-2.5 text-white transition-all duration-200 hover:bg-white/15 hover:text-mes-goldLine lg:px-3"
-      ) +
       '<a href="' +
       esc(searchHref) +
       '" class="site-nav-link inline-flex min-h-[3.125rem] items-center justify-center rounded-md px-2.5 text-white transition-all duration-200 hover:bg-white/15 hover:text-mes-goldLine hover:shadow-[0_4px_14px_rgba(0,0,0,0.2)] lg:px-3" aria-label="Search">' +
@@ -485,7 +438,6 @@
         '<div id="site-news-ticker" class="hidden border border-slate-200/80 border-t-slate-300/90 bg-white/90 px-3 shadow-[0_2px_8px_-2px_rgba(12,74,110,0.12)] sm:px-8 lg:px-10" aria-live="polite"></div>' +
         "</header>" +
         floatingSocialRail();
-      bindSiteThemeToggle();
     }
   }
 

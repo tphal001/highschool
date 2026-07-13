@@ -1,15 +1,6 @@
 /** Aqua blue institutional palette — calm, eye-friendly tones across nav, header, and sections. */
 
-(function applyStoredSiteTheme() {
-  try {
-    if (localStorage.getItem("site-theme") === "dark") {
-      document.documentElement.classList.add("dark");
-    }
-  } catch (e) {}
-})();
-
 tailwind.config = {
-  darkMode: "class",
 
   /** Injected in render.js — ensure Play CDN generates these utilities. */
 

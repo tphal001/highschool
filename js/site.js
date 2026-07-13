@@ -1098,10 +1098,11 @@
   }
 
   function initPage() {
+    document.documentElement.classList.remove("dark");
+    try {
+      localStorage.removeItem("site-theme");
+    } catch (e) {}
     initSiteAtmosphere();
-    if (typeof window.bindSiteThemeToggle === "function") {
-      window.bindSiteThemeToggle();
-    }
     if (typeof window.renderPageContent === "function") {
       window.renderPageContent();
     }
