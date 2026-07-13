@@ -1,18 +1,18 @@
 /**
  * Gallery: local file picker + thumbnails in the images panel.
- * v20260711n — OPEN registers controlID, then CLOSE + local picker, then MEDIA_INSERT.
+ * v20260711o — block externalLibrary.show(), keep MEDIA_LIBRARY_OPEN for controlID.
  */
 (function () {
   "use strict";
 
-  var VERSION = "20260711n";
+  var VERSION = "20260711o";
   var UPLOAD_GAP_MS =
     (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.UPLOAD_GAP_MS) || 2000;
-  var PICKER_MARK = "data-site-gallery-picker";
   var INPUT_MARK = "data-site-gallery-input";
   var started = false;
   var lastOpenPayload = null;
   var pickerBusy = false;
+  var lastPickerAnchor = null;
 
   function getStore() {
     if (!window.CMS) return null;
@@ -45,9 +45,13 @@
     return (window.location.hash || "").toLowerCase().indexOf("entries/gallery") >= 0;
   }
 
+  function fieldName(field) {
+    if (!field) return "";
+    return field.get ? field.get("name") : field.name || "";
+  }
+
   function isGalleryMediaField(field) {
-    if (!field || !field.get) return false;
-    var n = field.get("name");
+    var n = fieldName(field);
     return n === "images" || n === "videos";
   }
 
@@ -94,9 +98,7 @@
     var list = state.entryDraft.getIn(["entry", "data", batchField]);
     if (list && list.setIn) {
       while (list.size <= idx) {
-        list = list.push(
-          fromJs({ title: "", images: [], videos: [] })
-        );
+        list = list.push(fromJs({ title: "", images: [], videos: [] }));
       }
       var newList = list.setIn([idx, mediaKey], fromJs(paths.slice()));
       if (titleHint) newList = newList.setIn([idx, "title"], titleHint);
@@ -158,17 +160,12 @@
 
   function fieldNameFromPayload(payload) {
     if (!payload || !payload.field) return "photoBatches";
-    var parent = payload.field.get("parent");
-    if (parent && parent.get) {
-      var parentName = parent.get("name");
-      if (parentName === "videoBatches" || parentName === "photoBatches") return parentName;
-    }
-    return payload.field.get("name") === "videos" ? "videoBatches" : "photoBatches";
+    return fieldName(payload.field) === "videos" ? "videoBatches" : "photoBatches";
   }
 
   function mediaKeyFromPayload(payload) {
     if (!payload || !payload.field) return "images";
-    return payload.field.get("name") === "videos" ? "videos" : "images";
+    return fieldName(payload.field) === "videos" ? "videos" : "images";
   }
 
   function batchIndexFromElement(el) {
@@ -245,22 +242,21 @@
       setBatchImagesDirect(batchField, idx, mediaKey, merged, titleHint);
     }
     store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
+    lastOpenPayload = null;
   }
 
   function applyFiles(files, payload, anchorEl) {
     if (!files || !files.length || !getStore()) return;
 
     var activePayload = payload || lastOpenPayload;
-    if (!activePayload || !activePayload.field) {
-      activePayload = makePayload("images");
-    }
+    if (!activePayload || !activePayload.field) return;
 
     var batchField = fieldNameFromPayload(activePayload);
     var mediaKey = mediaKeyFromPayload(activePayload);
     var currentPaths = toPathList(activePayload.value);
     var batches = getBatches(batchField);
-    var titleHint = albumTitleNear(anchorEl);
-    var domIndex = batchIndexFromElement(anchorEl);
+    var titleHint = albumTitleNear(anchorEl || lastPickerAnchor);
+    var domIndex = batchIndexFromElement(anchorEl || lastPickerAnchor);
     var idx = findBatchIndex(batches, mediaKey, currentPaths, titleHint, domIndex);
 
     if (!batches[idx]) {
@@ -290,17 +286,6 @@
     next();
   }
 
-  function makePayload(mediaKey, value) {
-    return {
-      field: {
-        get: function (k) {
-          return k === "name" ? mediaKey : "";
-        },
-      },
-      value: value || [],
-    };
-  }
-
   function createGalleryInput(accept) {
     var input = document.createElement("input");
     input.type = "file";
@@ -312,18 +297,18 @@
   }
 
   function openUploadPicker(payload, anchorEl) {
-    if (pickerBusy) return;
+    if (pickerBusy || !payload) return;
     pickerBusy = true;
+    lastPickerAnchor = anchorEl || null;
     window.__galleryPickerOpenedAt = Date.now();
 
-    var accept =
-      payload && payload.field && payload.field.get("name") === "videos" ? "video/*" : "image/*";
+    var accept = fieldName(payload.field) === "videos" ? "video/*" : "image/*";
     var input = createGalleryInput(accept);
     document.body.appendChild(input);
     input.addEventListener("change", function () {
       pickerBusy = false;
       if (input.files && input.files.length) {
-        applyFiles(input.files, payload || lastOpenPayload, anchorEl);
+        applyFiles(input.files, payload, anchorEl);
       }
       input.remove();
     });
@@ -335,6 +320,37 @@
       pickerBusy = false;
     }, 1500);
     input.click();
+  }
+
+  /** Decap calls externalLibrary.show() BEFORE MEDIA_LIBRARY_OPEN — block it on Gallery. */
+  function patchExternalLibrary() {
+    var store = getStore();
+    if (!store) return false;
+    var ml = store.getState().mediaLibrary;
+    if (!ml) return false;
+    var ext = ml.get("externalLibrary");
+    if (!ext || typeof ext.show !== "function") return false;
+    if (ext.__siteGalleryShowPatch) return true;
+
+    ext.__siteGalleryShowPatch = true;
+    var origShow = ext.show.bind(ext);
+    var origHide = ext.hide ? ext.hide.bind(ext) : null;
+
+    ext.show = function (opts) {
+      if (isGalleryRoute() && opts && opts.id) {
+        return;
+      }
+      return origShow(opts);
+    };
+
+    if (origHide) {
+      ext.hide = function () {
+        if (isGalleryRoute()) return;
+        return origHide();
+      };
+    }
+
+    return true;
   }
 
   function patchStore() {
@@ -354,62 +370,38 @@
         lastOpenPayload = action.payload;
         orig(action);
         orig({ type: "MEDIA_LIBRARY_CLOSE" });
-        var recent = Date.now() - (window.__galleryPickerOpenedAt || 0) < 500;
-        if (!recent) {
-          openUploadPicker(lastOpenPayload, null);
-        }
+        openUploadPicker(lastOpenPayload, lastPickerAnchor);
         return;
       }
       return orig(action);
     };
   }
 
-  function isChooseLabel(text) {
-    text = (text || "").replace(/\s+/g, " ").trim().toLowerCase();
+  function isChooseClickTarget(el) {
+    if (!el || !el.closest) return false;
+    if (el.closest('[class*="MediaLibrary"]') || el.closest('[role="dialog"]')) return false;
+    if (el.closest("#site-gallery-top-picker")) return false;
+    var hit = el.closest("button, a, label, [role='button']");
+    if (!hit) return false;
+    var text = (hit.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
     return (
       /^choose\s+(an?\s+)?images?/.test(text) ||
       /^choose\s+(a?\s+)?files?/.test(text)
     );
   }
 
-  function injectPickers() {
-    if (!isGalleryRoute() || !getStore()) return;
-
-    document.querySelectorAll("button, a, label, [role='button']").forEach(function (btn) {
-      if (!isChooseLabel(btn.textContent)) return;
-      if (btn.closest('[class*="MediaLibrary"]') || btn.closest('[role="dialog"]')) return;
-      if (btn.closest("#site-gallery-top-picker")) return;
-      if (btn.closest("[" + PICKER_MARK + "]")) return;
-      if (btn.getAttribute(PICKER_MARK)) return;
-
-      var host = btn.parentElement;
-      if (!host) return;
-      if (host.querySelector("[" + PICKER_MARK + "]")) {
-        btn.style.setProperty("display", "none", "important");
-        btn.setAttribute(PICKER_MARK, "1");
-        return;
-      }
-
-      btn.style.setProperty("display", "none", "important");
-      btn.setAttribute(PICKER_MARK, "1");
-
-      var wrap = document.createElement("div");
-      wrap.setAttribute(PICKER_MARK, "1");
-      wrap.style.cssText = "margin:.5rem 0;";
-
-      var label = document.createElement("label");
-      label.style.cssText =
-        "display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;";
-      label.textContent = btn.textContent.replace(/\s+/g, " ").trim() || "Choose images";
-
-      label.addEventListener("click", function (e) {
-        e.preventDefault();
-        btn.click();
-      });
-
-      wrap.appendChild(label);
-      host.insertBefore(wrap, btn);
-    });
+  function hookChooseClicks() {
+    if (document.__siteGalleryClickHook) return;
+    document.__siteGalleryClickHook = true;
+    document.addEventListener(
+      "click",
+      function (e) {
+        if (!isGalleryRoute()) return;
+        if (!isChooseClickTarget(e.target)) return;
+        lastPickerAnchor = e.target.closest('[class*="listControlItem"], [class*="ListItem"]') || e.target;
+      },
+      true
+    );
   }
 
   function killMediaModal() {
@@ -418,8 +410,8 @@
       var txt = modal.textContent || "";
       if (txt.indexOf("Choose selected") < 0 && txt.indexOf("Upload") < 0) return;
       modal.style.setProperty("display", "none", "important");
-      var store = getStore();
-      if (store) store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
+      modal.style.setProperty("visibility", "hidden", "important");
+      modal.style.setProperty("pointer-events", "none", "important");
     });
   }
 
@@ -438,33 +430,12 @@
     box.style.cssText =
       "margin:12px 16px;padding:14px 16px;background:#ecfdf5;border:2px solid #0d9488;border-radius:8px;font-family:system-ui,sans-serif;font-size:14px;line-height:1.5;";
     box.innerHTML =
-      '<strong style="color:#0f766e;">Pick files from your computer</strong> ' +
-      '<span style="color:#334155;">(v' +
+      '<strong style="color:#0f766e;">Gallery uploads (v' +
       VERSION +
-      ")</span>" +
-      '<div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:10px;">' +
-      '<label style="display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;">Choose photos<input type="file" id="site-gallery-top-photos" multiple accept="image/*" ' +
-      INPUT_MARK +
-      '="1" style="display:none;"></label>' +
-      '<label style="display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;">Choose videos<input type="file" id="site-gallery-top-videos" multiple accept="video/*" ' +
-      INPUT_MARK +
-      '="1" style="display:none;"></label>' +
-      "</div>" +
-      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add upload + and Title first, then use <strong>Choose images</strong> on that album row (thumbnails appear there).</p>';
+      ")</strong>" +
+      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add upload + → Title → click <strong>Choose images</strong> on that row. Your computer file picker opens (not Decap Media).</p>';
 
     root.insertBefore(box, root.firstChild);
-
-    document.getElementById("site-gallery-top-photos").addEventListener("change", function (e) {
-      if (!e.target.files || !e.target.files.length) return;
-      applyFiles(e.target.files, makePayload("images"), box);
-      e.target.value = "";
-    });
-
-    document.getElementById("site-gallery-top-videos").addEventListener("change", function (e) {
-      if (!e.target.files || !e.target.files.length) return;
-      applyFiles(e.target.files, makePayload("videos"), box);
-      e.target.value = "";
-    });
   }
 
   function injectStyles() {
@@ -472,7 +443,9 @@
     var s = document.createElement("style");
     s.id = "site-gallery-picker-css";
     s.textContent =
-      'body[data-site-gallery="1"] [class*="MediaLibrary"]{display:none!important;visibility:hidden!important;pointer-events:none!important;}';
+      'body[data-site-gallery="1"] [class*="MediaLibrary"],' +
+      'body[data-site-gallery="1"] [class*="mediaLibrary"],' +
+      'body[data-site-gallery="1"] [role="dialog"]{display:none!important;visibility:hidden!important;pointer-events:none!important;opacity:0!important;}';
     document.head.appendChild(s);
   }
 
@@ -482,36 +455,37 @@
   }
 
   function start() {
+    hookChooseClicks();
     if (!getStore()) {
-      window.setTimeout(start, 300);
+      window.setTimeout(start, 200);
       return;
     }
+    patchExternalLibrary();
     markReady();
     document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
     injectStyles();
     patchStore();
     injectTopBanner();
-    injectPickers();
     killMediaModal();
     if (!started) {
       started = true;
       window.setInterval(function () {
         document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
+        patchExternalLibrary();
         injectTopBanner();
-        injectPickers();
         killMediaModal();
-      }, 400);
+      }, 300);
       window.addEventListener("hashchange", function () {
+        document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
         injectTopBanner();
-        injectPickers();
+        killMediaModal();
       });
       new MutationObserver(function () {
-        injectTopBanner();
-        injectPickers();
         killMediaModal();
       }).observe(document.body, { childList: true, subtree: true });
     }
   }
 
   window.SiteGalleryLocalFiles = { start: start, version: VERSION };
+  hookChooseClicks();
 })();
