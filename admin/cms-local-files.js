@@ -1,18 +1,16 @@
 /**
- * Gallery: local file picker + thumbnails in the images panel.
- * v20260711o — block externalLibrary.show(), keep MEDIA_LIBRARY_OPEN for controlID.
+ * Gallery albums: per-row local multi-file upload (no Decap Media picker).
+ * v20260711p
  */
 (function () {
   "use strict";
 
-  var VERSION = "20260711o";
+  var VERSION = "20260711p";
   var UPLOAD_GAP_MS =
     (window.SiteCmsBulkUpload && window.SiteCmsBulkUpload.UPLOAD_GAP_MS) || 2000;
   var INPUT_MARK = "data-site-gallery-input";
+  var UPLOADER_MARK = "data-site-album-uploader";
   var started = false;
-  var lastOpenPayload = null;
-  var pickerBusy = false;
-  var lastPickerAnchor = null;
 
   function getStore() {
     if (!window.CMS) return null;
@@ -30,29 +28,8 @@
     return val.toJS ? val.toJS() : val;
   }
 
-  function toPathList(val) {
-    var raw = toJs(val);
-    if (!raw) return [];
-    if (Array.isArray(raw)) return raw.map(String);
-    return [String(raw)];
-  }
-
-  function cloneData(val) {
-    return JSON.parse(JSON.stringify(val));
-  }
-
   function isGalleryRoute() {
     return (window.location.hash || "").toLowerCase().indexOf("entries/gallery") >= 0;
-  }
-
-  function fieldName(field) {
-    if (!field) return "";
-    return field.get ? field.get("name") : field.name || "";
-  }
-
-  function isGalleryMediaField(field) {
-    var n = fieldName(field);
-    return n === "images" || n === "videos";
   }
 
   function getGalleryField(state, name) {
@@ -69,78 +46,48 @@
     }
   }
 
-  function getBatches(fieldName) {
+  function getBatchPaths(batchField, idx, mediaKey) {
     var store = getStore();
     if (!store) return [];
     var entry = store.getState().entryDraft && store.getState().entryDraft.get("entry");
     if (!entry) return [];
-    var raw = entry.getIn(["data", fieldName]);
-    return Array.isArray(toJs(raw)) ? cloneData(toJs(raw)) : [];
+    var raw = entry.getIn(["data", batchField, idx, mediaKey]);
+    raw = toJs(raw);
+    if (!raw) return [];
+    return Array.isArray(raw) ? raw.map(String) : [String(raw)];
   }
 
-  function setBatches(fieldName, batches) {
-    var store = getStore();
-    if (!store) return;
-    var field = getGalleryField(store.getState(), fieldName);
-    if (!field) return;
-    store.dispatch({
-      type: "DRAFT_CHANGE_FIELD",
-      payload: { field: field, value: fromJs(cloneData(batches)), metadata: {}, entries: [] },
-    });
-  }
-
-  function setBatchImagesDirect(batchField, idx, mediaKey, paths, titleHint) {
+  function setBatchMedia(batchField, idx, mediaKey, paths) {
     var store = getStore();
     if (!store) return;
     var state = store.getState();
     var field = getGalleryField(state, batchField);
     if (!field) return;
     var list = state.entryDraft.getIn(["entry", "data", batchField]);
-    if (list && list.setIn) {
-      while (list.size <= idx) {
-        list = list.push(fromJs({ title: "", images: [], videos: [] }));
-      }
-      var newList = list.setIn([idx, mediaKey], fromJs(paths.slice()));
-      if (titleHint) newList = newList.setIn([idx, "title"], titleHint);
-      store.dispatch({
-        type: "DRAFT_CHANGE_FIELD",
-        payload: { field: field, value: newList, metadata: {}, entries: [] },
-      });
-      return;
+    if (!list || !list.setIn) return;
+
+    while (list.size <= idx) {
+      list = list.push(fromJs({ title: "", images: [], videos: [] }));
     }
-    var batches = getBatches(batchField);
-    while (batches.length <= idx) {
-      batches.push({ title: "", images: [], videos: [] });
-    }
-    batches[idx][mediaKey] = paths.slice();
-    if (titleHint) batches[idx].title = titleHint;
-    setBatches(batchField, batches);
+    var newList = list.setIn([idx, mediaKey], fromJs(paths.slice()));
+    store.dispatch({
+      type: "DRAFT_CHANGE_FIELD",
+      payload: { field: field, value: newList, metadata: {}, entries: [] },
+    });
   }
 
   function publicPath(name) {
     return "/images/" + String(name || "").replace(/^\/+/, "").replace(/^images\//, "");
   }
 
-  function mediaPaths(list) {
-    if (!Array.isArray(list)) return [];
-    return list
-      .map(function (item) {
-        if (typeof item === "string") return item;
-        if (item && item.image) return item.image;
-        if (item && item.video) return item.video;
-        return "";
-      })
-      .filter(Boolean);
-  }
-
-  function persistFileLikeUpload(file, field) {
+  function persistFile(file) {
     var store = getStore();
     if (!store) return null;
     var path = "images/" + file.name;
     var url = URL.createObjectURL(file);
     store.dispatch({
       type: "ADD_ASSET",
-      payload: { path: path, file: file, url: url, field: field },
+      payload: { path: path, file: file, url: url },
     });
     store.dispatch({
       type: "ADD_DRAFT_ENTRY_MEDIA_FILE",
@@ -158,171 +105,164 @@
     return publicPath(file.name);
   }
 
-  function fieldNameFromPayload(payload) {
-    if (!payload || !payload.field) return "photoBatches";
-    return fieldName(payload.field) === "videos" ? "videoBatches" : "photoBatches";
-  }
-
-  function mediaKeyFromPayload(payload) {
-    if (!payload || !payload.field) return "images";
-    return fieldName(payload.field) === "videos" ? "videos" : "images";
-  }
-
-  function batchIndexFromElement(el) {
-    if (!el || !el.closest) return -1;
-    var item = el.closest('[class*="listControlItem"], [class*="ListItem"]');
-    if (!item) return -1;
-    var listRoot = item.closest('[class*="ListControl"], [class*="listWidget"], .nc-listWidget');
-    if (!listRoot) return -1;
-    var items = listRoot.querySelectorAll('[class*="listControlItem"], [class*="ListItem"]');
-    for (var i = 0; i < items.length; i++) {
-      if (items[i] === item) return i;
-    }
-    return -1;
-  }
-
-  function findBatchIndex(batches, mediaKey, currentPaths, titleHint, domIndex) {
-    var sortedCurrent = currentPaths.slice().sort().join("|");
-    if (sortedCurrent) {
-      for (var k = 0; k < batches.length; k++) {
-        var sortedBatch = mediaPaths(batches[k][mediaKey]).slice().sort().join("|");
-        if (sortedBatch === sortedCurrent) return k;
-      }
-    }
-    if (domIndex >= 0 && domIndex < batches.length) return domIndex;
-    if (titleHint) {
-      for (var i = 0; i < batches.length; i++) {
-        if ((batches[i].title || "").trim() === titleHint) return i;
-      }
-    }
-    if (!sortedCurrent && domIndex >= 0) return domIndex;
-    for (var j = 0; j < batches.length; j++) {
-      if ((batches[j].title || "").trim() && mediaPaths(batches[j][mediaKey]).length === 0) return j;
-    }
-    return batches.length > 0 ? 0 : 0;
-  }
-
-  function albumTitleNear(el) {
-    var walk = el && el.parentElement;
-    var n = 0;
-    while (walk && walk !== document.body && n < 40) {
-      var labels = walk.querySelectorAll("label, [class*='Label']");
-      for (var l = 0; l < labels.length; l++) {
-        if ((labels[l].textContent || "").toLowerCase().indexOf("title") < 0) continue;
-        var inp =
-          labels[l].parentElement &&
-          labels[l].parentElement.querySelector('input[type="text"]');
-        if (inp && inp.value) return inp.value.trim();
-      }
-      var inputs = walk.querySelectorAll('input[type="text"]');
-      if (inputs.length === 1 && inputs[0].value) return inputs[0].value.trim();
-      walk = walk.parentElement;
-      n++;
-    }
-    return "";
-  }
-
-  function hasOpenControl() {
-    var store = getStore();
-    if (!store || !lastOpenPayload || !lastOpenPayload.controlID) return false;
-    var ml = store.getState().mediaLibrary;
-    return ml && ml.get("controlID") === lastOpenPayload.controlID;
-  }
-
-  function finishUpload(batchField, idx, mediaKey, merged, newPaths, titleHint) {
-    var store = getStore();
-    if (!store) return;
-
-    if (hasOpenControl() && newPaths.length) {
-      store.dispatch({
-        type: "MEDIA_INSERT",
-        payload: { mediaPath: newPaths.slice() },
-      });
-    } else {
-      setBatchImagesDirect(batchField, idx, mediaKey, merged, titleHint);
-    }
-    store.dispatch({ type: "MEDIA_LIBRARY_CLOSE" });
-    lastOpenPayload = null;
-  }
-
-  function applyFiles(files, payload, anchorEl) {
-    if (!files || !files.length || !getStore()) return;
-
-    var activePayload = payload || lastOpenPayload;
-    if (!activePayload || !activePayload.field) return;
-
-    var batchField = fieldNameFromPayload(activePayload);
-    var mediaKey = mediaKeyFromPayload(activePayload);
-    var currentPaths = toPathList(activePayload.value);
-    var batches = getBatches(batchField);
-    var titleHint = albumTitleNear(anchorEl || lastPickerAnchor);
-    var domIndex = batchIndexFromElement(anchorEl || lastPickerAnchor);
-    var idx = findBatchIndex(batches, mediaKey, currentPaths, titleHint, domIndex);
-
-    if (!batches[idx]) {
-      batches[idx] = { title: titleHint || "", images: [], videos: [] };
-    }
-
-    var merged = mediaPaths(batches[idx][mediaKey]).slice();
-    var newPaths = [];
+  function uploadFiles(files, batchField, idx, mediaKey, onDone) {
+    if (!files || !files.length) return;
+    var merged = getBatchPaths(batchField, idx, mediaKey).slice();
     var queue = Array.from(files);
-    var field = activePayload.field;
     var i = 0;
 
     function next() {
       if (i >= queue.length) {
-        finishUpload(batchField, idx, mediaKey, merged, newPaths, titleHint);
+        setBatchMedia(batchField, idx, mediaKey, merged);
+        if (onDone) onDone(merged);
         return;
       }
-      var file = queue[i++];
-      var path = persistFileLikeUpload(file, field);
-      if (path && merged.indexOf(path) < 0) {
-        merged.push(path);
-        newPaths.push(path);
-      }
+      var path = persistFile(queue[i++]);
+      if (path && merged.indexOf(path) < 0) merged.push(path);
       window.setTimeout(next, UPLOAD_GAP_MS);
     }
 
     next();
   }
 
-  function createGalleryInput(accept) {
-    var input = document.createElement("input");
-    input.type = "file";
-    input.multiple = true;
-    input.accept = accept;
-    input.setAttribute(INPUT_MARK, "1");
-    input.style.cssText = "position:fixed;left:-9999px;width:1px;height:1px;opacity:0;";
-    return input;
+  function renderThumbs(container, paths) {
+    var box = container.querySelector("[data-site-album-thumbs]");
+    if (!box) return;
+    if (!paths.length) {
+      box.innerHTML = '<span style="color:#64748b;font-size:13px;">No images yet.</span>';
+      return;
+    }
+    box.innerHTML = paths
+      .map(function (p) {
+        var src = p.indexOf("http") === 0 ? p : p;
+        return (
+          '<img src="' +
+          src +
+          '" alt="" style="width:72px;height:72px;object-fit:cover;border-radius:4px;border:1px solid #cbd5e1;">'
+        );
+      })
+      .join("");
   }
 
-  function openUploadPicker(payload, anchorEl) {
-    if (pickerBusy || !payload) return;
-    pickerBusy = true;
-    lastPickerAnchor = anchorEl || null;
-    window.__galleryPickerOpenedAt = Date.now();
+  function hideDecapChooser(listItem) {
+    listItem.querySelectorAll("button, a, label, [role='button']").forEach(function (el) {
+      var t = (el.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
+      if (!/^choose\s+(an?\s+)?images?/.test(t) && !/^choose\s+(a?\s+)?files?/.test(t)) return;
+      var block = el.parentElement;
+      if (block) block.style.setProperty("display", "none", "important");
+    });
+  }
 
-    var accept = fieldName(payload.field) === "videos" ? "video/*" : "image/*";
-    var input = createGalleryInput(accept);
-    document.body.appendChild(input);
+  function injectUploader(listItem, batchField, idx, mediaKey, accept, labelText) {
+    if (listItem.getAttribute(UPLOADER_MARK)) return;
+    listItem.setAttribute(UPLOADER_MARK, "1");
+    hideDecapChooser(listItem);
+
+    var wrap = document.createElement("div");
+    wrap.style.cssText = "margin:.5rem 0 1rem;padding:.75rem;background:#f8fafc;border:1px solid #cbd5e1;border-radius:6px;";
+    wrap.innerHTML =
+      '<label style="display:inline-block;padding:.55rem 1rem;border-radius:4px;background:#3b4c9a;color:#fff;font-weight:600;cursor:pointer;">' +
+      labelText +
+      '<input type="file" multiple accept="' +
+      accept +
+      '" ' +
+      INPUT_MARK +
+      '="1" style="display:none;"></label>' +
+      '<div data-site-album-thumbs style="margin-top:10px;display:flex;flex-wrap:wrap;gap:8px;"></div>';
+
+    var imagesLabel = null;
+    listItem.querySelectorAll("label, [class*='Label']").forEach(function (lbl) {
+      if (imagesLabel) return;
+      var txt = (lbl.textContent || "").toLowerCase();
+      if (mediaKey === "images" && txt.indexOf("images from your computer") >= 0) imagesLabel = lbl;
+      if (mediaKey === "videos" && txt.indexOf("videos from your computer") >= 0) imagesLabel = lbl;
+    });
+
+    if (imagesLabel && imagesLabel.parentElement) {
+      imagesLabel.parentElement.appendChild(wrap);
+    } else {
+      listItem.appendChild(wrap);
+    }
+
+    var input = wrap.querySelector('input[type="file"]');
     input.addEventListener("change", function () {
-      pickerBusy = false;
-      if (input.files && input.files.length) {
-        applyFiles(input.files, payload, anchorEl);
-      }
-      input.remove();
+      if (!input.files || !input.files.length) return;
+      uploadFiles(input.files, batchField, idx, mediaKey, function (paths) {
+        renderThumbs(wrap, paths);
+      });
+      input.value = "";
     });
-    input.addEventListener("cancel", function () {
-      pickerBusy = false;
-      input.remove();
-    });
-    window.setTimeout(function () {
-      pickerBusy = false;
-    }, 1500);
-    input.click();
+
+    renderThumbs(wrap, getBatchPaths(batchField, idx, mediaKey));
   }
 
-  /** Decap calls externalLibrary.show() BEFORE MEDIA_LIBRARY_OPEN — block it on Gallery. */
+  function listItemsForField(labelMatch, batchField, mediaKey, accept, buttonLabel) {
+    document.querySelectorAll('[class*="listControlItem"]').forEach(function (listItem) {
+      var hit = false;
+      listItem.querySelectorAll("label, [class*='Label']").forEach(function (lbl) {
+        if (hit) return;
+        if ((lbl.textContent || "").toLowerCase().indexOf(labelMatch) >= 0) hit = true;
+      });
+      if (!hit) return;
+
+      var listRoot = listItem.closest('[class*="ListControl"]');
+      if (!listRoot) return;
+      var items = listRoot.querySelectorAll('[class*="listControlItem"]');
+      var idx = -1;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i] === listItem) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx < 0) return;
+      injectUploader(listItem, batchField, idx, mediaKey, accept, buttonLabel);
+    });
+  }
+
+  function refreshThumbs() {
+    if (!isGalleryRoute()) return;
+    document.querySelectorAll("[" + UPLOADER_MARK + "]").forEach(function (listItem) {
+      var wrap = listItem.querySelector("[data-site-album-thumbs]");
+      if (!wrap || !wrap.parentElement) return;
+      var parent = wrap.parentElement;
+      var isVideo = !!parent.querySelector('input[accept*="video"]');
+      var batchField = isVideo ? "videoBatches" : "photoBatches";
+      var mediaKey = isVideo ? "videos" : "images";
+      var listRoot = listItem.closest('[class*="ListControl"]');
+      if (!listRoot) return;
+      var items = listRoot.querySelectorAll('[class*="listControlItem"]');
+      var idx = -1;
+      for (var i = 0; i < items.length; i++) {
+        if (items[i] === listItem) {
+          idx = i;
+          break;
+        }
+      }
+      if (idx < 0) return;
+      renderThumbs(parent, getBatchPaths(batchField, idx, mediaKey));
+    });
+  }
+
+  function injectAlbumUploaders() {
+    if (!isGalleryRoute() || !getStore()) return;
+    listItemsForField(
+      "images from your computer",
+      "photoBatches",
+      "images",
+      "image/*",
+      "Pick photos from your computer"
+    );
+    listItemsForField(
+      "videos from your computer",
+      "videoBatches",
+      "videos",
+      "video/*",
+      "Pick videos from your computer"
+    );
+    refreshThumbs();
+  }
+
   function patchExternalLibrary() {
     var store = getStore();
     if (!store) return false;
@@ -334,74 +274,30 @@
 
     ext.__siteGalleryShowPatch = true;
     var origShow = ext.show.bind(ext);
-    var origHide = ext.hide ? ext.hide.bind(ext) : null;
-
     ext.show = function (opts) {
-      if (isGalleryRoute() && opts && opts.id) {
-        return;
-      }
+      if (isGalleryRoute() && opts && opts.id) return;
       return origShow(opts);
     };
-
-    if (origHide) {
-      ext.hide = function () {
-        if (isGalleryRoute()) return;
-        return origHide();
-      };
-    }
-
     return true;
   }
 
-  function patchStore() {
+  function patchStoreOpen() {
     var store = getStore();
-    if (!store || store.__siteGalleryStorePatch) return;
-    store.__siteGalleryStorePatch = true;
+    if (!store || store.__siteGalleryOpenPatch) return;
+    store.__siteGalleryOpenPatch = true;
     var orig = store.dispatch.bind(store);
-
     store.dispatch = function (action) {
-      if (
-        action &&
-        action.type === "MEDIA_LIBRARY_OPEN" &&
-        isGalleryRoute() &&
-        action.payload &&
-        isGalleryMediaField(action.payload.field)
-      ) {
-        lastOpenPayload = action.payload;
-        orig(action);
-        orig({ type: "MEDIA_LIBRARY_CLOSE" });
-        openUploadPicker(lastOpenPayload, lastPickerAnchor);
-        return;
+      if (action && action.type === "MEDIA_LIBRARY_OPEN" && isGalleryRoute()) {
+        var field = action.payload && action.payload.field;
+        var n = field && (field.get ? field.get("name") : field.name);
+        if (n === "images" || n === "videos") {
+          orig(action);
+          orig({ type: "MEDIA_LIBRARY_CLOSE" });
+          return;
+        }
       }
       return orig(action);
     };
-  }
-
-  function isChooseClickTarget(el) {
-    if (!el || !el.closest) return false;
-    if (el.closest('[class*="MediaLibrary"]') || el.closest('[role="dialog"]')) return false;
-    if (el.closest("#site-gallery-top-picker")) return false;
-    var hit = el.closest("button, a, label, [role='button']");
-    if (!hit) return false;
-    var text = (hit.textContent || "").replace(/\s+/g, " ").trim().toLowerCase();
-    return (
-      /^choose\s+(an?\s+)?images?/.test(text) ||
-      /^choose\s+(a?\s+)?files?/.test(text)
-    );
-  }
-
-  function hookChooseClicks() {
-    if (document.__siteGalleryClickHook) return;
-    document.__siteGalleryClickHook = true;
-    document.addEventListener(
-      "click",
-      function (e) {
-        if (!isGalleryRoute()) return;
-        if (!isChooseClickTarget(e.target)) return;
-        lastPickerAnchor = e.target.closest('[class*="listControlItem"], [class*="ListItem"]') || e.target;
-      },
-      true
-    );
   }
 
   function killMediaModal() {
@@ -410,14 +306,17 @@
       var txt = modal.textContent || "";
       if (txt.indexOf("Choose selected") < 0 && txt.indexOf("Upload") < 0) return;
       modal.style.setProperty("display", "none", "important");
-      modal.style.setProperty("visibility", "hidden", "important");
-      modal.style.setProperty("pointer-events", "none", "important");
     });
   }
 
   function injectTopBanner() {
     if (!isGalleryRoute() || !getStore()) return;
-    if (document.getElementById("site-gallery-top-picker")) return;
+    var existing = document.getElementById("site-gallery-top-picker");
+    if (existing) {
+      existing.querySelector("[data-site-version]") &&
+        (existing.querySelector("[data-site-version]").textContent = "v" + VERSION);
+      return;
+    }
 
     var root =
       document.querySelector('[class*="EditorContainer"]') ||
@@ -430,10 +329,11 @@
     box.style.cssText =
       "margin:12px 16px;padding:14px 16px;background:#ecfdf5;border:2px solid #0d9488;border-radius:8px;font-family:system-ui,sans-serif;font-size:14px;line-height:1.5;";
     box.innerHTML =
-      '<strong style="color:#0f766e;">Gallery uploads (v' +
+      '<strong style="color:#0f766e;">Gallery uploads</strong> ' +
+      '<span data-site-version style="color:#334155;">v' +
       VERSION +
-      ")</strong>" +
-      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add upload + → Title → click <strong>Choose images</strong> on that row. Your computer file picker opens (not Decap Media).</p>';
+      "</span>" +
+      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add upload + → enter Title → use the blue <strong>Pick photos from your computer</strong> button inside that album row.</p>';
 
     root.insertBefore(box, root.firstChild);
   }
@@ -444,8 +344,7 @@
     s.id = "site-gallery-picker-css";
     s.textContent =
       'body[data-site-gallery="1"] [class*="MediaLibrary"],' +
-      'body[data-site-gallery="1"] [class*="mediaLibrary"],' +
-      'body[data-site-gallery="1"] [role="dialog"]{display:none!important;visibility:hidden!important;pointer-events:none!important;opacity:0!important;}';
+      'body[data-site-gallery="1"] [role="dialog"]{display:none!important;visibility:hidden!important;pointer-events:none!important;}';
     document.head.appendChild(s);
   }
 
@@ -455,37 +354,42 @@
   }
 
   function start() {
-    hookChooseClicks();
     if (!getStore()) {
       window.setTimeout(start, 200);
       return;
     }
     patchExternalLibrary();
+    patchStoreOpen();
     markReady();
     document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
     injectStyles();
-    patchStore();
     injectTopBanner();
+    injectAlbumUploaders();
     killMediaModal();
+
     if (!started) {
       started = true;
+      getStore().subscribe(function () {
+        refreshThumbs();
+      });
       window.setInterval(function () {
         document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
         patchExternalLibrary();
         injectTopBanner();
+        injectAlbumUploaders();
         killMediaModal();
-      }, 300);
+      }, 400);
       window.addEventListener("hashchange", function () {
         document.body.setAttribute("data-site-gallery", isGalleryRoute() ? "1" : "0");
         injectTopBanner();
-        killMediaModal();
+        injectAlbumUploaders();
       });
       new MutationObserver(function () {
+        injectAlbumUploaders();
         killMediaModal();
       }).observe(document.body, { childList: true, subtree: true });
     }
   }
 
   window.SiteGalleryLocalFiles = { start: start, version: VERSION };
-  hookChooseClicks();
 })();
