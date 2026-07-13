@@ -2,14 +2,6 @@
   "intro": "Moments from campus life - celebrations, learning, and everyday joy.",
   "photoBatches": [
     {
-      "title": "Self Study Session",
-      "images": [
-        "/images/1000888480.jpg",
-        "/images/1000888482.jpg",
-        "/images/1000888484.jpg"
-      ]
-    },
-    {
       "title": "Annual day",
       "images": [
         "/images/event.jpg"
@@ -46,12 +38,5 @@
       ]
     }
   ],
-  "videoBatches": [
-    {
-      "videos": [
-        "/images/microsoftteams-video.mp4"
-      ],
-      "title": "Some thrills in the air"
-    }
-  ]
+  "videoBatches": []
 }
