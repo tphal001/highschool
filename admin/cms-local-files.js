@@ -333,7 +333,7 @@
       '<span data-site-version style="color:#334155;">v' +
       VERSION +
       "</span>" +
-      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add upload + → enter Title → use the blue <strong>Pick photos from your computer</strong> button inside that album row.</p>';
+      '<p style="margin:8px 0 0;color:#475569;font-size:13px;">Add album + → enter Title → use the blue <strong>Pick photos from your computer</strong> button inside that album row.</p>';
 
     root.insertBefore(box, root.firstChild);
   }

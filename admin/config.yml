@@ -217,9 +217,9 @@ collections:
             name: photoBatches
             widget: list
             summary: "{{fields.title}}"
-            label_singular: upload
+            label_singular: album
             add_to_top: true
-            hint: "Add upload + → Title → click blue Pick photos from your computer → Publish."
+            hint: "Newest albums appear first on the site. Add album + → Title → Pick photos from your computer → Publish."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Images from your computer
@@ -233,9 +233,9 @@ collections:
             name: videoBatches
             widget: list
             summary: "{{fields.title}}"
-            label_singular: upload
+            label_singular: album
             add_to_top: true
-            hint: "Add upload + → Title → click blue Pick videos from your computer → Publish."
+            hint: "Newest albums appear first on the site. Add album + → Title → Pick videos from your computer → Publish."
             fields:
               - { label: Title, name: title, widget: string }
               - label: Videos from your computer

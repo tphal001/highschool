@@ -488,7 +488,7 @@
 
   function galleryLightboxButton(imgSrc, alt, caption) {
     return (
-      '<button type="button" class="js-gallery-lightbox group block w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" data-lightbox-src="' +
+      '<button type="button" class="js-gallery-lightbox group block h-full w-full cursor-zoom-in text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" data-lightbox-src="' +
       esc(imgSrc) +
       '" data-lightbox-alt="' +
       esc(alt) +
@@ -846,7 +846,7 @@
     }
   }
 
-  function setGalleryPageLayoutMode(activityMode, activityIntro) {
+  function setGalleryPageLayoutMode(activityMode, introText) {
     if (document.body.getAttribute("data-page") !== "gallery") return;
     var pageTitle = document.querySelector("body[data-page='gallery'] main h1");
     var pageLead = pageTitle && pageTitle.nextElementSibling;
@@ -855,15 +855,20 @@
       pageTitle.textContent = "Activities";
       if (pageLead) {
         pageLead.textContent =
-          activityIntro ||
+          introText ||
           "Sports, cultural programs, competitions, and co-curricular activities.";
         pageLead.classList.remove("hidden");
       }
     } else {
       pageTitle.textContent = "Gallery";
+      introText = (introText || "").trim();
       if (pageLead) {
-        pageLead.textContent = "Photos and moments from campus life.";
-        pageLead.classList.remove("hidden");
+        if (introText) {
+          pageLead.textContent = introText;
+          pageLead.classList.remove("hidden");
+        } else {
+          pageLead.classList.add("hidden");
+        }
       }
     }
   }
@@ -1458,15 +1463,15 @@
     var ctx = getPageCtx("gallery");
 
     function buildGalleryBatchSections(batches, type) {
-      var sorted = sortCmsList(batches || []);
-      if (!sorted.length) {
+      var ordered = (batches || []).slice();
+      if (!ordered.length) {
         return (
           '<p class="mt-6 text-slate-600" data-reveal>No ' +
           (type === "video" ? "videos" : "photos") +
           " yet. Add some in the CMS.</p>"
         );
       }
-      return sorted
+      return ordered
         .map(function (batch, batchIdx) {
           var title = (batch.title || "").trim() || (type === "video" ? "Videos" : "Photos");
           var mediaItems = type === "video" ? batch.videos || [] : batch.images || [];
@@ -1496,14 +1501,14 @@
               }
               var alt = title + " — " + (idx + 1);
               return (
-                '<figure class="gallery-batch-slide shrink-0 snap-start w-[min(88vw,320px)] overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">' +
-                '<div class="aspect-[4/3] overflow-hidden">' +
+                '<figure class="gallery-batch-slide shrink-0 snap-start w-[min(88vw,320px)] overflow-hidden rounded-2xl border border-slate-200 shadow-sm">' +
+                '<div class="gallery-batch-aspect aspect-[4/3] overflow-hidden bg-slate-100">' +
                 galleryLightboxButton(src, alt, title) +
                 '<img src="' +
                 esc(src) +
                 '" alt="' +
                 esc(alt) +
-                '" class="h-full w-full object-cover transition duration-500 hover:scale-105" loading="lazy"/>' +
+                '" class="block h-full w-full object-cover transition duration-500 hover:scale-105" loading="lazy"/>' +
                 galleryLightboxClose() +
                 "</div></figure>"
               );
@@ -1578,12 +1583,9 @@
       }
     }
 
-    setGalleryPageLayoutMode(false);
+    setGalleryPageLayoutMode(false, g.intro);
     el.innerHTML =
       '<div id="student-life" class="scroll-mt-40"></div>' +
-      '<p class="text-xl text-slate-600" data-reveal>' +
-      esc(g.intro) +
-      "</p>" +
       buildGalleryBatchSections(g.photoBatches || [], "photo") +
       buildGalleryBatchSections(g.videoBatches || [], "video");
   }

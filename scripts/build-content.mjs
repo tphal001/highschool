@@ -123,6 +123,29 @@ function mergeGalleryBulkImages(gallery) {
   delete gallery.galleryBulkTrigger;
 }
 
+function stampGalleryBatches(items, previousItems, keyField) {
+  if (!Array.isArray(items)) return items;
+  keyField = keyField || "title";
+  var prevDates = {};
+  (previousItems || []).forEach(function (p) {
+    if (!p || typeof p !== "object") return;
+    var key = String(p[keyField] || p.title || "").trim();
+    if (key && p.datetime) prevDates[key] = p.datetime;
+  });
+  var today = todayIsoDate();
+  return items.map(function (item, idx) {
+    if (!item || typeof item !== "object") return item;
+    var out = Object.assign({}, item);
+    delete out.date;
+    delete out.displayDate;
+    var key = String(out[keyField] || out.title || "").trim();
+    var datetime = String(out.datetime || "").trim();
+    if (!datetime) datetime = prevDates[key] || today;
+    out.datetime = datetime;
+    return out;
+  });
+}
+
 function stampListForSort(items, previousItems, keyField) {
   if (!Array.isArray(items)) return items;
   keyField = keyField || "title";
@@ -372,7 +395,7 @@ function normalizeSiteForEmit(site, previous) {
     var prevGal = (previous && previous.gallery) || {};
     if (Array.isArray(site.gallery.photoBatches)) {
       var prevPhoto = prevGal.photoBatches || [];
-      site.gallery.photoBatches = stampListForSort(
+      site.gallery.photoBatches = stampGalleryBatches(
         site.gallery.photoBatches.map(function (b, idx) {
           if (!b || typeof b !== "object") return b;
           return Object.assign({}, b, {
@@ -390,7 +413,7 @@ function normalizeSiteForEmit(site, previous) {
     }
     if (Array.isArray(site.gallery.videoBatches)) {
       var prevVid = prevGal.videoBatches || [];
-      site.gallery.videoBatches = stampListForSort(
+      site.gallery.videoBatches = stampGalleryBatches(
         site.gallery.videoBatches.map(function (b, idx) {
           if (!b || typeof b !== "object") return b;
           return Object.assign({}, b, {

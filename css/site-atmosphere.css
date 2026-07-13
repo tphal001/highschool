@@ -962,6 +962,24 @@ announcement-card .announcement-card__media,
   -webkit-overflow-scrolling: touch;
 }
 
+.gallery-batch-aspect {
+  line-height: 0;
+}
+
+.gallery-batch-aspect .js-gallery-lightbox {
+  display: block;
+  height: 100%;
+  width: 100%;
+  line-height: 0;
+}
+
+.gallery-batch-aspect img {
+  display: block;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
 .gallery-batch-track::-webkit-scrollbar {
   height: 8px;
 }
