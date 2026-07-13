@@ -1099,6 +1099,9 @@
 
   function initPage() {
     initSiteAtmosphere();
+    if (typeof window.bindSiteThemeToggle === "function") {
+      window.bindSiteThemeToggle();
+    }
     if (typeof window.renderPageContent === "function") {
       window.renderPageContent();
     }
