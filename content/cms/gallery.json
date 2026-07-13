@@ -46,5 +46,12 @@
       ]
     }
   ],
-  "videoBatches": []
+  "videoBatches": [
+    {
+      "videos": [
+        "/images/microsoftteams-video.mp4"
+      ],
+      "title": "Some thrills in the air"
+    }
+  ]
 }
