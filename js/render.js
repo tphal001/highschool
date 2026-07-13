@@ -1767,7 +1767,7 @@
     var photoHtml = photo
       ? '<img src="' +
         esc(mediaSrc(photo)) +
-        '" alt="" class="h-14 w-14 shrink-0 rounded-full object-cover ring-2 ring-mes-primary/15 shadow-sm" loading="lazy"/>'
+        '" alt="" class="h-14 w-14 shrink-0 rounded-full border-2 border-black object-cover shadow-sm" loading="lazy"/>'
       : "";
     var classYear = (m.classYear || "").trim();
     var badge = classYear ? "Class of " + classYear + " · Alumni" : "Alumni";
@@ -1781,6 +1781,30 @@
         ? window.formatContactPhoneDisplay(phone)
         : phone;
     var linkedIn = (m.linkedIn || "").trim();
+    var email = (m.email || "").trim();
+    var contactLine = "";
+    if (phone || email) {
+      contactLine =
+        '<p class="mt-2 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs sm:text-sm">' +
+        (phone
+          ? '<a href="tel:' +
+            esc(phoneTel) +
+            '" class="inline-flex items-center gap-1 font-semibold text-mes-primary hover:text-mes-primaryDark hover:underline"><span aria-hidden="true">📞</span> ' +
+            esc(phoneDisplay) +
+            "</a>"
+          : "") +
+        (phone && email
+          ? '<span class="text-slate-300" aria-hidden="true">|</span>'
+          : "") +
+        (email
+          ? '<a href="mailto:' +
+            esc(email) +
+            '" class="inline-flex items-center gap-1 font-semibold text-mes-primary hover:text-mes-primaryDark hover:underline"><span aria-hidden="true">✉️</span> ' +
+            esc(email) +
+            "</a>"
+          : "") +
+        "</p>";
+    }
     return (
       '<section class="mt-2 w-full scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
       '<div class="rounded-xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
@@ -1795,7 +1819,7 @@
       '<div class="mt-4 flex gap-4 sm:items-start">' +
       photoHtml +
       '<div class="min-w-0 flex-1">' +
-      '<p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm font-bold text-mes-primary sm:text-base">' +
+      '<p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm font-bold text-black sm:text-base">' +
       '<span class="font-display">' +
       esc(m.name || "") +
       "</span>" +
@@ -1812,13 +1836,7 @@
       (m.note
         ? '<p class="mt-2 text-xs leading-relaxed text-slate-600">' + esc(m.note) + "</p>"
         : "") +
-      (phone
-        ? '<p class="mt-2 text-xs"><a href="tel:' +
-          esc(phoneTel) +
-          '" class="font-semibold text-mes-primary hover:text-mes-primaryDark hover:underline">' +
-          esc(phoneDisplay) +
-          "</a></p>"
-        : "") +
+      contactLine +
       "</div></div></div></section>"
     );
   }

@@ -468,24 +468,24 @@
       }
 
       var col2 =
-        '<div><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Quick links</p><ul class="mt-2 space-y-1.5">' +
+        '<div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Quick links</p><ul class="mt-2 space-y-1.5">' +
         linkList(links) +
         "</ul></div>";
 
       var col3 =
         links2.length > 0
-          ? '<div><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Explore</p><ul class="mt-2 space-y-1.5">' +
+          ? '<div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Explore</p><ul class="mt-2 space-y-1.5">' +
             linkList(links2) +
             "</ul></div>"
           : "";
 
       var gridClass =
         links2.length > 0
-          ? "grid gap-5 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6"
-          : "grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6";
+          ? "footer-columns footer-columns--4 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10 lg:gap-y-6"
+          : "footer-columns footer-columns--3 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-6";
 
       var contactBlock =
-        '<div><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Contact us</p>' +
+        '<div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Contact us</p>' +
         (address ? '<p class="mt-2 text-xs leading-relaxed text-slate-600">' + esc(address) + "</p>" : "") +
         (phone || email
           ? '<p class="mt-1.5 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs">' +
@@ -530,7 +530,7 @@
         '<div class="mx-auto max-w-7xl ' +
         gridClass +
         '">' +
-        '<div class="sm:col-span-2 lg:col-span-1">' +
+        '<div class="min-w-0">' +
         '<p class="font-display text-base font-bold text-slate-900">' +
         esc(schoolName) +
         "</p>" +

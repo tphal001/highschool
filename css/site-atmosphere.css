@@ -219,6 +219,22 @@ body.site-body #site-footer.site-footer-compact {
   padding-bottom: 1.25rem;
 }
 
+#site-footer .footer-columns {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  #site-footer .footer-columns--4 {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    column-gap: 2.5rem;
+  }
+
+  #site-footer .footer-columns--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 2.5rem;
+  }
+}
+
 @media (min-width: 640px) {
   body.site-body #site-footer.site-footer-compact {
     padding-top: 1.5rem;

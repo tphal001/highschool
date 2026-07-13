@@ -57,6 +57,7 @@ window.SITE_CONFIG = {
     highlight: "Built and maintained by a proud alumnus — Class of 2008.",
     photo: "/images/tushar.jpg",
     phone: "+91 9404650064",
+    email: "phalke.tushar1@gmail.com",
     linkedIn: "https://www.linkedin.com/in/tushar-phalke-59792767/",
     note: "For website updates, technical issues, or help with online content — not for admissions or general school enquiries.",
   },
