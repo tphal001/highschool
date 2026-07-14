@@ -655,37 +655,52 @@ body.site-body[data-page]:not([data-page="home"]) main {
 }
 
 body.site-body[data-page="contact"] {
-  background-color: #fbfdff;
+  background-color: #ffffff;
 }
 
 body.site-body[data-page="contact"] main {
   background: linear-gradient(
     180deg,
     #ffffff 0%,
-    #fcfeff 48%,
-    #f6faff 100%
+    #ffffff 62%,
+    #fafcff 100%
   );
 }
 
 body.site-body[data-page="contact"] #site-atmosphere {
-  background: #fbfdff;
+  background: #ffffff;
 }
 
 body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__dual {
   background: linear-gradient(
     112deg,
     #ffffff 0%,
-    #f9fbff 42%,
-    #f3f8ff 100%
+    #fefefe 50%,
+    #fafcff 100%
   );
 }
 
-body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__mesh {
-  opacity: 0.28;
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__mesh,
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__dual-stripe,
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__grid {
+  opacity: 0;
 }
 
-body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__dual-stripe {
-  opacity: 0.2;
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__orb {
+  opacity: 0.12;
+  filter: blur(90px);
+}
+
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__orb--1 {
+  background: radial-gradient(circle, rgba(248, 250, 252, 0.95) 0%, rgba(224, 242, 254, 0.18) 45%, transparent 72%);
+}
+
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__orb--2 {
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(224, 242, 254, 0.14) 50%, transparent 72%);
+}
+
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__orb--3 {
+  background: radial-gradient(circle, rgba(250, 252, 255, 0.5) 0%, transparent 70%);
 }
 
 @media (min-width: 1024px) {
