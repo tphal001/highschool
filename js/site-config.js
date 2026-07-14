@@ -106,7 +106,7 @@ window.SITE_CONFIG = {
         { label: "About our school", href: "about.html#history" },
         { label: "Mission and Vision", href: "about.html#mission" },
         { label: "Board and Governing Body Members", href: "about.html#board" },
-        { label: "Principal Desk", href: "about.html#principal" },
+        { label: "Principal's Desk", href: "about.html#principal" },
         { label: "Staff", href: "about.html#staff" },
       ],
     },
@@ -204,8 +204,7 @@ window.SITE_CONFIG = {
   /** First footer column — governing body and staff links. */
   footerStaffLinks: [
     { label: "Chairman's message", href: "about.html#chairman" },
-    { label: "Board and Governing Body", href: "about.html#board" },
-    { label: "Principal's desk", href: "about.html#principal" },
+    { label: "Principal's Desk", href: "about.html#principal" },
     { label: "Staff", href: "about.html#staff" },
   ],
 };

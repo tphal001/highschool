@@ -1059,10 +1059,13 @@
     );
   }
 
-  function buildAboutPrincipalSection(a) {
+  function buildAboutPrincipalSection(a, opts) {
+    opts = opts || {};
     return (
       '<section id="principal" class="scroll-mt-52" data-reveal>' +
-      '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>' +
+      (opts.omitHeading
+        ? ""
+        : '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>') +
       '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
       '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
       '<img src="' +
@@ -1102,7 +1105,7 @@
   var ABOUT_SECTION_HEADERS = {
     mission: "Mission and Vision",
     board: "Board and Governing Body Members",
-    principal: "Principal Desk",
+    principal: "Principal's Desk",
     staff: "Staff",
   };
 
