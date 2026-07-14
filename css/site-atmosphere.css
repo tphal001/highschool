@@ -52,6 +52,12 @@
   pointer-events: none;
   overflow: hidden;
   background: var(--site-cream);
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+
+body.site-ready #site-atmosphere {
+  opacity: 1;
 }
 
 /* Dual-tone split: warm cream (left) ↔ rose-gold (right) */

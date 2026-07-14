@@ -1,4 +1,18 @@
 (function () {
+  if (typeof document !== "undefined" && !document.getElementById("site-critical-css")) {
+    var critical = document.createElement("style");
+    critical.id = "site-critical-css";
+    critical.textContent =
+      "html,body{background-color:#e0f2fe;}" +
+      'body[data-page]:not([data-page="home"]) main{background:linear-gradient(180deg,#e0f2fe 0%,#bae6fd 52%,#7dd3fc 100%);}' +
+      'body[data-page="contact"]:not([data-page="home"]) main,' +
+      'body[data-page="contact"]:not([data-page="home"]) main.site-band--cream{background:linear-gradient(180deg,#e0f2fe 0%,#bae6fd 100%);}' +
+      'body[data-page="home"] #home-hero.site-hero-panel{min-height:28rem;background:linear-gradient(180deg,#e8f4fc 0%,#e0f2fe 100%);}' +
+      "#site-atmosphere{opacity:0!important;}" +
+      "body.site-ready #site-atmosphere{opacity:1!important;transition:opacity .25s ease;}";
+    document.head.appendChild(critical);
+  }
+
   if (typeof document !== "undefined" && !document.getElementById("site-nav-overflow-fix")) {
     var st = document.createElement("style");
     st.id = "site-nav-overflow-fix";

@@ -44,17 +44,6 @@
       announcement-card {
         display: block;
       }
-      /* Prevent background stripe flash before JS/CSS finish (Home) */
-      #home-hero.site-hero-panel {
-        min-height: 28rem;
-        background: linear-gradient(180deg, #e8f4fc 0%, #e0f2fe 100%);
-      }
-      #site-atmosphere .site-atmosphere__dual-stripe {
-        opacity: 0;
-      }
-      body.site-ready #site-atmosphere .site-atmosphere__dual-stripe {
-        opacity: 0.85;
-      }
       /**
        * One shared value for block-start + block-end so top/bottom “white strips” match.
        * (Tailwind py-* is symmetric too; this makes the intent explicit and avoids drift.)

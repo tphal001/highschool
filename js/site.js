@@ -1058,8 +1058,6 @@
   }
 
   function initSiteAtmosphere() {
-    document.body.classList.add("site-body");
-
     if (!document.getElementById("site-atmosphere")) {
       var wrap = document.createElement("div");
       wrap.id = "site-atmosphere";
@@ -1102,10 +1100,11 @@
     try {
       localStorage.removeItem("site-theme");
     } catch (e) {}
-    initSiteAtmosphere();
+    document.body.classList.add("site-body");
     if (typeof window.renderPageContent === "function") {
       window.renderPageContent();
     }
+    initSiteAtmosphere();
     initHomeHeroTopPadding();
     initInnerPageTopPadding();
     initHeroSlider();
