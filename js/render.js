@@ -1059,19 +1059,72 @@
     );
   }
 
+  function buildAboutPrincipalExploreMoreHtml() {
+    var links = [
+      {
+        label: "Results",
+        href: "news.html?ctx=results",
+        desc: "Exam outcomes and achievements",
+      },
+      {
+        label: "Meet our staff",
+        href: "about.html#staff",
+        desc: "Dedicated faculty and team",
+      },
+      {
+        label: "Campus & facilities",
+        href: "academics.html",
+        desc: "Programs and learning spaces",
+      },
+      {
+        label: "Admissions",
+        href: "admissions.html",
+        desc: "Join our school community",
+      },
+    ];
+    return (
+      '<div class="principal-standalone-explore mt-8 border-t border-slate-200/80 pt-8" data-reveal>' +
+      '<h3 class="font-display text-lg font-bold text-mes-primary">Explore our school</h3>' +
+      '<p class="mt-1 text-sm text-slate-600">Continue learning about life and learning at Dr. Gadagkar High School.</p>' +
+      '<div class="mt-4 grid gap-3 sm:grid-cols-2">' +
+      links
+        .map(function (item) {
+          return (
+            '<a href="' +
+            esc(item.href) +
+            '" class="site-card-3d group flex flex-col rounded-xl border border-slate-200/90 bg-white/90 p-4 shadow-sm transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/40 hover:shadow-lg hover:shadow-mes-primary/10">' +
+            '<span class="font-semibold text-mes-primary group-hover:text-mes-primaryDark">' +
+            esc(item.label) +
+            "</span>" +
+            '<span class="mt-1 text-xs leading-snug text-slate-600">' +
+            esc(item.desc) +
+            "</span></a>"
+          );
+        })
+        .join("") +
+      "</div></div>"
+    );
+  }
+
+  function setAboutStandaloneLayout(mode) {
+    var grid = document.querySelector('body[data-page="about"] main .grid');
+    var pageAbout = document.getElementById("page-about");
+    var aside = document.getElementById("page-sidebar");
+    document.body.classList.toggle("about-standalone-principal", mode === "principal");
+    if (grid) grid.classList.toggle("inner-page-balanced-grid", mode === "principal");
+    if (pageAbout) pageAbout.classList.toggle("inner-page-balanced-main", mode === "principal");
+    if (aside) aside.classList.toggle("inner-page-balanced-sidebar", mode === "principal");
+  }
+
   function buildAboutPrincipalSection(a, opts) {
     opts = opts || {};
-    var innerWrapClass = opts.omitHeading
+    var standalone = !!opts.omitHeading;
+    var innerWrapClass = standalone
       ? "flex flex-col gap-8 md:flex-row md:items-start md:gap-10 lg:gap-12"
       : "mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12";
-    return (
-      '<section id="principal" class="scroll-mt-52" data-reveal>' +
-      (opts.omitHeading
-        ? ""
-        : '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>') +
-      '<div class="' +
-      innerWrapClass +
-      '">' +
+    var sectionClass =
+      "scroll-mt-52" + (standalone ? " site-card-3d site-about-principal-standalone flex flex-col" : "");
+    var photoBlock =
       '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
       '<img src="' +
       esc(mediaSrc(a.principal.photo)) +
@@ -1084,7 +1137,8 @@
       '<p class="mt-1 w-full text-center text-base font-medium text-mes-primaryDark md:text-left">' +
       esc(a.principal.title) +
       "</p>" +
-      "</div>" +
+      "</div>";
+    var messageBlock =
       '<div class="min-w-0 flex-1 border-t border-slate-100 pt-6 md:border-l md:border-t-0 md:pl-10 md:pt-0 lg:pl-12">' +
       '<div class="space-y-3 text-lg leading-relaxed text-slate-600">' +
       a.principal.message
@@ -1092,7 +1146,21 @@
           return "<p>" + esc(p) + "</p>";
         })
         .join("") +
-      "</div></div></div></section>"
+      "</div></div>";
+    return (
+      '<section id="principal" class="' +
+      sectionClass +
+      '" data-reveal>' +
+      (standalone ? "" : '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>') +
+      '<div class="' +
+      (standalone ? "principal-standalone-body " : "") +
+      innerWrapClass +
+      '">' +
+      photoBlock +
+      messageBlock +
+      "</div>" +
+      (standalone ? buildAboutPrincipalExploreMoreHtml() : "") +
+      "</section>"
     );
   }
 
@@ -1127,6 +1195,7 @@
     };
 
     if (sub && isSectionOnlySub("about", sub, "") && sectionBuilders[sub]) {
+      setAboutStandaloneLayout(sub === "principal" ? "principal" : null);
       setInnerPageHeader("about", {
         title: ABOUT_SECTION_HEADERS[sub] || "About",
         hideLead: true,
@@ -1135,6 +1204,7 @@
       return;
     }
 
+    setAboutStandaloneLayout(null);
     setInnerPageHeader("about", { title: "About", hideLead: false });
     var chairmanHtml = buildAboutChairmanSection(a);
     el.innerHTML =

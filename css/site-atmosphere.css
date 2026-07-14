@@ -718,6 +718,75 @@ body.site-body #page-about #chairman .site-chairman-card > * {
   min-width: 0;
 }
 
+/* Principal's Desk standalone — lift effect, fuller layout, sidebar height match */
+body.about-standalone-principal #principal .principal-standalone-explore {
+  margin-top: 2rem;
+}
+
+@media (min-width: 1024px) {
+  body.about-standalone-principal main .inner-page-balanced-grid {
+    align-items: stretch;
+  }
+
+  body.about-standalone-principal main .inner-page-balanced-grid > div:first-child {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.about-standalone-principal #page-about.inner-page-balanced-main {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    min-height: 0;
+  }
+
+  body.about-standalone-principal #page-about > #principal.site-about-principal-standalone {
+    flex: 1;
+  }
+
+  body.about-standalone-principal #principal .principal-standalone-explore {
+    margin-top: auto;
+  }
+
+  body.about-standalone-principal #page-sidebar.inner-page-balanced-sidebar {
+    display: flex;
+    flex-direction: column;
+  }
+
+  body.about-standalone-principal #page-sidebar.inner-page-balanced-sidebar .site-sidebar-panel:last-child {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  body.about-standalone-principal
+    #page-sidebar.inner-page-balanced-sidebar
+    .site-sidebar-panel:last-child
+    > a.site-sidebar-panel__card {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  body.about-standalone-principal
+    #page-sidebar.inner-page-balanced-sidebar
+    .site-sidebar-panel:last-child
+    > a.site-sidebar-panel__card
+    > div.p-4 {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+  }
+
+  body.about-standalone-principal
+    #page-sidebar.inner-page-balanced-sidebar
+    .site-sidebar-panel:last-child
+    .site-action-link {
+    margin-top: auto;
+    padding-top: 0.5rem;
+  }
+}
+
 /* Sidebar — self-contained panels (Related info, Fund appeal) */
 body.site-body #page-sidebar {
   min-width: 0;
