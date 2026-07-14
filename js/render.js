@@ -780,10 +780,11 @@
             "</div>"
           : "";
       als.innerHTML =
-        '<div class="mx-auto max-w-3xl text-center" data-reveal>' +
+        '<div class="max-w-3xl" data-reveal>' +
+        '<div class="border-b border-slate-200/80 pb-2">' +
         '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-24 after:bg-mes-red">' +
         esc(al.sectionTitle) +
-        "</h2>" +
+        "</h2></div>" +
         '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
         esc(al.sectionSubtitle) +
         "</p>" +
