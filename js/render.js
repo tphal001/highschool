@@ -1061,12 +1061,17 @@
 
   function buildAboutPrincipalSection(a, opts) {
     opts = opts || {};
+    var innerWrapClass = opts.omitHeading
+      ? "flex flex-col gap-8 md:flex-row md:items-start md:gap-10 lg:gap-12"
+      : "mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12";
     return (
       '<section id="principal" class="scroll-mt-52" data-reveal>' +
       (opts.omitHeading
         ? ""
         : '<h2 class="font-display text-2xl font-bold text-mes-primary">Leadership</h2>') +
-      '<div class="mt-8 flex flex-col gap-8 rounded-2xl border border-slate-200 bg-white p-6 sm:p-8 md:flex-row md:items-start md:gap-10 lg:gap-12">' +
+      '<div class="' +
+      innerWrapClass +
+      '">' +
       '<div class="flex w-full shrink-0 flex-col items-center md:w-56 md:items-start lg:w-64">' +
       '<img src="' +
       esc(mediaSrc(a.principal.photo)) +
@@ -1770,7 +1775,7 @@
     var photoHtml = photo
       ? '<img src="' +
         esc(mediaSrc(photo)) +
-        '" alt="" class="h-14 w-14 shrink-0 rounded-full border-2 border-black object-cover shadow-sm" loading="lazy"/>'
+        '" alt="" class="h-14 w-14 shrink-0 rounded-full border border-black object-cover shadow-sm" loading="lazy"/>'
       : "";
     var classYear = (m.classYear || "").trim();
     var badge = classYear ? "Class of " + classYear + " · Alumni" : "Alumni";
@@ -1810,7 +1815,7 @@
     }
     return (
       '<section class="mt-2 w-full scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
-      '<div class="website-maintainer-card rounded-xl border-2 border-black bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
+      '<div class="website-maintainer-card rounded-xl border border-black bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
       '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-mes-primary sm:text-lg">' +
       esc(m.role || "Website support") +
       "</h2>" +
