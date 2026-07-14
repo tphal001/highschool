@@ -654,13 +654,38 @@ body.site-body[data-page]:not([data-page="home"]) main {
   );
 }
 
+body.site-body[data-page="contact"] {
+  background-color: #fbfdff;
+}
+
 body.site-body[data-page="contact"] main {
   background: linear-gradient(
     180deg,
-    var(--site-cream-pale) 0%,
-    var(--site-cream-light) 55%,
-    color-mix(in srgb, var(--site-cream) 72%, white) 100%
+    #ffffff 0%,
+    #fcfeff 48%,
+    #f6faff 100%
   );
+}
+
+body.site-body[data-page="contact"] #site-atmosphere {
+  background: #fbfdff;
+}
+
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__dual {
+  background: linear-gradient(
+    112deg,
+    #ffffff 0%,
+    #f9fbff 42%,
+    #f3f8ff 100%
+  );
+}
+
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__mesh {
+  opacity: 0.28;
+}
+
+body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__dual-stripe {
+  opacity: 0.2;
 }
 
 @media (min-width: 1024px) {

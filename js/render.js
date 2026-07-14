@@ -760,7 +760,7 @@
       var featuredRow = "";
       if (firstStory) {
         featuredRow =
-          '<div class="home-alumni-featured mt-6 grid gap-8 lg:grid-cols-2 lg:items-stretch lg:gap-10" data-reveal-stagger>' +
+          '<div class="home-alumni-featured mt-6 grid gap-6 lg:grid-cols-2 lg:items-stretch" data-reveal-stagger>' +
           '<div class="flex min-w-0 flex-col">' +
           buildAlumniSpotlightStoryHtml(firstStory) +
           "</div>" +
