@@ -82,6 +82,11 @@
     transparent 56%,
     transparent 100%
   );
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+body.site-ready #site-atmosphere .site-atmosphere__dual-stripe {
   opacity: 0.85;
 }
 

@@ -1120,6 +1120,7 @@
     initHeaderScroll();
     initReveal();
     initForms();
+    document.body.classList.add("site-ready");
   }
 
   window.initHomeHeroTopPadding = initHomeHeroTopPadding;
