@@ -450,7 +450,7 @@
       var email = this.getAttribute("email") || cfg.contactEmail || "";
       var links = parseJson(this.getAttribute("footer-links"), cfg.footerLinks || []);
       var links2 = cfg.footerSecondaryLinks || [];
-      var intro = cfg.footerIntro || "";
+      var staffLinks = cfg.footerStaffLinks || [];
       var y = new Date().getFullYear();
 
       function linkList(items) {
@@ -466,6 +466,13 @@
           })
           .join("");
       }
+
+      var col1 =
+        staffLinks.length > 0
+          ? '<div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Governance &amp; staff</p><ul class="mt-2 space-y-1.5">' +
+            linkList(staffLinks) +
+            "</ul></div>"
+          : "";
 
       var col2 =
         '<div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Quick links</p><ul class="mt-2 space-y-1.5">' +
@@ -530,12 +537,7 @@
         '<div class="mx-auto max-w-7xl ' +
         gridClass +
         '">' +
-        '<div class="min-w-0">' +
-        '<p class="font-display text-base font-bold text-slate-900">' +
-        esc(schoolName) +
-        "</p>" +
-        (intro ? '<p class="mt-2 line-clamp-3 text-xs leading-relaxed text-slate-600">' + esc(intro) + "</p>" : "") +
-        "</div>" +
+        col1 +
         col2 +
         col3 +
         contactBlock +

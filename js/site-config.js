@@ -197,14 +197,17 @@ window.SITE_CONFIG = {
 
   /** Second link column in footer (RLMSS multi-column footer). */
   footerSecondaryLinks: [
-    { label: "Principal's desk", href: "about.html#principal" },
     { label: "Facilities", href: "academics.html" },
     { label: "Events", href: "news.html?ctx=events" },
   ],
 
-  /** Intro paragraph above quick links (column 1). */
-  footerIntro:
-    "The school has served generations of learners with strong academics, caring staff, and a safe, inspiring campus.",
+  /** First footer column — governing body and staff links. */
+  footerStaffLinks: [
+    { label: "Chairman's message", href: "about.html#chairman" },
+    { label: "Board and Governing Body", href: "about.html#board" },
+    { label: "Principal's desk", href: "about.html#principal" },
+    { label: "Staff", href: "about.html#staff" },
+  ],
 };
 
 /** Display phone with emoji; tel: links use digits only. */

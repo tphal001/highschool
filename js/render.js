@@ -1807,8 +1807,8 @@
     }
     return (
       '<section class="mt-2 w-full scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
-      '<div class="rounded-xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
-      '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-black sm:text-lg">' +
+      '<div class="website-maintainer-card rounded-xl border-2 border-black bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
+      '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-mes-primary sm:text-lg">' +
       esc(m.role || "Website support") +
       "</h2>" +
       (m.highlight
@@ -1819,7 +1819,7 @@
       '<div class="mt-4 flex gap-4 sm:items-start">' +
       photoHtml +
       '<div class="min-w-0 flex-1">' +
-      '<p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm font-bold text-black sm:text-base">' +
+      '<p class="flex flex-wrap items-center gap-x-1.5 gap-y-1 text-sm font-bold text-mes-primary sm:text-base">' +
       '<span class="font-display">' +
       esc(m.name || "") +
       "</span>" +
