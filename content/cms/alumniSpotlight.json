@@ -12,8 +12,14 @@
     {
       "quote": "Every small effort today builds the confidence you’ll stand on tomorrow.",
       "name": "Rahul Patil",
-      "role": "IPS Officer",
+      "role": "Batch 2010 · IPS Officer",
       "photo": "/images/male.png"
+    },
+    {
+      "name": "Batch 2013 · Shweta Bhosale",
+      "quote": "High school is about finding who you are, because that’s more important than trying to be someone else.",
+      "role": "Chartered Accountant",
+      "photo": "/images/female.png"
     }
   ],
   "stats": [
