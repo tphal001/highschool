@@ -655,19 +655,21 @@ body.site-body[data-page]:not([data-page="home"]) main {
 }
 
 body.site-body[data-page="contact"] {
-  background-color: #ffffff !important;
+  background-color: var(--site-cream);
 }
 
-body.site-body[data-page="contact"]:not([data-page="home"]) main {
-  background: #ffffff;
+body.site-body[data-page="contact"]:not([data-page="home"]) main,
+body.site-body[data-page="contact"]:not([data-page="home"]) main.site-band--cream {
+  background: linear-gradient(180deg, var(--site-cream) 0%, var(--site-cream-deep) 100%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65);
 }
 
 body.site-body[data-page="contact"] #site-atmosphere {
-  background: #ffffff;
+  background: var(--site-cream);
 }
 
 body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__dual {
-  background: #ffffff;
+  background: linear-gradient(180deg, var(--site-cream) 0%, var(--site-cream-deep) 100%);
 }
 
 body.site-body[data-page="contact"] #site-atmosphere .site-atmosphere__mesh,
