@@ -1083,7 +1083,7 @@
       },
     ];
     return (
-      '<div class="principal-standalone-explore mt-8 border-t border-slate-200/80 pt-8" data-reveal>' +
+      '<div class="principal-standalone-explore mt-6 border-t border-slate-200/80 pt-6" data-reveal>' +
       '<h3 class="font-display text-lg font-bold text-mes-primary">Explore our school</h3>' +
       '<p class="mt-1 text-sm text-slate-600">Continue learning about life and learning at Dr. Gadagkar High School.</p>' +
       '<div class="mt-4 grid gap-3 sm:grid-cols-2">' +
@@ -1142,8 +1142,9 @@
       '<div class="min-w-0 flex-1 border-t border-slate-100 pt-6 md:border-l md:border-t-0 md:pl-10 md:pt-0 lg:pl-12">' +
       '<div class="space-y-3 text-lg leading-relaxed text-slate-600">' +
       a.principal.message
-        .map(function (p) {
-          return "<p>" + esc(p) + "</p>";
+        .map(function (p, i) {
+          var text = i === 0 ? "&ldquo;" + esc(p) + "&rdquo;" : esc(p);
+          return "<p>" + text + "</p>";
         })
         .join("") +
       "</div></div>";

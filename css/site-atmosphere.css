@@ -720,7 +720,7 @@ body.site-body #page-about #chairman .site-chairman-card > * {
 
 /* Principal's Desk standalone — lift effect, fuller layout, sidebar height match */
 body.about-standalone-principal #principal .principal-standalone-explore {
-  margin-top: 2rem;
+  margin-top: 1.5rem;
 }
 
 @media (min-width: 1024px) {
@@ -742,10 +742,6 @@ body.about-standalone-principal #principal .principal-standalone-explore {
 
   body.about-standalone-principal #page-about > #principal.site-about-principal-standalone {
     flex: 1;
-  }
-
-  body.about-standalone-principal #principal .principal-standalone-explore {
-    margin-top: auto;
   }
 
   body.about-standalone-principal #page-sidebar.inner-page-balanced-sidebar {
