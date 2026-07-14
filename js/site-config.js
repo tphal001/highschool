@@ -197,13 +197,13 @@ window.SITE_CONFIG = {
 
   /** Second link column in footer (RLMSS multi-column footer). */
   footerSecondaryLinks: [
-    { label: "Facilities", href: "academics.html" },
+    { label: "Admissions", href: "admissions.html" },
     { label: "Events", href: "news.html?ctx=events" },
   ],
 
   /** First footer column — governing body and staff links. */
   footerStaffLinks: [
-    { label: "Chairman's message", href: "about.html#chairman" },
+    { label: "Campus", href: "academics.html" },
     { label: "Principal's Desk", href: "about.html#principal" },
     { label: "Staff", href: "about.html#staff" },
   ],

@@ -1105,7 +1105,7 @@
   var ABOUT_SECTION_HEADERS = {
     mission: "Mission and Vision",
     board: "Board and Governing Body Members",
-    principal: "Principal's Desk",
+    principal: "Leadership",
     staff: "Staff",
   };
 
