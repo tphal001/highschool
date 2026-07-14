@@ -517,11 +517,11 @@
           esc(st.initials || (st.name || "?").charAt(0)) +
           "</div>";
     return (
-      '<blockquote data-reveal class="site-auto-glass site-card-3d group h-full rounded-2xl border border-slate-200/90 p-8 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/35 hover:shadow-xl hover:shadow-mes-primary/10 sm:p-10">' +
-      '<p class="text-lg leading-relaxed text-slate-700 sm:text-xl">“' +
+      '<blockquote data-reveal class="site-auto-glass site-card-3d group flex h-full flex-col rounded-2xl border border-slate-200/90 p-8 transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-accent/35 hover:shadow-xl hover:shadow-mes-primary/10 sm:p-10">' +
+      '<p class="flex-1 text-lg leading-relaxed text-slate-700 sm:text-xl">“' +
       esc(st.quote) +
       '”</p>' +
-      '<footer class="mt-8 flex items-center gap-5">' +
+      '<footer class="mt-8 flex shrink-0 items-center gap-5">' +
       avatarBlock +
       "<div>" +
       '<cite class="not-italic text-lg font-semibold text-mes-primary">' +
@@ -537,28 +537,55 @@
   }
 
   function buildAlumniNetworkGlanceHtml(al) {
-    var statsHtml = (al.stats || [])
-      .map(function (s) {
-        return (
-          "<div><dt class=\"text-sm font-medium uppercase tracking-wider text-slate-400\">" +
-          esc(s.label) +
-          '</dt><dd class="mt-2 font-display text-3xl font-bold text-mes-accent">' +
-          esc(s.value) +
-          "</dd></div>"
-        );
-      })
-      .join("");
-    return (
-      '<div data-reveal class="home-alumni-network-card rounded-3xl border border-slate-200/80 bg-gradient-to-br from-mes-primary via-mes-primaryDark to-slate-900 p-10 text-white shadow-lg transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-goldLine/40 hover:shadow-2xl hover:shadow-black/30 sm:p-12 lg:self-start">' +
-      '<h3 class="font-display text-xl font-bold text-white">Network at a glance</h3>' +
-      '<dl class="mt-8 grid grid-cols-2 gap-8">' +
-      statsHtml +
-      "</dl>" +
+    var stats = al.stats || [];
+    function statCell(s) {
+      return (
+        "<div><p class=\"text-sm font-medium uppercase tracking-wider text-slate-400\">" +
+        esc(s.label) +
+        '</p><p class="mt-2 font-display text-3xl font-bold text-mes-accent">' +
+        esc(s.value) +
+        "</p></div>"
+      );
+    }
+    var buttonHtml =
       '<a href="' +
       esc(al.linkHref) +
-      '" class="mt-10 inline-flex w-full items-center justify-center rounded-full bg-mes-accent py-4 text-base font-semibold text-mes-primaryDark transition hover:bg-mes-accentLight sm:w-auto sm:px-10">' +
+      '" class="inline-flex w-full items-center justify-center rounded-full bg-mes-accent px-6 py-3 text-sm font-semibold text-mes-primaryDark transition hover:bg-mes-accentLight sm:w-auto sm:px-8">' +
       esc(al.linkLabel) +
-      "</a>" +
+      "</a>";
+    var statsGridHtml = "";
+    if (stats.length >= 3) {
+      statsGridHtml =
+        '<div class="mt-6 grid flex-1 grid-cols-2 gap-x-6 gap-y-6">' +
+        statCell(stats[0]) +
+        statCell(stats[1]) +
+        statCell(stats[2]) +
+        '<div class="flex items-end">' +
+        buttonHtml +
+        "</div></div>";
+    } else if (stats.length === 2) {
+      statsGridHtml =
+        '<div class="mt-6 grid flex-1 grid-cols-2 gap-6">' +
+        statCell(stats[0]) +
+        statCell(stats[1]) +
+        '<div class="col-span-2 flex items-end justify-end">' +
+        buttonHtml +
+        "</div></div>";
+    } else if (stats.length === 1) {
+      statsGridHtml =
+        '<div class="mt-6 grid flex-1 grid-cols-1 gap-6 sm:grid-cols-2">' +
+        statCell(stats[0]) +
+        '<div class="flex items-end sm:justify-end">' +
+        buttonHtml +
+        "</div></div>";
+    } else {
+      statsGridHtml =
+        '<div class="mt-6 flex flex-1 items-end justify-end">' + buttonHtml + "</div>";
+    }
+    return (
+      '<div data-reveal class="home-alumni-network-card flex h-full flex-col rounded-3xl border border-slate-200/80 bg-gradient-to-br from-mes-primary via-mes-primaryDark to-slate-900 p-8 text-white shadow-lg transition-all duration-300 ease-out hover:-translate-y-1 hover:border-mes-goldLine/40 hover:shadow-2xl hover:shadow-black/30 sm:p-10">' +
+      '<h3 class="font-display text-xl font-bold text-white">Network at a glance</h3>' +
+      statsGridHtml +
       "</div>"
     );
   }
@@ -733,8 +760,8 @@
       var featuredRow = "";
       if (firstStory) {
         featuredRow =
-          '<div class="mt-6 grid gap-8 lg:grid-cols-2 lg:items-start lg:gap-10" data-reveal-stagger>' +
-          '<div class="min-w-0">' +
+          '<div class="home-alumni-featured mt-6 grid gap-8 lg:grid-cols-2 lg:items-stretch lg:gap-10" data-reveal-stagger>' +
+          '<div class="flex min-w-0 flex-col">' +
           buildAlumniSpotlightStoryHtml(firstStory) +
           "</div>" +
           buildAlumniNetworkGlanceHtml(al) +
@@ -1850,13 +1877,13 @@
       esc(cfg.contactEmail) +
       "</a></p>" +
       "</div>" +
-      '<div class="grid gap-6 lg:grid-cols-2 lg:items-start">' +
-      '<div class="flex flex-col" data-reveal>' +
-      '<div class="overflow-hidden rounded-xl border border-slate-200 bg-slate-100">' +
-      '<iframe title="School location" class="h-[14rem] w-full border-0 sm:h-[16rem]" loading="lazy" src="' +
+      '<div class="contact-map-form grid gap-6 lg:grid-cols-2 lg:items-stretch">' +
+      '<div class="contact-map-col flex min-h-0 flex-col" data-reveal>' +
+      '<div class="contact-map-frame flex min-h-[14rem] flex-1 overflow-hidden rounded-xl border border-slate-200 bg-slate-100 sm:min-h-[16rem]">' +
+      '<iframe title="School location" class="h-full min-h-[14rem] w-full border-0 sm:min-h-[16rem]" loading="lazy" src="' +
       esc(co.mapEmbed) +
       '"></iframe></div></div>' +
-      '<div class="flex flex-col" data-reveal>' +
+      '<div class="contact-form-panel flex min-h-0 flex-col" data-reveal>' +
       '<h2 class="font-display text-xl font-bold text-mes-primary sm:text-2xl">Send a message</h2>' +
       buildContactFormHtml() +
       "</div></div>" +
@@ -1911,7 +1938,7 @@
     }
     return (
       '<section class="mt-2 w-full scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
-      '<div class="website-maintainer-card rounded-xl border border-black bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
+      '<div class="website-maintainer-card rounded-xl border border-black bg-gradient-to-br from-white via-slate-50/80 to-sky-50/50 p-4 shadow-sm sm:p-5">' +
       '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-mes-primary sm:text-lg">' +
       esc(m.role || "Website support") +
       "</h2>" +

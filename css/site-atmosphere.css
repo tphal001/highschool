@@ -654,6 +654,29 @@ body.site-body[data-page]:not([data-page="home"]) main {
   );
 }
 
+body.site-body[data-page="contact"] main {
+  background: linear-gradient(
+    180deg,
+    var(--site-cream-pale) 0%,
+    var(--site-cream-light) 55%,
+    color-mix(in srgb, var(--site-cream) 72%, white) 100%
+  );
+}
+
+@media (min-width: 1024px) {
+  .home-alumni-featured > .flex {
+    min-height: 100%;
+  }
+
+  .contact-map-form .contact-map-col {
+    min-height: 100%;
+  }
+
+  .contact-map-form .contact-map-frame {
+    min-height: 100%;
+  }
+}
+
 body.site-body[data-page]:not([data-page="home"]) main > .mx-auto.max-w-7xl,
 body.site-body:not([data-page]) main > .mx-auto.max-w-lg {
   background: transparent;
