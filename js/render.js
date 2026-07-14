@@ -1789,7 +1789,7 @@
         (phone
           ? '<a href="tel:' +
             esc(phoneTel) +
-            '" class="inline-flex items-center gap-1 font-semibold text-mes-primary hover:text-mes-primaryDark hover:underline"><span aria-hidden="true">📞</span> ' +
+            '" class="inline-flex items-center gap-1 font-semibold text-mes-primary hover:text-mes-primaryDark hover:underline">' +
             esc(phoneDisplay) +
             "</a>"
           : "") +
@@ -1808,7 +1808,7 @@
     return (
       '<section class="mt-2 w-full scroll-mt-52" data-reveal aria-labelledby="website-maintainer-heading">' +
       '<div class="rounded-xl border border-slate-200/90 bg-gradient-to-br from-mes-light/90 via-white to-cyan-50/40 p-4 shadow-sm sm:p-5">' +
-      '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-mes-primary sm:text-lg">' +
+      '<h2 id="website-maintainer-heading" class="font-display text-base font-bold text-black sm:text-lg">' +
       esc(m.role || "Website support") +
       "</h2>" +
       (m.highlight

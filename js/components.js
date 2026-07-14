@@ -481,8 +481,8 @@
 
       var gridClass =
         links2.length > 0
-          ? "footer-columns footer-columns--4 grid gap-8 sm:grid-cols-2 lg:grid-cols-4 lg:gap-x-10 lg:gap-y-6"
-          : "footer-columns footer-columns--3 grid gap-8 sm:grid-cols-2 lg:grid-cols-3 lg:gap-x-10 lg:gap-y-6";
+          ? "footer-columns footer-columns--4"
+          : "footer-columns footer-columns--3";
 
       var contactBlock =
         '<div class="min-w-0"><p class="text-xs font-bold uppercase tracking-wide text-slate-800">Contact us</p>' +
