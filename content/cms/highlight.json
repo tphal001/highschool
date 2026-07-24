@@ -1,31 +1,391 @@
 {
-  "showModalOnOpen": true,
-  "oncePerSession": true,
-  "cacheBust": "v1",
-  "items": [
+  "partial": false,
+  "path": "content/cms/highlight.json",
+  "meta": {
+    "path": "content/cms/highlight.json"
+  },
+  "isModification": null,
+  "raw": "{\n  \"showModalOnOpen\": true,\n  \"oncePerSession\": true,\n  \"cacheBust\": \"v1\",\n  \"items\": [\n    {\n      \"accomplishment\": \"*आवडते मज मनापासून शाळा,\\nलावीते लळा जसा माय माऊली बाळा*\\n\\n१९६३ पासून अखंडपणे ज्ञानदानाचे कार्य करत, समाजाच्या सर्व स्तरांपर्यंत शिक्षण पोहोचवून एक शैक्षणिक क्रांती घडवणारी आपली अभिमानाची संस्था - श्री शिवाजी शिक्षण प्रसारक मंडळ सातारारोड संचलित, डॉ. गदगकर हायस्कूल व जरंडेश्वर कनिष्ठ महाविद्यालय, सातारारोड - आजही विद्यार्थ्यांच्या घडणीत महत्त्वाची भूमिका बजावत आहे.\\n\\nया स्नेहबंधांना अधिक दृढ करण्यासाठी आणि आपल्या सर्व माजी विद्यार्थ्यांना एका व्यासपीठावर एकत्र आणण्यासाठी आम्ही माजी विद्यार्थी माहिती संकलन उपक्रम हाती घेतला आहे.\\n\\nतरी सर्व माजी विद्यार्थ्यांनी आपली माहिती दिलेल्या लिंकद्वारे भरावी. तसेच, आपल्या वर्गमित्रांपर्यंत व परिचित माजी विद्यार्थ्यांपर्यंत ही लिंक जरूर पोहोचवावी, ही नम्र विनंती.\\n\\nआपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल.\",\n      \"enabled\": true,\n      \"badge\": \"Highlights\",\n      \"studentName\": \"सर्व माजी विद्यार्थी\",\n      \"posterImage\": \"/images/img-20260720-wa0043.jpg\",\n      \"headline\": \"माजी विद्यार्थी मेळावा\",\n      \"linkUrl\": \"https://docs.google.com/forms/d/e/1FAIpQLSdpynZ6-v3caNLehbJy98HJblnm_EquCmFkqWNBQHn-cUJT_A/viewform?usp=header\",\n      \"cacheBust\": \"v1\",\n      \"linkLabel\": \"View\",\n      \"showOnHome\": true,\n      \"linkUrlLabel\": \"Open link\"\n    },\n    {\n      \"accomplishment\": \"*पालकांनी योग्य शाळेची केलेली निवड विद्यार्थ्यांचे भवितव्य ठरवते....*\\nसलग दुसऱ्या वर्षी शिष्यवृत्ती परीक्षेत *डॉ. गदगकर हायस्कूल* ने गुणवत्ता यादी स्थान मिळवले आहे. यावर्षी आपल्या विद्यालयाची इयत्ता आठवीची विद्यार्थिनी *कुमारी दिव्या सुरेश फाळके* हिने *कोरेगाव तालुक्यामध्ये प्रथम* येऊन शाळेच्या शिरपेचात मानाचा तुरा खोवला आहे....\\n दिव्या फाळके व तिला मार्गदर्शन करणाऱ्या सर्व शिक्षकांचे हार्दिक अभिनंदन.......💐💐💐\",\n      \"enabled\": true,\n      \"badge\": \"Highlights\",\n      \"studentName\": \"कुमारी दिव्या सुरेश फाळके\",\n      \"posterImage\": \"/images/1000879527.jpg\",\n      \"headline\": \"शिष्यवृत्ती परीक्षेत *दिव्या* कोरेगाव तालुक्यामध्ये प्रथम\",\n      \"linkLabel\": \"View\",\n      \"showOnHome\": true,\n      \"linkUrlLabel\": \"Open link\"\n    }\n  ]\n}\n",
+  "data": {
+    "showModalOnOpen": true,
+    "oncePerSession": true,
+    "cacheBust": "v1",
+    "items": [
+      {
+        "accomplishment": "*आवडते मज मनापासून शाळा,\nलावीते लळा जसा माय माऊली बाळा*\n\n१९६३ पासून अखंडपणे ज्ञानदानाचे कार्य करत, समाजाच्या सर्व स्तरांपर्यंत शिक्षण पोहोचवून एक शैक्षणिक क्रांती घडवणारी आपली अभिमानाची संस्था - श्री शिवाजी शिक्षण प्रसारक मंडळ सातारारोड संचलित, डॉ. गदगकर हायस्कूल व जरंडेश्वर कनिष्ठ महाविद्यालय, सातारारोड - आजही विद्यार्थ्यांच्या घडणीत महत्त्वाची भूमिका बजावत आहे.\n\nया स्नेहबंधांना अधिक दृढ करण्यासाठी आणि आपल्या सर्व माजी विद्यार्थ्यांना एका व्यासपीठावर एकत्र आणण्यासाठी आम्ही माजी विद्यार्थी माहिती संकलन उपक्रम हाती घेतला आहे.\n\nतरी सर्व माजी विद्यार्थ्यांनी आपली माहिती दिलेल्या लिंकद्वारे भरावी. तसेच, आपल्या वर्गमित्रांपर्यंत व परिचित माजी विद्यार्थ्यांपर्यंत ही लिंक जरूर पोहोचवावी, ही नम्र विनंती.\n\nआपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल...!",
+        "enabled": true,
+        "badge": "Highlights",
+        "studentName": "सर्व माजी विद्यार्थी",
+        "posterImage": "/images/img-20260720-wa0043.jpg",
+        "headline": "माजी विद्यार्थी मेळावा",
+        "linkUrl": "https://docs.google.com/forms/d/e/1FAIpQLSdpynZ6-v3caNLehbJy98HJblnm_EquCmFkqWNBQHn-cUJT_A/viewform?usp=header",
+        "cacheBust": "v1",
+        "linkLabel": "View",
+        "showOnHome": true,
+        "linkUrlLabel": "Open link"
+      },
+      {
+        "accomplishment": "*पालकांनी योग्य शाळेची केलेली निवड विद्यार्थ्यांचे भवितव्य ठरवते....*\nसलग दुसऱ्या वर्षी शिष्यवृत्ती परीक्षेत *डॉ. गदगकर हायस्कूल* ने गुणवत्ता यादी स्थान मिळवले आहे. यावर्षी आपल्या विद्यालयाची इयत्ता आठवीची विद्यार्थिनी *कुमारी दिव्या सुरेश फाळके* हिने *कोरेगाव तालुक्यामध्ये प्रथम* येऊन शाळेच्या शिरपेचात मानाचा तुरा खोवला आहे....\n दिव्या फाळके व तिला मार्गदर्शन करणाऱ्या सर्व शिक्षकांचे हार्दिक अभिनंदन.......💐💐💐",
+        "enabled": true,
+        "badge": "Highlights",
+        "studentName": "कुमारी दिव्या सुरेश फाळके",
+        "posterImage": "/images/1000879527.jpg",
+        "headline": "शिष्यवृत्ती परीक्षेत *दिव्या* कोरेगाव तालुक्यामध्ये प्रथम",
+        "linkUrl": "",
+        "linkLabel": "View",
+        "showOnHome": true,
+        "linkUrlLabel": "Open link"
+      }
+    ]
+  },
+  "author": "",
+  "slug": "highlight",
+  "newRecord": false,
+  "status": "",
+  "mediaFiles": [
     {
-      "accomplishment": "*आवडते मज मनापासून शाळा,\nलावीते लळा जसा माय माऊली बाळा*\n\n१९६३ पासून अखंडपणे ज्ञानदानाचे कार्य करत, समाजाच्या सर्व स्तरांपर्यंत शिक्षण पोहोचवून एक शैक्षणिक क्रांती घडवणारी आपली अभिमानाची संस्था - श्री शिवाजी शिक्षण प्रसारक मंडळ सातारारोड संचलित, डॉ. गदगकर हायस्कूल व जरंडेश्वर कनिष्ठ महाविद्यालय, सातारारोड - आजही विद्यार्थ्यांच्या घडणीत महत्त्वाची भूमिका बजावत आहे.\n\nया स्नेहबंधांना अधिक दृढ करण्यासाठी आणि आपल्या सर्व माजी विद्यार्थ्यांना एका व्यासपीठावर एकत्र आणण्यासाठी आम्ही माजी विद्यार्थी माहिती संकलन उपक्रम हाती घेतला आहे.\n\nतरी सर्व माजी विद्यार्थ्यांनी आपली माहिती दिलेल्या लिंकद्वारे भरावी. तसेच, आपल्या वर्गमित्रांपर्यंत व परिचित माजी विद्यार्थ्यांपर्यंत ही लिंक जरूर पोहोचवावी, ही नम्र विनंती.\n\nआपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल.",
-      "enabled": true,
-      "badge": "Highlights",
-      "studentName": "सर्व माजी विद्यार्थी",
-      "posterImage": "/images/img-20260720-wa0043.jpg",
-      "headline": "माजी विद्यार्थी मेळावा",
-      "linkUrl": "https://docs.google.com/forms/d/e/1FAIpQLSdpynZ6-v3caNLehbJy98HJblnm_EquCmFkqWNBQHn-cUJT_A/viewform?usp=header",
-      "cacheBust": "v1",
-      "linkLabel": "View",
-      "showOnHome": true,
-      "linkUrlLabel": "Open link"
+      "id": "b3572e001bb2976a837a9dbc04f8163f53879eda",
+      "name": "1.jpg",
+      "size": 566237,
+      "displayURL": {
+        "id": "b3572e001bb2976a837a9dbc04f8163f53879eda",
+        "path": "images/1.jpg"
+      },
+      "path": "images/1.jpg"
     },
     {
-      "accomplishment": "*पालकांनी योग्य शाळेची केलेली निवड विद्यार्थ्यांचे भवितव्य ठरवते....*\nसलग दुसऱ्या वर्षी शिष्यवृत्ती परीक्षेत *डॉ. गदगकर हायस्कूल* ने गुणवत्ता यादी स्थान मिळवले आहे. यावर्षी आपल्या विद्यालयाची इयत्ता आठवीची विद्यार्थिनी *कुमारी दिव्या सुरेश फाळके* हिने *कोरेगाव तालुक्यामध्ये प्रथम* येऊन शाळेच्या शिरपेचात मानाचा तुरा खोवला आहे....\n दिव्या फाळके व तिला मार्गदर्शन करणाऱ्या सर्व शिक्षकांचे हार्दिक अभिनंदन.......💐💐💐",
-      "enabled": true,
-      "badge": "Highlights",
-      "studentName": "कुमारी दिव्या सुरेश फाळके",
-      "posterImage": "/images/1000879527.jpg",
-      "headline": "शिष्यवृत्ती परीक्षेत *दिव्या* कोरेगाव तालुक्यामध्ये प्रथम",
-      "linkLabel": "View",
-      "showOnHome": true,
-      "linkUrlLabel": "Open link"
+      "id": "a18224ff80f94b375acfdde63eae2808303bb82d",
+      "name": "1000879527.jpg",
+      "size": 366124,
+      "displayURL": {
+        "id": "a18224ff80f94b375acfdde63eae2808303bb82d",
+        "path": "images/1000879527.jpg"
+      },
+      "path": "images/1000879527.jpg"
+    },
+    {
+      "id": "26f00c5a960347a9e423972692bf2c42e2a0a015",
+      "name": "1000885126.jpg",
+      "size": 20822,
+      "displayURL": {
+        "id": "26f00c5a960347a9e423972692bf2c42e2a0a015",
+        "path": "images/1000885126.jpg"
+      },
+      "path": "images/1000885126.jpg"
+    },
+    {
+      "id": "60d676c2004e39f81c2f38ffae11754772f4bff9",
+      "name": "1000885143.jpg",
+      "size": 117612,
+      "displayURL": {
+        "id": "60d676c2004e39f81c2f38ffae11754772f4bff9",
+        "path": "images/1000885143.jpg"
+      },
+      "path": "images/1000885143.jpg"
+    },
+    {
+      "id": "a75e12fc0b223d0567679be52342d124e4c27a4c",
+      "name": "1000885186.jpg",
+      "size": 72515,
+      "displayURL": {
+        "id": "a75e12fc0b223d0567679be52342d124e4c27a4c",
+        "path": "images/1000885186.jpg"
+      },
+      "path": "images/1000885186.jpg"
+    },
+    {
+      "id": "85ba1e5129a277b7c5d4e180ad0f658b929a8cf9",
+      "name": "1000885212.jpg",
+      "size": 109378,
+      "displayURL": {
+        "id": "85ba1e5129a277b7c5d4e180ad0f658b929a8cf9",
+        "path": "images/1000885212.jpg"
+      },
+      "path": "images/1000885212.jpg"
+    },
+    {
+      "id": "82243809d2b99e2cb9383ff3e55ebed0a883c966",
+      "name": "1000885226.jpg",
+      "size": 44738,
+      "displayURL": {
+        "id": "82243809d2b99e2cb9383ff3e55ebed0a883c966",
+        "path": "images/1000885226.jpg"
+      },
+      "path": "images/1000885226.jpg"
+    },
+    {
+      "id": "b165a14a98841730a83ab9cc83edd7632a28cf5e",
+      "name": "1000885234.jpg",
+      "size": 94562,
+      "displayURL": {
+        "id": "b165a14a98841730a83ab9cc83edd7632a28cf5e",
+        "path": "images/1000885234.jpg"
+      },
+      "path": "images/1000885234.jpg"
+    },
+    {
+      "id": "e12ec2619b342a11819032af1baf16f16440ae2f",
+      "name": "1000885243.jpg",
+      "size": 117441,
+      "displayURL": {
+        "id": "e12ec2619b342a11819032af1baf16f16440ae2f",
+        "path": "images/1000885243.jpg"
+      },
+      "path": "images/1000885243.jpg"
+    },
+    {
+      "id": "70f2c40e22639808cde7d552bede8e84689f4fd4",
+      "name": "1000885250.jpg",
+      "size": 139451,
+      "displayURL": {
+        "id": "70f2c40e22639808cde7d552bede8e84689f4fd4",
+        "path": "images/1000885250.jpg"
+      },
+      "path": "images/1000885250.jpg"
+    },
+    {
+      "id": "abf4e29586e69eaada5dc405d2126047cad81ab0",
+      "name": "1000885372.jpg",
+      "size": 36893,
+      "displayURL": {
+        "id": "abf4e29586e69eaada5dc405d2126047cad81ab0",
+        "path": "images/1000885372.jpg"
+      },
+      "path": "images/1000885372.jpg"
+    },
+    {
+      "id": "45ed4df58787b12262682d9816380ec2546767e6",
+      "name": "1000885391.jpg",
+      "size": 133773,
+      "displayURL": {
+        "id": "45ed4df58787b12262682d9816380ec2546767e6",
+        "path": "images/1000885391.jpg"
+      },
+      "path": "images/1000885391.jpg"
+    },
+    {
+      "id": "4f60547ce76c7a7dcde3c7487e46d4e339a933f3",
+      "name": "1000885398.jpg",
+      "size": 21603,
+      "displayURL": {
+        "id": "4f60547ce76c7a7dcde3c7487e46d4e339a933f3",
+        "path": "images/1000885398.jpg"
+      },
+      "path": "images/1000885398.jpg"
+    },
+    {
+      "id": "d3f302aeeef6c9b27283821b59126124b5b8732f",
+      "name": "1000885578.jpg",
+      "size": 72994,
+      "displayURL": {
+        "id": "d3f302aeeef6c9b27283821b59126124b5b8732f",
+        "path": "images/1000885578.jpg"
+      },
+      "path": "images/1000885578.jpg"
+    },
+    {
+      "id": "8d195d528234de222b54a82e47688dd72ea24eb3",
+      "name": "1000886744.jpg",
+      "size": 14464,
+      "displayURL": {
+        "id": "8d195d528234de222b54a82e47688dd72ea24eb3",
+        "path": "images/1000886744.jpg"
+      },
+      "path": "images/1000886744.jpg"
+    },
+    {
+      "id": "ae59f5c58c77b5c65a162c596dc097393590cd9d",
+      "name": "1000888480.jpg",
+      "size": 113640,
+      "displayURL": {
+        "id": "ae59f5c58c77b5c65a162c596dc097393590cd9d",
+        "path": "images/1000888480.jpg"
+      },
+      "path": "images/1000888480.jpg"
+    },
+    {
+      "id": "b8874240dd423ce4f447753c0cf9234d8bdb7bb8",
+      "name": "1000888482.jpg",
+      "size": 117887,
+      "displayURL": {
+        "id": "b8874240dd423ce4f447753c0cf9234d8bdb7bb8",
+        "path": "images/1000888482.jpg"
+      },
+      "path": "images/1000888482.jpg"
+    },
+    {
+      "id": "8efef729943c36e7b48fbc999b3dd40a9be454da",
+      "name": "1000888484.jpg",
+      "size": 139746,
+      "displayURL": {
+        "id": "8efef729943c36e7b48fbc999b3dd40a9be454da",
+        "path": "images/1000888484.jpg"
+      },
+      "path": "images/1000888484.jpg"
+    },
+    {
+      "id": "9fa45e1f95de6e926368acef651053da253a0787",
+      "name": "2.jpg",
+      "size": 490947,
+      "displayURL": {
+        "id": "9fa45e1f95de6e926368acef651053da253a0787",
+        "path": "images/2.jpg"
+      },
+      "path": "images/2.jpg"
+    },
+    {
+      "id": "42e07511b076f5368afe253f7baf1ac6c3ce150c",
+      "name": "3.jpg",
+      "size": 268094,
+      "displayURL": {
+        "id": "42e07511b076f5368afe253f7baf1ac6c3ce150c",
+        "path": "images/3.jpg"
+      },
+      "path": "images/3.jpg"
+    },
+    {
+      "id": "1915a70476cda9236a0ac7289ca44ec26ab1f8b8",
+      "name": "event.jpg",
+      "size": 115582,
+      "displayURL": {
+        "id": "1915a70476cda9236a0ac7289ca44ec26ab1f8b8",
+        "path": "images/event.jpg"
+      },
+      "path": "images/event.jpg"
+    },
+    {
+      "id": "ca14f4da0a3dc931730582be4df6912f0c3af9ed",
+      "name": "female.png",
+      "size": 10673,
+      "displayURL": {
+        "id": "ca14f4da0a3dc931730582be4df6912f0c3af9ed",
+        "path": "images/female.png"
+      },
+      "path": "images/female.png"
+    },
+    {
+      "id": "f2c4fb77c88a089db5840fb2ea3e55354e0aba97",
+      "name": "flash.jpg",
+      "size": 100941,
+      "displayURL": {
+        "id": "f2c4fb77c88a089db5840fb2ea3e55354e0aba97",
+        "path": "images/flash.jpg"
+      },
+      "path": "images/flash.jpg"
+    },
+    {
+      "id": "ad115f0f5a18f9801fa3a645fae1fa593b61fe49",
+      "name": "img-20260601-wa0000.jpg",
+      "size": 703863,
+      "displayURL": {
+        "id": "ad115f0f5a18f9801fa3a645fae1fa593b61fe49",
+        "path": "images/img-20260601-wa0000.jpg"
+      },
+      "path": "images/img-20260601-wa0000.jpg"
+    },
+    {
+      "id": "db9fb2a1c31df6e9ed6426b6286252557cee8ca6",
+      "name": "img-20260601-wa0001.jpg",
+      "size": 713415,
+      "displayURL": {
+        "id": "db9fb2a1c31df6e9ed6426b6286252557cee8ca6",
+        "path": "images/img-20260601-wa0001.jpg"
+      },
+      "path": "images/img-20260601-wa0001.jpg"
+    },
+    {
+      "id": "7439170913cd7fb928c7f0d65f8459a259fa2391",
+      "name": "img-20260630-wa0004.jpg",
+      "size": 71116,
+      "displayURL": {
+        "id": "7439170913cd7fb928c7f0d65f8459a259fa2391",
+        "path": "images/img-20260630-wa0004.jpg"
+      },
+      "path": "images/img-20260630-wa0004.jpg"
+    },
+    {
+      "id": "f7e6b75f09cc6862c89d5ba8a972cab38524774d",
+      "name": "img-20260710-wa0039.jpg",
+      "size": 90190,
+      "displayURL": {
+        "id": "f7e6b75f09cc6862c89d5ba8a972cab38524774d",
+        "path": "images/img-20260710-wa0039.jpg"
+      },
+      "path": "images/img-20260710-wa0039.jpg"
+    },
+    {
+      "id": "e64e48b146c235db948631ab917ed337d1186202",
+      "name": "img-20260710-wa0058.jpg",
+      "size": 46590,
+      "displayURL": {
+        "id": "e64e48b146c235db948631ab917ed337d1186202",
+        "path": "images/img-20260710-wa0058.jpg"
+      },
+      "path": "images/img-20260710-wa0058.jpg"
+    },
+    {
+      "id": "615601099f3590bd16f36eeaa92841f1848089a1",
+      "name": "img-20260720-wa0043.jpg",
+      "size": 315810,
+      "displayURL": {
+        "id": "615601099f3590bd16f36eeaa92841f1848089a1",
+        "path": "images/img-20260720-wa0043.jpg"
+      },
+      "path": "images/img-20260720-wa0043.jpg"
+    },
+    {
+      "id": "7122c03fa6f62b48a0e563447311d56e0ef1b794",
+      "name": "lib.png",
+      "size": 101568,
+      "displayURL": {
+        "id": "7122c03fa6f62b48a0e563447311d56e0ef1b794",
+        "path": "images/lib.png"
+      },
+      "path": "images/lib.png"
+    },
+    {
+      "id": "8a7d1579448fa7db0484c85e7eadbb23aa986b27",
+      "name": "logo.png",
+      "size": 1702801,
+      "displayURL": {
+        "id": "8a7d1579448fa7db0484c85e7eadbb23aa986b27",
+        "path": "images/logo.png"
+      },
+      "path": "images/logo.png"
+    },
+    {
+      "id": "3178c6ca466e119409c51ddb2f3c40f3e8d804d2",
+      "name": "male.png",
+      "size": 11892,
+      "displayURL": {
+        "id": "3178c6ca466e119409c51ddb2f3c40f3e8d804d2",
+        "path": "images/male.png"
+      },
+      "path": "images/male.png"
+    },
+    {
+      "id": "1195496e1c07ba14924f7a94f17e4cc662c9c16a",
+      "name": "principal.jpg",
+      "size": 36715,
+      "displayURL": {
+        "id": "1195496e1c07ba14924f7a94f17e4cc662c9c16a",
+        "path": "images/principal.jpg"
+      },
+      "path": "images/principal.jpg"
+    },
+    {
+      "id": "e0347dc1dd798c0692ab67badfd897a7369a0bf2",
+      "name": "tushar.jpg",
+      "size": 797559,
+      "displayURL": {
+        "id": "e0347dc1dd798c0692ab67badfd897a7369a0bf2",
+        "path": "images/tushar.jpg"
+      },
+      "path": "images/tushar.jpg"
     }
-  ]
+  ],
+  "label": "Highlights (posters & popup)",
+  "updatedOn": "",
+  "i18n": {},
+  "collection": "staff_content"
 }
