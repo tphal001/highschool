@@ -189,6 +189,27 @@ function normalizeImageField(val) {
   return "";
 }
 
+function normalizeHighlightCmsFile(data) {
+  if (!data || typeof data !== "object") return data;
+  var out = Object.assign({}, data);
+  if (!Array.isArray(out.items)) return out;
+  out.items = out.items
+    .map(function (it) {
+      if (!it || typeof it !== "object") return null;
+      var headline = String(it.headline || "").trim();
+      if (!headline) return null;
+      return Object.assign({}, it, {
+        posterImage: normalizeImageField(it.posterImage),
+        linkUrl: it.linkUrl != null ? String(it.linkUrl).trim() : "",
+        linkLabel: it.linkLabel || "View",
+        linkUrlLabel: it.linkUrlLabel || "Open link",
+        badge: it.badge || "Highlights",
+      });
+    })
+    .filter(Boolean);
+  return out;
+}
+
 function readJsonFile(fp) {
   return JSON.parse(fs.readFileSync(fp, "utf8"));
 }
@@ -241,7 +262,7 @@ function applyCmsFile(site, filename, data) {
       mergeGalleryBulkImages(site.gallery);
       break;
     case "highlight.json":
-      site.highlights = data;
+      site.highlights = normalizeHighlightCmsFile(data);
       break;
     case "quickAnnouncements.json":
       if (data.items) site.quickAnnouncements = data.items;

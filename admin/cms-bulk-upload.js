@@ -49,9 +49,14 @@
     input.dispatchEvent(new Event("input", { bubbles: true }));
   }
 
+  function isGalleryCmsRoute() {
+    return (window.location.hash || "").toLowerCase().indexOf("entries/gallery") >= 0;
+  }
+
   function patchInput(input) {
     if (!input || input.getAttribute("data-bulk-patched")) return;
     if (input.getAttribute("data-site-gallery-input")) return;
+    if (!isGalleryCmsRoute()) return;
     input.setAttribute("data-bulk-patched", "1");
     input.setAttribute("multiple", "multiple");
 

@@ -299,7 +299,13 @@ collections:
               - { label: Headline, name: headline, widget: string }
               - { label: Student / achiever name, name: studentName, widget: string, required: false }
               - { label: Accomplishment text, name: accomplishment, widget: text }
-              - { label: Poster photo, name: posterImage, widget: image, choose_url: false }
+              - {
+                  label: Poster photo,
+                  name: posterImage,
+                  widget: image,
+                  choose_url: false,
+                  required: false,
+                }
               - {
                   label: View button label,
                   name: linkLabel,
