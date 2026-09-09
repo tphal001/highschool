@@ -9,6 +9,7 @@ import {
   parseSiteContentFromContentJs,
   ensureFlashNews,
 } from "./parse-content.mjs";
+import { unwrapCmsPayload } from "./repair-cms-json.mjs";
 
 function todayIsoDate() {
   return new Date().toISOString().slice(0, 10);
@@ -211,7 +212,7 @@ function normalizeHighlightCmsFile(data) {
 }
 
 function readJsonFile(fp) {
-  return JSON.parse(fs.readFileSync(fp, "utf8"));
+  return unwrapCmsPayload(JSON.parse(fs.readFileSync(fp, "utf8")));
 }
 
 function readDefaults() {
@@ -499,6 +500,14 @@ function normalizeAlumniSpotlight(spot) {
 
 /** Single highlightNews → highlights.items; drop legacy key. */
 function normalizeHighlights(site) {
+  if (
+    site.highlights &&
+    site.highlights.data &&
+    !Array.isArray(site.highlights.items) &&
+    typeof site.highlights.data === "object"
+  ) {
+    site.highlights = normalizeHighlightCmsFile(unwrapCmsPayload(site.highlights));
+  }
   if (site.highlights && Array.isArray(site.highlights.items)) {
     delete site.highlightNews;
     return site;
@@ -533,6 +542,27 @@ function normalizeHighlights(site) {
   }
   delete site.highlightNews;
   return site;
+}
+
+/* Auto-repair corrupted Decap blobs on disk before merge (safe no-op when files are clean). */
+if (fs.existsSync(paths.cmsDir)) {
+  fs.readdirSync(paths.cmsDir)
+    .filter(function (f) {
+      return f.endsWith(".json");
+    })
+    .forEach(function (f) {
+      var fp = path.join(paths.cmsDir, f);
+      try {
+        var parsed = JSON.parse(fs.readFileSync(fp, "utf8"));
+        var clean = unwrapCmsPayload(parsed);
+        if (JSON.stringify(parsed) !== JSON.stringify(clean)) {
+          fs.writeFileSync(fp, JSON.stringify(clean, null, 2) + "\n", "utf8");
+          console.log("Repaired CMS file during build: " + f);
+        }
+      } catch (e) {
+        /* invalid JSON surfaces in mergeCms */
+      }
+    });
 }
 
 const defaults = readDefaults();

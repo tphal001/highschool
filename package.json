@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "node scripts/build-content.mjs",
-    "seed": "node scripts/seed-cms.mjs"
+    "seed": "node scripts/seed-cms.mjs",
+    "repair-cms": "node scripts/repair-cms-json.mjs"
   }
 }

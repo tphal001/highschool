@@ -17,9 +17,9 @@ window.SITE_CONTENT = {
       "image": "images/1.jpg"
     },
     "quickNews": [
-      "Spring arts showcase — tickets on sale this week.",
-      "Summer programmes registration is open for STEM and sports camps.",
-      "Parent–teacher conferences — book your slot through the portal."
+      "सलग दुसऱ्या वर्षी शिष्यवृत्ती परीक्षेत *डॉ. गदगकर हायस्कूल* ने गुणवत्ता यादीमध्ये स्थान मिळवले.",
+      "इयत्ता आठवीची विद्यार्थिनी *कुमारी दिव्या सुरेश फाळके* हिने शिष्यवृत्ती परीक्षेत *कोरेगाव तालुक्यामध्ये प्रथम* येऊन शाळेच्या शिरपेचात मानाचा तुरा खोवला.",
+      "स्नेहबंधांना अधिक दृढ करण्यासाठी आणि आपल्या सर्व माजी विद्यार्थ्यांना एका व्यासपीठावर एकत्र आणण्यासाठी माजी विद्यार्थी माहिती संकलन उपक्रम कार्यरत."
     ],
     "fundraising": {
       "href": "fund-appeal.html",
@@ -182,19 +182,26 @@ window.SITE_CONTENT = {
     "events": [
       {
         "title": "Annual day rehearsal schedule",
-        "summary": "Grade-wise timings and venue details are shared with parents.",
-        "showInNav": true
+        "summary": "Grade-wise timings & venue details are shared with parents.",
+        "showInNav": true,
+        "image": "/images/event.jpg"
       },
       {
         "title": "Inter-house sports meet",
-        "summary": "Track and field events; students report in house colours.",
+        "summary": "Track & field events; students report in house colours.",
         "showInNav": true
       },
       {
-        "title": "Virangana — campus spotlight",
+        "title": "Virangana - campus spotlight",
         "summary": "Highlights and updates from the campus spotlight.",
         "anchorId": "evt-virangana",
         "showInNav": true
+      },
+      {
+        "showInNav": true,
+        "title": "माजी विद्यार्थी मेळावा",
+        "summary": "13th September, 2026 - आपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल.",
+        "image": "/images/img-20260720-wa0043.jpg"
       }
     ],
     "notices": [
@@ -237,21 +244,16 @@ window.SITE_CONTENT = {
   },
   "quickAnnouncements": [
     {
-      "title": "Spring arts showcase — tickets",
-      "excerpt": "Music, theater, and visual arts. Early-bird pricing ends April 5.",
-      "body": "Our annual Spring Arts Showcase brings together music, theater, dance, and visual arts from students across all grades.\n\nEarly-bird tickets are available at the school office until April 5. Evening shows run April 12–14 in the auditorium.",
       "href": "news.html?ctx=events",
-      "image": "https://images.unsplash.com/photo-1513364776144-60967b0f800f?auto=format&fit=crop&w=800&q=80"
+      "title": "माजी विद्यार्थी संघ",
+      "excerpt": "Scan the QR Code to join our WhatsApp Group.",
+      "image": "/images/img-20260630-wa0004.jpg"
     },
     {
-      "title": "Summer programmes registration",
-      "excerpt": "STEM labs, creative writing, and sports camps.",
-      "href": "news.html?ctx=events"
-    },
-    {
-      "title": "Parent–teacher conferences",
-      "excerpt": "Book your slot through the portal.",
-      "href": "news.html?ctx=events"
+      "href": "news.html?ctx=events",
+      "image": "/images/img-20260720-wa0043.jpg",
+      "title": "माजी विद्यार्थी मेळावा",
+      "excerpt": "माजी विद्यार्थी मेळावा - 2026"
     }
   ],
   "gallery": {
@@ -384,12 +386,12 @@ window.SITE_CONTENT = {
         "enabled": true,
         "showOnHome": true,
         "badge": "Highlights",
-        "headline": "Gold Medal at State Science Olympiad",
-        "studentName": "Priya Deshmukh",
-        "accomplishment": "Our student secured first place among 200+ schools, bringing pride to Dr. Gadagkar High School and the Satararoad community.",
-        "posterImage": "https://images.unsplash.com/photo-1523050854058-8df90110c9f1?auto=format&fit=crop&w=1200&q=80",
+        "headline": "माजी विद्यार्थी मेळावा",
+        "studentName": "सर्व माजी विद्यार्थी",
+        "accomplishment": "*आवडते मज मनापासून शाळा,\nलावीते लळा जसा माय माऊली बाळा*\n\n१९६३ पासून अखंडपणे ज्ञानदानाचे कार्य करत, समाजाच्या सर्व स्तरांपर्यंत शिक्षण पोहोचवून एक शैक्षणिक क्रांती घडवणारी आपली अभिमानाची संस्था - श्री शिवाजी शिक्षण प्रसारक मंडळ सातारारोड संचलित, डॉ. गदगकर हायस्कूल व जरंडेश्वर कनिष्ठ महाविद्यालय, सातारारोड - आजही विद्यार्थ्यांच्या घडणीत महत्त्वाची भूमिका बजावत आहे.\n\nया स्नेहबंधांना अधिक दृढ करण्यासाठी आणि आपल्या सर्व माजी विद्यार्थ्यांना एका व्यासपीठावर एकत्र आणण्यासाठी आम्ही माजी विद्यार्थी माहिती संकलन उपक्रम हाती घेतला आहे.\n\nतरी सर्व माजी विद्यार्थ्यांनी आपली माहिती दिलेल्या लिंकद्वारे भरावी. तसेच, आपल्या वर्गमित्रांपर्यंत व परिचित माजी विद्यार्थ्यांपर्यंत ही लिंक जरूर पोहोचवावी, ही नम्र विनंती.\n\nआपला सहभाग हीच आपल्या शाळेप्रती कृतज्ञतेची खरी भावना ठरेल...!",
+        "posterImage": "/images/img-20260720-wa0043.jpg",
         "linkLabel": "View",
-        "linkUrl": "",
+        "linkUrl": "https://docs.google.com/forms/d/e/1FAIpQLSdpynZ6-v3caNLehbJy98HJblnm_EquCmFkqWNBQHn-cUJT_A/viewform?usp=header",
         "linkUrlLabel": "Open link",
         "cacheBust": "v1"
       },
@@ -397,14 +399,13 @@ window.SITE_CONTENT = {
         "enabled": true,
         "showOnHome": true,
         "badge": "Highlights",
-        "headline": "District sports championship winners",
-        "studentName": "Athletics team",
-        "accomplishment": "Our under-16 relay and long-jump teams brought home gold at the district meet — congratulations to coaches and students.",
-        "posterImage": "https://images.unsplash.com/photo-1574629810360-7efbbe195018?auto=format&fit=crop&w=1200&q=80",
+        "headline": "शिष्यवृत्ती परीक्षेत *दिव्या* कोरेगाव तालुक्यामध्ये प्रथम",
+        "studentName": "कुमारी दिव्या सुरेश फाळके",
+        "accomplishment": "*पालकांनी योग्य शाळेची केलेली निवड विद्यार्थ्यांचे भवितव्य ठरवते....*\nसलग दुसऱ्या वर्षी शिष्यवृत्ती परीक्षेत *डॉ. गदगकर हायस्कूल* ने गुणवत्ता यादी स्थान मिळवले आहे. यावर्षी आपल्या विद्यालयाची इयत्ता आठवीची विद्यार्थिनी *कुमारी दिव्या सुरेश फाळके* हिने *कोरेगाव तालुक्यामध्ये प्रथम* येऊन शाळेच्या शिरपेचात मानाचा तुरा खोवला आहे....\n दिव्या फाळके व तिला मार्गदर्शन करणाऱ्या सर्व शिक्षकांचे हार्दिक अभिनंदन.......💐💐💐",
+        "posterImage": "/images/1000879527.jpg",
         "linkLabel": "View",
         "linkUrl": "",
-        "linkUrlLabel": "Open link",
-        "cacheBust": "v1"
+        "linkUrlLabel": "Open link"
       }
     ]
   },
