@@ -20,15 +20,6 @@
     document.head.appendChild(st);
   }
 
-  if (typeof document !== "undefined" && !document.getElementById("site-devanagari-font")) {
-    var devFont = document.createElement("link");
-    devFont.id = "site-devanagari-font";
-    devFont.rel = "stylesheet";
-    devFont.href =
-      "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600&display=swap";
-    document.head.appendChild(devFont);
-  }
-
   if (typeof document !== "undefined" && !document.getElementById("site-atmosphere-css")) {
     var link = document.createElement("link");
     link.id = "site-atmosphere-css";
@@ -421,42 +412,8 @@
     );
   }
 
-  function buildLogoMottoArcSvg(motto) {
-    return (
-      '<svg class="site-logo-crest__arc" viewBox="0 0 120 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
-      '<defs><path id="site-logo-motto-arc" d="M 4 14 A 140 140 0 0 1 116 14" /></defs>' +
-      '<text class="site-logo-crest__text" font-size="7.5" font-weight="600" font-family="Noto Sans Devanagari, Nirmala UI, Mangal, sans-serif" fill="#0e7490">' +
-      '<textPath href="#site-logo-motto-arc" startOffset="50%" text-anchor="middle">' +
-      motto +
-      "</textPath></text></svg>"
-    );
-  }
-
   function buildLogoCrestHtml(schoolName) {
-    var inner = buildLogoMarkInner(schoolName);
-    var motto = (cfg.logoMottoMr || "").trim();
-    if (!motto) return inner;
-
-    var crestedMark = inner
-      .replace(
-        'class="site-logo-mark"',
-        'class="site-logo-mark site-logo-mark--crested"'
-      )
-      .replace(
-        'class="site-logo-mark site-logo-mark--initials',
-        'class="site-logo-mark site-logo-mark--crested site-logo-mark--initials'
-      )
-      .replace(/^(<(?:span|div) class="site-logo-mark[^"]*">)/, "$1" + buildLogoMottoArcSvg(motto));
-
-    return (
-      '<span class="site-logo-crest" title="' +
-      esc(motto) +
-      '">' +
-      crestedMark +
-      '<span class="sr-only">' +
-      esc(motto) +
-      "</span></span>"
-    );
+    return buildLogoMarkInner(schoolName);
   }
 
   class SiteNavbar extends HTMLElement {
