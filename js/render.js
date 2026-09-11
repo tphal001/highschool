@@ -614,16 +614,11 @@
   function buildHeroInstitutionLeadHtml(line) {
     line = (line || "").trim();
     if (!line) return "";
-    var comma = line.indexOf(",");
-    if (comma === -1) {
-      return '<p class="hero-institutions-card__lead">' + esc(line) + "</p>";
-    }
     return (
+      '<div class="hero-institutions-card__lead-track">' +
       '<p class="hero-institutions-card__lead">' +
-      esc(line.slice(0, comma + 1)) +
-      '<span class="hero-institutions-card__lead-sub">' +
-      esc(line.slice(comma + 1).trim()) +
-      "</span></p>"
+      esc(line) +
+      "</p></div>"
     );
   }
 

@@ -728,32 +728,50 @@ body.site-body[data-page="home"] .hero-institutions-card__inner {
 
 body.site-body[data-page="home"] .hero-institutions-card__head {
   flex-shrink: 0;
+  container-type: inline-size;
+  overflow: hidden;
   padding-bottom: 0.3rem;
   border-bottom: 1px solid rgba(8, 145, 178, 0.14);
-  text-align: center;
+}
+
+body.site-body[data-page="home"] .hero-institutions-card__lead-track {
+  display: block;
+  width: max-content;
+  min-width: 100%;
+  animation: hero-institutions-lead-pan 10s ease-in-out infinite alternate;
 }
 
 body.site-body[data-page="home"] .hero-institutions-card__lead,
-body.site-body[data-page="home"] .hero-institutions-card__lead-sub,
 body.site-body[data-page="home"] .hero-institutions-school__name {
   font-family: "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif;
 }
 
 body.site-body[data-page="home"] .hero-institutions-card__lead {
   margin: 0;
+  display: inline-block;
+  white-space: nowrap;
   font-size: 0.8125rem;
   font-weight: 700;
   line-height: 1.35;
   color: #0c4a6e;
 }
 
-body.site-body[data-page="home"] .hero-institutions-card__lead-sub {
-  display: block;
-  margin-top: 0.05rem;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  line-height: 1.35;
-  color: #0c4a6e;
+@keyframes hero-institutions-lead-pan {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(min(0px, calc(100cqw - 100%)));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.site-body[data-page="home"] .hero-institutions-card__lead-track {
+    animation: none;
+    width: 100%;
+    text-align: center;
+  }
 }
 
 body.site-body[data-page="home"] .hero-institutions-schools {
@@ -868,8 +886,7 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview img {
     padding-bottom: 0.35rem;
   }
 
-  body.site-body[data-page="home"] .hero-institutions-card__lead,
-  body.site-body[data-page="home"] .hero-institutions-card__lead-sub {
+  body.site-body[data-page="home"] .hero-institutions-card__lead {
     font-size: 0.875rem;
   }
 
