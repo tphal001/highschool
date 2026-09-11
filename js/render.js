@@ -615,10 +615,9 @@
     line = (line || "").trim();
     if (!line) return "";
     return (
-      '<div class="hero-institutions-card__lead-track">' +
-      '<p class="hero-institutions-card__lead">' +
+      '<marquee class="hero-institutions-card__marquee" behavior="alternate" direction="left" scrollamount="3" truespeed="truespeed">' +
       esc(line) +
-      "</p></div>"
+      "</marquee>"
     );
   }
 

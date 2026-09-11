@@ -683,28 +683,20 @@ body.site-body[data-page="home"] .hero-institutions-card__inner {
 
 body.site-body[data-page="home"] .hero-institutions-card__head {
   flex-shrink: 0;
-  container-type: inline-size;
   overflow: hidden;
   padding-bottom: 0.3rem;
   border-bottom: 1px solid rgba(8, 145, 178, 0.14);
 }
 
-body.site-body[data-page="home"] .hero-institutions-card__lead-track {
-  display: block;
-  width: max-content;
-  min-width: 100%;
-  animation: hero-institutions-lead-pan 12s ease-in-out infinite alternate;
-}
-
-body.site-body[data-page="home"] .hero-institutions-card__lead,
+body.site-body[data-page="home"] .hero-institutions-card__marquee,
 body.site-body[data-page="home"] .hero-institutions-school__name {
   font-family: "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif;
 }
 
-body.site-body[data-page="home"] .hero-institutions-card__lead {
+body.site-body[data-page="home"] .hero-institutions-card__marquee {
   margin: 0;
-  display: inline-block;
-  white-space: nowrap;
+  display: block;
+  width: 100%;
   font-size: 0.75rem;
   font-weight: 800;
   line-height: 1.4;
@@ -714,21 +706,11 @@ body.site-body[data-page="home"] .hero-institutions-card__lead {
   text-rendering: optimizeLegibility;
 }
 
-@keyframes hero-institutions-lead-pan {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(min(0px, calc(100cqw - 100%)));
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  body.site-body[data-page="home"] .hero-institutions-card__lead-track {
-    animation: none;
-    width: 100%;
-    text-align: center;
+  body.site-body[data-page="home"] .hero-institutions-card__marquee {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 }
 
@@ -852,7 +834,7 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview img {
     padding-bottom: 0.35rem;
   }
 
-  body.site-body[data-page="home"] .hero-institutions-card__lead {
+  body.site-body[data-page="home"] .hero-institutions-card__marquee {
     font-size: 0.8125rem;
   }
 
