@@ -677,21 +677,11 @@
         '<span class="text-lg leading-none" aria-hidden="true">&#8250;</span></button>' +
         '<div id="hero-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>' +
         "</div></div>" +
-        '<div class="min-w-0 lg:col-span-7 lg:row-start-2" data-reveal>' +
-        '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
-        esc(he.badge) +
-        "</p>" +
-        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl">' +
-        headlineHtml() +
-        "</h1>" +
-        '<div class="mt-2.5">' +
-        buildHeroSchoolsBlockHtml(he) +
-        "</div></div>" +
-        '<div class="hero-right-stack min-w-0 lg:col-span-5 lg:row-start-1 lg:row-span-2" data-reveal>' +
+        '<div class="hero-fund-slot min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-1" data-reveal>' +
         '<a href="' +
         esc(fundHref) +
-        '" class="hero-fund-card group flex min-h-0 flex-1 flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
-        '<div class="site-glass site-card-3d flex min-h-0 flex-1 flex-col rounded-xl border border-mes-primary/10 p-3 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:border-mes-primary/40 group-hover:shadow-lg group-hover:shadow-mes-primary/20 sm:p-4">' +
+        '" class="hero-fund-card group flex h-full min-h-0 flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
+        '<div class="site-glass site-card-3d flex h-full min-h-0 flex-col rounded-xl border border-mes-primary/10 p-3 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:border-mes-primary/40 group-hover:shadow-lg group-hover:shadow-mes-primary/20 sm:p-4">' +
         '<div class="shrink-0 border-b border-slate-200 pb-2">' +
         '<h2 class="relative inline-block pb-1.5 font-display text-base font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-12 after:bg-mes-red sm:text-lg">' +
         esc(fr.sectionTitle || "Fund raising appeal") +
@@ -699,7 +689,7 @@
         '<h3 class="mt-2 shrink-0 text-xs font-bold leading-snug text-mes-primary sm:mt-3 sm:text-sm">' +
         esc(fr.title || "") +
         "</h3>" +
-        '<div class="relative mt-2 min-h-[4.5rem] flex-1 overflow-hidden rounded-md border border-slate-200 bg-white sm:mt-3 sm:min-h-[5rem]">' +
+        '<div class="hero-fund-card__media relative mt-2 min-h-0 flex-1 overflow-hidden rounded-md border border-slate-200 bg-white sm:mt-3">' +
         '<img src="' +
         esc(fr.image || he.image) +
         '" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy"/>' +
@@ -715,7 +705,18 @@
         "</span><span>" +
         esc(fr.footerLine || "") +
         '</span></div><p class="site-action-link mt-2 shrink-0 text-[11px] font-semibold group-hover:underline sm:mt-3 sm:text-xs">View full appeal →</p>' +
-        "</div></a>" +
+        "</div></a></div>" +
+        '<div class="hero-copy-slot min-w-0 lg:col-span-7 lg:row-start-2" data-reveal>' +
+        '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
+        esc(he.badge) +
+        "</p>" +
+        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl">' +
+        headlineHtml() +
+        "</h1>" +
+        '<div class="mt-2.5">' +
+        buildHeroSchoolsBlockHtml(he) +
+        "</div></div>" +
+        '<div class="hero-gallery-slot min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-2" data-reveal>' +
         buildGalleryPreviewCardHtml({ heroBand: true }) +
         "</div></div></div>";
     }

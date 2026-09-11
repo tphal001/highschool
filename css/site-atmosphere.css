@@ -766,33 +766,49 @@ body.site-body[data-page="home"] .hero-institutions-list__name {
   color: #0c4a6e;
 }
 
-body.site-body[data-page="home"] .hero-right-stack {
+/* Row 1 right: fund appeal matches slideshow height only */
+body.site-body[data-page="home"] .hero-fund-slot {
+  min-height: 0;
+}
+
+body.site-body[data-page="home"] .hero-fund-slot .hero-fund-card {
+  height: 100%;
+  min-height: 0;
+}
+
+body.site-body[data-page="home"] .hero-fund-slot .hero-fund-card__media {
+  min-height: 0;
+}
+
+/* Row 2 right: gallery starts at the badge / “60+ years…” line */
+body.site-body[data-page="home"] .hero-gallery-slot {
   display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
   min-height: 0;
 }
 
-body.site-body[data-page="home"] .hero-right-stack .hero-fund-card {
+body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link {
+  display: flex;
   flex: 1 1 auto;
+  width: 100%;
   min-height: 0;
+  height: auto !important;
 }
 
-body.site-body[data-page="home"] .hero-right-stack .hero-gallery-link {
-  flex: 0 0 auto;
-  height: auto !important;
+body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  width: 100%;
+  min-height: 7.125rem;
+  height: auto;
   max-height: none;
 }
 
-body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview-wrap {
-  height: 7.125rem;
-  max-height: 7.125rem;
-  flex-shrink: 0;
-}
-
-body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview {
-  height: 4.35rem;
-  max-height: 4.35rem;
+body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview {
+  flex: 1 1 auto;
+  min-height: 4.35rem;
+  height: auto;
+  max-height: none;
 }
 
 @media (min-width: 640px) {
@@ -812,14 +828,23 @@ body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview {
     font-size: 0.6875rem;
   }
 
-  body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview-wrap {
-    height: 7.375rem;
-    max-height: 7.375rem;
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap {
+    min-height: 7.375rem;
   }
 
-  body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview {
-    height: 4.55rem;
-    max-height: 4.55rem;
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview {
+    min-height: 4.55rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  body.site-body[data-page="home"] .hero-gallery-slot {
+    align-self: stretch;
+  }
+
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link,
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap {
+    height: 100%;
   }
 }
 
