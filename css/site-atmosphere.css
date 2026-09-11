@@ -2,6 +2,8 @@
  * Site-wide ambient background, dual-tone layers, and partition depth.
  */
 
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600&display=swap");
+
 :root {
   /* Soft ice blue — sky/cyan family, one step darker than sky-50 */
   --site-cream: #e0f2fe;
@@ -533,6 +535,39 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   align-self: center;
 }
 
+/* Logo crest — Marathi motto on a soft arc above the circular mark */
+.site-logo-crest {
+  position: relative;
+  display: flex;
+  height: 4.65rem;
+  width: 4.65rem;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.site-logo-crest__arc {
+  position: absolute;
+  inset: -0.15rem;
+  width: calc(100% + 0.3rem);
+  height: calc(100% + 0.3rem);
+  overflow: visible;
+  pointer-events: none;
+}
+
+.site-logo-crest__text {
+  font-family: "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif;
+  font-size: 6.75px;
+  font-weight: 600;
+  fill: rgba(14, 116, 144, 0.62);
+  letter-spacing: 0.04em;
+}
+
+.site-logo-crest .site-logo-mark {
+  position: relative;
+  z-index: 1;
+}
+
 /* Circular logo — blends PNG white box into header gradient */
 .site-logo-mark {
   display: flex;
@@ -562,6 +597,15 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 }
 
 @media (min-width: 640px) {
+  .site-logo-crest {
+    height: 5.35rem;
+    width: 5.35rem;
+  }
+
+  .site-logo-crest__text {
+    font-size: 7.25px;
+  }
+
   .site-logo-mark {
     height: 4.75rem;
     width: 4.75rem;
@@ -653,6 +697,21 @@ body.site-body[data-page="home"] #hero-slider {
     0 1px 0 rgba(255, 255, 255, 0.5) inset,
     0 16px 40px -12px rgba(12, 74, 110, 0.2),
     0 0 0 1px rgba(8, 145, 178, 0.06) !important;
+}
+
+body.site-body[data-page="home"] .hero-schools-grid {
+  grid-auto-rows: 1fr;
+}
+
+body.site-body[data-page="home"] .hero-school-postcard {
+  min-height: 3.75rem;
+}
+
+@media (min-width: 1024px) {
+  body.site-body[data-page="home"] .hero-schools-band,
+  body.site-body[data-page="home"] .hero-gallery-preview-wrap {
+    min-height: 10.75rem;
+  }
 }
 
 /* ── Inner pages: standard full-width content (no floating box) ── */

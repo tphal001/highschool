@@ -391,6 +391,46 @@
     );
   }
 
+  function buildLogoMarkInner(schoolName) {
+    var initials = (cfg.logoInitials || "S").trim() || "S";
+    var logoImg = (cfg.logoImageUrl || "").trim();
+    if (logoImg) {
+      return (
+        '<span class="site-logo-mark">' +
+        '<img src="' +
+        esc(logoImg) +
+        '" alt="' +
+        esc(schoolName) +
+        '" class="site-logo-mark__img" />' +
+        "</span>"
+      );
+    }
+    return (
+      '<div class="site-logo-mark site-logo-mark--initials flex items-center justify-center text-lg font-bold text-mes-primary sm:text-xl">' +
+      esc(initials) +
+      "</div>"
+    );
+  }
+
+  function buildLogoCrestHtml(schoolName) {
+    var inner = buildLogoMarkInner(schoolName);
+    var motto = (cfg.logoMottoMr || "").trim();
+    if (!motto) return inner;
+    return (
+      '<span class="site-logo-crest">' +
+      '<svg class="site-logo-crest__arc" viewBox="0 0 100 100" aria-hidden="true" focusable="false">' +
+      '<defs><path id="site-logo-motto-arc" d="M 12 54 A 38 38 0 0 1 88 54" /></defs>' +
+      '<text class="site-logo-crest__text">' +
+      '<textPath href="#site-logo-motto-arc" xlink:href="#site-logo-motto-arc" startOffset="50%" text-anchor="middle">' +
+      esc(motto) +
+      "</textPath></text></svg>" +
+      inner +
+      '<span class="sr-only">' +
+      esc(motto) +
+      "</span></span>"
+    );
+  }
+
   class SiteNavbar extends HTMLElement {
     connectedCallback() {
       var schoolName =
@@ -402,19 +442,7 @@
           ? window.resolveNavLinks(cfg)
           : parseJson(this.getAttribute("nav-links"), cfg.navLinks || []);
 
-      var initials = (cfg.logoInitials || "S").trim() || "S";
-      var logoImg = (cfg.logoImageUrl || "").trim();
-      var logoBlock = logoImg
-        ? '<span class="site-logo-mark">' +
-          '<img src="' +
-          esc(logoImg) +
-          '" alt="' +
-          esc(schoolName) +
-          '" class="site-logo-mark__img" />' +
-          "</span>"
-        : '<div class="site-logo-mark site-logo-mark--initials flex items-center justify-center text-lg font-bold text-mes-primary sm:text-xl">' +
-          esc(initials) +
-          "</div>";
+      var logoBlock = buildLogoCrestHtml(schoolName);
 
       var infoBoxes = buildHeaderInfoBoxes();
 

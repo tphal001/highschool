@@ -116,7 +116,9 @@
     return imgs;
   }
 
-  function buildGalleryPreviewCardHtml() {
+  function buildGalleryPreviewCardHtml(opts) {
+    opts = opts || {};
+    var fillHeight = !!opts.fillHeight;
     var galleryHref = "gallery.html?ctx=gallery#photo";
     var imgs = galleryAllImageSrcs(C.gallery);
     if (!imgs.length) {
@@ -133,13 +135,28 @@
         esc(first) +
         '" alt="" class="h-full w-full object-cover transition-opacity duration-500" loading="lazy"/>'
       : '<div class="flex h-full items-center justify-center px-4 text-center text-xs text-slate-500">Add photos in the CMS gallery.</div>';
+    var previewClass = fillHeight
+      ? "hero-gallery-preview relative mt-1.5 min-h-[5.5rem] flex-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
+      : "relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]";
+    var shellClass = fillHeight
+      ? "site-glass site-card-3d hero-gallery-preview-wrap flex h-full min-h-[9.5rem] flex-col rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
+      : "site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35";
+    var linkClass =
+      "group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" +
+      (fillHeight ? " h-full" : "");
     return (
       '<a href="' +
       esc(galleryHref) +
-      '" class="group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" aria-label="Open campus photo gallery">' +
-      '<div class="site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35">' +
-      '<p class="text-[10px] font-bold uppercase tracking-wider text-mes-primary">Our picture gallery</p>' +
-      '<div id="home-gallery-preview" class="relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]"' +
+      '" class="' +
+      linkClass +
+      '" aria-label="Open campus photo gallery">' +
+      '<div class="' +
+      shellClass +
+      '">' +
+      '<p class="shrink-0 text-[10px] font-bold uppercase tracking-wider text-mes-primary">Our picture gallery</p>' +
+      '<div id="home-gallery-preview" class="' +
+      previewClass +
+      '"' +
       (imgs.length > 1 ? ' data-gallery-preview="1"' : "") +
       ">" +
       mediaHtml +
@@ -590,29 +607,34 @@
     );
   }
 
-  function buildHeroSubtextHtml(he) {
+  function buildHeroSchoolPostcardHtml(name) {
+    return (
+      '<article class="hero-school-postcard site-card-3d flex flex-col justify-center rounded-lg border border-mes-primary/15 bg-gradient-to-br from-white via-white to-slate-50 px-3 py-2.5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-mes-accent/45 hover:shadow-md sm:px-3.5 sm:py-3">' +
+      '<span class="hero-school-postcard__rule mb-2 block h-0.5 w-9 rounded-full bg-gradient-to-r from-mes-accent to-mes-primary/30" aria-hidden="true"></span>' +
+      '<p class="font-display text-[0.8125rem] font-semibold leading-snug text-mes-primary sm:text-sm">' +
+      esc(name) +
+      "</p></article>"
+    );
+  }
+
+  function buildHeroSchoolsBlockHtml(he) {
     he = he || {};
     var names = Array.isArray(he.schoolNames) ? he.schoolNames.filter(Boolean) : [];
     var line = (he.subtext || "").trim();
     if (!line && !names.length) return "";
     var html =
-      '<div class="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">';
+      '<div class="hero-schools-band flex h-full min-h-[9.5rem] flex-col">';
     if (line) {
-      html += '<p class="font-semibold text-mes-primary">' + esc(line) + "</p>";
+      html +=
+        '<p class="shrink-0 text-sm font-semibold leading-snug text-mes-primary sm:text-base">' +
+        esc(line) +
+        "</p>";
     }
     if (names.length) {
       html +=
-        '<ul class="mt-2 list-none space-y-1 pl-0 text-slate-700">' +
-        names
-          .map(function (name) {
-            return (
-              '<li class="flex gap-2"><span class="text-mes-accent" aria-hidden="true">•</span><span>' +
-              esc(name) +
-              "</span></li>"
-            );
-          })
-          .join("") +
-        "</ul>";
+        '<div class="hero-schools-grid mt-2 grid flex-1 grid-cols-2 gap-2 sm:gap-2.5">' +
+        names.map(buildHeroSchoolPostcardHtml).join("") +
+        "</div>";
     }
     html += "</div>";
     return html;
@@ -660,18 +682,20 @@
         '<span class="text-lg leading-none" aria-hidden="true">&#8250;</span></button>' +
         '<div id="hero-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>' +
         "</div></div>" +
-        '<div class="min-w-0 lg:col-span-7 lg:row-start-2" data-reveal>' +
+        '<div class="min-w-0 lg:col-span-12 lg:row-start-2" data-reveal>' +
         '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(he.badge) +
         "</p>" +
-        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl">' +
+        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl lg:max-w-3xl">' +
         headlineHtml() +
         "</h1>" +
-        buildHeroSubtextHtml(he) +
+        '<div class="mt-3 grid gap-3 lg:grid-cols-12 lg:items-stretch lg:gap-x-6">' +
+        '<div class="min-w-0 lg:col-span-7">' +
+        buildHeroSchoolsBlockHtml(he) +
         "</div>" +
-        '<div class="min-w-0 lg:col-span-5 lg:row-start-2 flex flex-col justify-start lg:self-end" data-reveal>' +
-        buildGalleryPreviewCardHtml() +
-        "</div>" +
+        '<div class="min-w-0 lg:col-span-5 flex">' +
+        buildGalleryPreviewCardHtml({ fillHeight: true }) +
+        "</div></div></div>" +
         '<aside class="flex min-h-0 min-w-0 flex-col lg:col-span-5 lg:row-start-1 lg:h-full">' +
         '<a href="' +
         esc(fundHref) +

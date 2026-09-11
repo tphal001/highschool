@@ -21,6 +21,8 @@ window.SITE_CONFIG = {
   logoInitials: "DG",
   /** School logo in the header (PNG/SVG). Leave "" to use initials badge. */
   logoImageUrl: "/images/logo.png",
+  /** Marathi motto curved above the logo (header crest). Leave "" to hide. */
+  logoMottoMr: "दुरितांचे तिमिर जावो",
   address: "Dr. Gadagkar Highschool, Satararoad, Tal. Koregaon, Dist. Satara - 415010",
   logoHref: "index.html",
   /** Must match the Home nav link href (used for the “vimp” notice modal). */
