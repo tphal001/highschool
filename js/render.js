@@ -630,9 +630,11 @@
         "</ul>"
       : "";
     return (
-      '<article class="hero-institutions-card site-glass site-card-3d h-full overflow-hidden rounded-xl border border-mes-primary/15 bg-gradient-to-br from-white via-white to-slate-50/90 p-2.5 shadow-sm sm:p-3">' +
+      '<article class="hero-institutions-card site-glass site-card-3d h-full overflow-hidden rounded-xl border border-mes-primary/15 bg-gradient-to-br from-white via-white to-slate-50/90 shadow-sm">' +
       (line
-        ? '<p class="hero-institutions-card__lead">' + esc(line) + "</p>"
+        ? '<header class="hero-institutions-card__head"><p class="hero-institutions-card__lead">' +
+          esc(line) +
+          "</p></header>"
         : "") +
       listHtml +
       "</article>"
@@ -712,7 +714,7 @@
         "</div></a></div>" +
         '<div class="hero-lower-band min-w-0 lg:col-span-12 lg:row-start-2">' +
         '<div class="hero-lower-band__grid">' +
-        '<p class="hero-lower-badge text-[11px] font-semibold uppercase tracking-wider text-slate-500" data-reveal>' +
+        '<p class="hero-lower-badge text-[11px] font-bold uppercase tracking-wider text-slate-700" data-reveal>' +
         esc(he.badge) +
         "</p>" +
         '<h1 class="hero-lower-headline font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl" data-reveal>' +

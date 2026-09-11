@@ -429,9 +429,9 @@
       '<span class="site-logo-crest" title="' +
       esc(motto) +
       '">' +
-      '<svg class="site-logo-crest__arc" viewBox="0 0 180 72" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
-      '<defs><path id="site-logo-motto-arc" d="M 6 58 A 84 84 0 0 1 174 58" /></defs>' +
-      '<text class="site-logo-crest__text" font-size="12" font-weight="600" font-family="Noto Sans Devanagari, Nirmala UI, Mangal, sans-serif" fill="#0e7490">' +
+      '<svg class="site-logo-crest__arc" viewBox="0 0 180 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
+      '<defs><path id="site-logo-motto-arc" d="M 10 36 A 80 80 0 0 1 170 36" /></defs>' +
+      '<text class="site-logo-crest__text" font-size="11" font-weight="600" font-family="Noto Sans Devanagari, Nirmala UI, Mangal, sans-serif" fill="#0e7490">' +
       '<textPath href="#site-logo-motto-arc" startOffset="50%" text-anchor="middle">' +
       motto +
       "</textPath></text></svg>" +

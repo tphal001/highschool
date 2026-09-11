@@ -541,12 +541,12 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   overflow: visible;
 }
 
-/* Logo crest — Marathi motto on a soft arc above the circular mark */
+/* Logo crest — Marathi motto on a soft arc hugging the circular mark */
 .site-logo-crest {
   position: relative;
   display: flex;
-  height: 5.35rem;
-  width: 6.75rem;
+  height: 4.85rem;
+  width: 5.5rem;
   flex-shrink: 0;
   align-items: flex-end;
   justify-content: center;
@@ -555,11 +555,11 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 
 .site-logo-crest__arc {
   position: absolute;
-  top: 0;
   left: 50%;
+  bottom: 4rem;
   z-index: 2;
-  width: 6.75rem;
-  height: 2.85rem;
+  width: 5.65rem;
+  height: 1.45rem;
   overflow: visible;
   pointer-events: none;
   transform: translateX(-50%);
@@ -606,17 +606,18 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 
 @media (min-width: 640px) {
   .site-logo-crest {
-    height: 5.65rem;
-    width: 7.25rem;
+    height: 5.15rem;
+    width: 6rem;
   }
 
   .site-logo-crest__arc {
-    width: 7.25rem;
-    height: 3rem;
+    width: 6.15rem;
+    height: 1.55rem;
+    bottom: 4.75rem;
   }
 
   .site-logo-crest__text {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .site-logo-mark {
@@ -713,35 +714,51 @@ body.site-body[data-page="home"] #hero-slider {
 }
 
 /* Home hero — institutions postcard + right column (fund + gallery stack) */
+body.site-body[data-page="home"] .hero-lower-badge {
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #334155;
+}
+
 body.site-body[data-page="home"] .hero-institutions-card {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   height: 7.75rem;
 }
 
+body.site-body[data-page="home"] .hero-institutions-card__head,
 body.site-body[data-page="home"] .hero-institutions-card__lead,
 body.site-body[data-page="home"] .hero-institutions-list__name {
   font-family: "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif;
+}
+
+body.site-body[data-page="home"] .hero-institutions-card__head {
+  flex-shrink: 0;
+  border-bottom: 1px solid rgba(8, 145, 178, 0.16);
+  background: linear-gradient(180deg, rgba(224, 242, 254, 0.55) 0%, rgba(255, 255, 255, 0.92) 100%);
+  padding: 0.45rem 0.65rem 0.4rem;
 }
 
 body.site-body[data-page="home"] .hero-institutions-card__lead {
   margin: 0;
   font-size: 0.8125rem;
   font-weight: 700;
-  line-height: 1.4;
-  color: #0e7490;
+  line-height: 1.35;
+  color: #0c4a6e;
   text-align: center;
 }
 
 body.site-body[data-page="home"] .hero-institutions-list {
-  margin: 0.4rem 0 0;
-  padding: 0;
+  margin: 0;
+  padding: 0.45rem 0.65rem 0.5rem;
   list-style: none;
   display: grid;
+  flex: 1 1 auto;
+  align-content: center;
   grid-template-columns: 1fr 1fr;
-  column-gap: 0.75rem;
-  row-gap: 0.25rem;
+  column-gap: 0.65rem;
+  row-gap: 0.2rem;
 }
 
 body.site-body[data-page="home"] .hero-institutions-list li {
@@ -833,8 +850,16 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview img {
     height: 8rem;
   }
 
+  body.site-body[data-page="home"] .hero-institutions-card__head {
+    padding: 0.5rem 0.75rem 0.45rem;
+  }
+
   body.site-body[data-page="home"] .hero-institutions-card__lead {
-    font-size: 0.9375rem;
+    font-size: 0.875rem;
+  }
+
+  body.site-body[data-page="home"] .hero-institutions-list {
+    padding: 0.5rem 0.75rem 0.55rem;
   }
 
   body.site-body[data-page="home"] .hero-institutions-list__name {
