@@ -10,7 +10,13 @@
       "badge": "60+ years of excellence · Est. 1963",
       "headline": "Where curiosity meets purpose.",
       "headlineAccent": "purpose",
-      "subtext": "Dr. Gadagkar High School, Satararoad nurtures scholarship, character, and leadership for every learner.",
+      "subtext": "श्री शिवाजी शिक्षण प्रसारक मंडळ, सातारारोड संचलित",
+      "schoolNames": [
+        "डॉ. गदगकर हायस्कूल",
+        "जरंडेश्वर कनिष्ठ महाविद्यालय",
+        "श्रीमती लक्ष्मीबाई केळकर प्राथमिक शाळा",
+        "डॉ. गदगकर शिशुविहार"
+      ],
       "image": "images/1.jpg"
     },
     "quickNews": [

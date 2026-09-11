@@ -590,6 +590,34 @@
     );
   }
 
+  function buildHeroSubtextHtml(he) {
+    he = he || {};
+    var names = Array.isArray(he.schoolNames) ? he.schoolNames.filter(Boolean) : [];
+    var line = (he.subtext || "").trim();
+    if (!line && !names.length) return "";
+    var html =
+      '<div class="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">';
+    if (line) {
+      html += '<p class="font-semibold text-mes-primary">' + esc(line) + "</p>";
+    }
+    if (names.length) {
+      html +=
+        '<ul class="mt-2 list-none space-y-1 pl-0 text-slate-700">' +
+        names
+          .map(function (name) {
+            return (
+              '<li class="flex gap-2"><span class="text-mes-accent" aria-hidden="true">•</span><span>' +
+              esc(name) +
+              "</span></li>"
+            );
+          })
+          .join("") +
+        "</ul>";
+    }
+    html += "</div>";
+    return html;
+  }
+
   function renderHomePage() {
     var h = C.home;
     if (!h) return;
@@ -639,9 +667,7 @@
         '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl">' +
         headlineHtml() +
         "</h1>" +
-        '<p class="mt-3 max-w-2xl text-base leading-relaxed text-slate-600 sm:text-lg">' +
-        esc(he.subtext) +
-        "</p>" +
+        buildHeroSubtextHtml(he) +
         "</div>" +
         '<div class="min-w-0 lg:col-span-5 lg:row-start-2 flex flex-col justify-start lg:self-end" data-reveal>' +
         buildGalleryPreviewCardHtml() +
