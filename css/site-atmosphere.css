@@ -780,7 +780,11 @@ body.site-body[data-page="home"] .hero-fund-slot .hero-fund-card__media {
   min-height: 0;
 }
 
-/* Row 2 right: gallery starts at the badge / “60+ years…” line */
+/* Row 2: copy + gallery share one band — left sets height, gallery matches */
+body.site-body[data-page="home"] .hero-lower-band__grid {
+  align-items: stretch;
+}
+
 body.site-body[data-page="home"] .hero-gallery-slot {
   display: flex;
   min-height: 0;
@@ -801,14 +805,12 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap {
   width: 100%;
   min-height: 7.125rem;
   height: auto;
-  max-height: none;
 }
 
 body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview {
   flex: 1 1 auto;
   min-height: 4.35rem;
   height: auto;
-  max-height: none;
 }
 
 @media (min-width: 640px) {
@@ -838,13 +840,33 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview {
 }
 
 @media (min-width: 1024px) {
+  body.site-body[data-page="home"] .hero-copy-slot {
+    grid-column: span 7 / span 7;
+  }
+
   body.site-body[data-page="home"] .hero-gallery-slot {
-    align-self: stretch;
+    grid-column: 8 / -1;
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
   }
 
   body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link,
-  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap {
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap,
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview {
     height: 100%;
+    min-height: 0;
+    max-height: 100%;
+  }
+
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview {
+    flex: 1 1 auto;
+    min-height: 0;
   }
 }
 

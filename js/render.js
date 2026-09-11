@@ -706,7 +706,9 @@
         esc(fr.footerLine || "") +
         '</span></div><p class="site-action-link mt-2 shrink-0 text-[11px] font-semibold group-hover:underline sm:mt-3 sm:text-xs">View full appeal →</p>' +
         "</div></a></div>" +
-        '<div class="hero-copy-slot min-w-0 lg:col-span-7 lg:row-start-2" data-reveal>' +
+        '<div class="hero-lower-band min-w-0 lg:col-span-12 lg:row-start-2">' +
+        '<div class="hero-lower-band__grid grid gap-3 lg:grid-cols-12 lg:items-stretch lg:gap-x-6">' +
+        '<div class="hero-copy-slot min-w-0" data-reveal>' +
         '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(he.badge) +
         "</p>" +
@@ -716,9 +718,9 @@
         '<div class="mt-2.5">' +
         buildHeroSchoolsBlockHtml(he) +
         "</div></div>" +
-        '<div class="hero-gallery-slot min-w-0 lg:col-span-5 lg:col-start-8 lg:row-start-2" data-reveal>' +
+        '<div class="hero-gallery-slot min-w-0" data-reveal>' +
         buildGalleryPreviewCardHtml({ heroBand: true }) +
-        "</div></div></div>";
+        "</div></div></div></div></div>";
     }
 
     renderHomeHighlight();
