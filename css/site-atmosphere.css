@@ -773,6 +773,10 @@ body.site-body[data-page="home"] .hero-institutions-school {
   min-width: 0;
 }
 
+body.site-body[data-page="home"] .hero-institutions-school:nth-child(even) {
+  padding-left: 1rem;
+}
+
 body.site-body[data-page="home"] .hero-institutions-school__mark {
   margin-top: 0.18rem;
   font-size: 0.5rem;
