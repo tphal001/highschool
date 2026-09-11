@@ -630,14 +630,11 @@
         "</ul>"
       : "";
     return (
-      '<article class="hero-institutions-card site-glass site-card-3d h-full overflow-hidden rounded-xl border border-mes-primary/15 bg-gradient-to-br from-white via-white to-slate-50/90 shadow-sm">' +
-      (line
-        ? '<header class="hero-institutions-card__head"><p class="hero-institutions-card__lead">' +
-          esc(line) +
-          "</p></header>"
-        : "") +
+      '<article class="hero-institutions-card site-glass h-full overflow-hidden rounded-xl border border-mes-primary/15 shadow-sm">' +
+      '<div class="hero-institutions-card__inner">' +
+      (line ? '<p class="hero-institutions-card__lead">' + esc(line) + "</p>" : "") +
       listHtml +
-      "</article>"
+      "</div></article>"
     );
   }
 

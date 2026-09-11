@@ -713,73 +713,66 @@ body.site-body[data-page="home"] .hero-lower-badge {
 }
 
 body.site-body[data-page="home"] .hero-institutions-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
   height: 7.75rem;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(240, 249, 255, 0.95) 100%);
 }
 
-body.site-body[data-page="home"] .hero-institutions-card__head,
+body.site-body[data-page="home"] .hero-institutions-card__inner {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.45rem 0.7rem 0.5rem;
+}
+
 body.site-body[data-page="home"] .hero-institutions-card__lead,
 body.site-body[data-page="home"] .hero-institutions-list__name {
   font-family: "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif;
 }
 
-body.site-body[data-page="home"] .hero-institutions-card__head {
-  flex-shrink: 0;
-  display: flex;
-  justify-content: center;
-  border-bottom: 1px solid rgba(8, 145, 178, 0.16);
-  background: linear-gradient(180deg, rgba(224, 242, 254, 0.55) 0%, rgba(255, 255, 255, 0.92) 100%);
-  padding: 0.45rem 0.65rem 0.4rem;
-}
-
 body.site-body[data-page="home"] .hero-institutions-card__lead {
   margin: 0;
-  width: fit-content;
-  max-width: 100%;
+  padding: 0 0.15rem 0.35rem;
+  border-bottom: 1px solid rgba(8, 145, 178, 0.14);
   font-size: 0.8125rem;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.3;
   color: #0c4a6e;
   text-align: center;
 }
 
 body.site-body[data-page="home"] .hero-institutions-list {
-  margin: 0 auto;
-  padding: 0.45rem 0.65rem 0.5rem;
+  margin: 0;
+  padding: 0;
   list-style: none;
   display: grid;
-  flex: 1 1 auto;
-  align-content: center;
-  width: fit-content;
-  max-width: calc(100% - 1.3rem);
-  grid-template-columns: max-content max-content;
-  column-gap: 1rem;
-  row-gap: 0.2rem;
-  justify-content: center;
+  width: 100%;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  column-gap: 0.85rem;
+  row-gap: 0.15rem;
 }
 
 body.site-body[data-page="home"] .hero-institutions-list li {
   display: flex;
   align-items: flex-start;
-  gap: 0.3rem;
+  gap: 0.25rem;
   min-width: 0;
 }
 
 body.site-body[data-page="home"] .hero-institutions-list__mark {
   flex-shrink: 0;
-  margin-top: 0.1rem;
-  font-size: 0.625rem;
-  line-height: 1.3;
+  margin-top: 0.15rem;
+  font-size: 0.5rem;
+  line-height: 1;
   color: #0891b2;
 }
 
 body.site-body[data-page="home"] .hero-institutions-list__name {
-  font-size: 0.8125rem;
+  font-size: 0.75rem;
   font-weight: 600;
-  line-height: 1.35;
-  color: #0c4a6e;
+  line-height: 1.3;
+  color: #0e7490;
 }
 
 /* Row 1 right: fund appeal matches slideshow height only */
@@ -849,24 +842,27 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview img {
     height: 8rem;
   }
 
-  body.site-body[data-page="home"] .hero-institutions-card__head {
-    padding: 0.5rem 0.75rem 0.45rem;
+  body.site-body[data-page="home"] .hero-institutions-card__inner {
+    gap: 0.4rem;
+    padding: 0.5rem 0.85rem 0.55rem;
   }
 
   body.site-body[data-page="home"] .hero-institutions-card__lead {
     font-size: 0.875rem;
+    padding-bottom: 0.4rem;
   }
 
   body.site-body[data-page="home"] .hero-institutions-list {
-    padding: 0.5rem 0.75rem 0.55rem;
+    column-gap: 1rem;
+    row-gap: 0.2rem;
   }
 
   body.site-body[data-page="home"] .hero-institutions-list__name {
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
   }
 
   body.site-body[data-page="home"] .hero-institutions-list__mark {
-    font-size: 0.6875rem;
+    font-size: 0.5625rem;
   }
 
 }
