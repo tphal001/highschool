@@ -139,10 +139,11 @@
       ? "hero-gallery-preview relative mt-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
       : "relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]";
     var shellClass = heroBand
-      ? "site-glass site-card-3d hero-gallery-preview-wrap flex h-full flex-col rounded-xl border border-mes-primary/15 p-2 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
+      ? "site-glass site-card-3d hero-gallery-preview-wrap flex shrink-0 flex-col rounded-xl border border-mes-primary/15 p-2 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
       : "site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35";
-    var linkClass =
-      "group block h-full rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2";
+    var linkClass = heroBand
+      ? "hero-gallery-link group block shrink-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2"
+      : "group block h-full rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2";
     return (
       '<a href="' +
       esc(galleryHref) +

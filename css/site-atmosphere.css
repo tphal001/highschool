@@ -731,6 +731,7 @@ body.site-body[data-page="home"] .hero-institutions-card__lead {
   font-weight: 700;
   line-height: 1.4;
   color: #0e7490;
+  text-align: center;
 }
 
 body.site-body[data-page="home"] .hero-institutions-list {
@@ -772,8 +773,20 @@ body.site-body[data-page="home"] .hero-right-stack {
   min-height: 0;
 }
 
+body.site-body[data-page="home"] .hero-right-stack .hero-fund-card {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+body.site-body[data-page="home"] .hero-right-stack .hero-gallery-link {
+  flex: 0 0 auto;
+  height: auto !important;
+  max-height: none;
+}
+
 body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview-wrap {
   height: 7.125rem;
+  max-height: 7.125rem;
   flex-shrink: 0;
 }
 
@@ -801,6 +814,7 @@ body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview {
 
   body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview-wrap {
     height: 7.375rem;
+    max-height: 7.375rem;
   }
 
   body.site-body[data-page="home"] .hero-right-stack .hero-gallery-preview {
