@@ -139,10 +139,10 @@
       ? "hero-gallery-preview relative mt-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
       : "relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]";
     var shellClass = heroBand
-      ? "site-glass site-card-3d hero-gallery-preview-wrap flex shrink-0 flex-col rounded-xl border border-mes-primary/15 p-2 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
+      ? "site-glass site-card-3d hero-gallery-preview-wrap flex h-full min-h-0 flex-col rounded-xl border border-mes-primary/15 p-2 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
       : "site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35";
     var linkClass = heroBand
-      ? "hero-gallery-link group block shrink-0 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2"
+      ? "hero-gallery-link group flex h-full min-h-0 flex-col rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2"
       : "group block h-full rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2";
     return (
       '<a href="' +
@@ -707,17 +707,16 @@
         '</span></div><p class="site-action-link mt-2 shrink-0 text-[11px] font-semibold group-hover:underline sm:mt-3 sm:text-xs">View full appeal →</p>' +
         "</div></a></div>" +
         '<div class="hero-lower-band min-w-0 lg:col-span-12 lg:row-start-2">' +
-        '<div class="hero-lower-band__grid grid gap-3 lg:grid-cols-12 lg:items-stretch lg:gap-x-6">' +
-        '<div class="hero-copy-slot min-w-0" data-reveal>' +
-        '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
+        '<div class="hero-lower-band__grid">' +
+        '<p class="hero-lower-badge text-[11px] font-semibold uppercase tracking-wider text-slate-500" data-reveal>' +
         esc(he.badge) +
         "</p>" +
-        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl">' +
+        '<h1 class="hero-lower-headline font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl" data-reveal>' +
         headlineHtml() +
         "</h1>" +
-        '<div class="mt-2.5">' +
+        '<div class="hero-institutions-wrap min-w-0" data-reveal>' +
         buildHeroSchoolsBlockHtml(he) +
-        "</div></div>" +
+        "</div>" +
         '<div class="hero-gallery-slot min-w-0" data-reveal>' +
         buildGalleryPreviewCardHtml({ heroBand: true }) +
         "</div></div></div></div></div>";
