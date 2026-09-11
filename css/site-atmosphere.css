@@ -2,7 +2,7 @@
  * Site-wide ambient background, dual-tone layers, and partition depth.
  */
 
-@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@600;700;800&display=swap");
 
 :root {
   /* Soft ice blue — sky/cyan family, one step darker than sky-50 */
@@ -693,7 +693,7 @@ body.site-body[data-page="home"] .hero-institutions-card__lead-track {
   display: block;
   width: max-content;
   min-width: 100%;
-  animation: hero-institutions-lead-pan 10s ease-in-out infinite alternate;
+  animation: hero-institutions-lead-pan 12s ease-in-out infinite alternate;
 }
 
 body.site-body[data-page="home"] .hero-institutions-card__lead,
@@ -705,10 +705,13 @@ body.site-body[data-page="home"] .hero-institutions-card__lead {
   margin: 0;
   display: inline-block;
   white-space: nowrap;
-  font-size: 0.6875rem;
-  font-weight: 700;
-  line-height: 1.35;
-  color: #0c4a6e;
+  font-size: 0.75rem;
+  font-weight: 800;
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: #083344;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 @keyframes hero-institutions-lead-pan {
@@ -790,7 +793,7 @@ body.site-body[data-page="home"] .hero-gallery-slot {
   display: flex;
   min-height: 0;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
 }
 
 body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link {
@@ -799,7 +802,14 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link {
   width: 100%;
   min-height: 0;
   min-width: 0;
-  overflow: hidden;
+  overflow: visible;
+}
+
+body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link:hover .hero-gallery-preview-wrap.site-card-3d,
+body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap.site-card-3d:hover {
+  transform: translateY(-6px) scale(1.008);
+  border-color: rgba(6, 182, 212, 0.45) !important;
+  box-shadow: var(--site-card-shadow-hover) !important;
 }
 
 body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview-wrap {
@@ -843,7 +853,7 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview img {
   }
 
   body.site-body[data-page="home"] .hero-institutions-card__lead {
-    font-size: 0.75rem;
+    font-size: 0.8125rem;
   }
 
   body.site-body[data-page="home"] .hero-institutions-schools {
@@ -908,7 +918,8 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview img {
     height: 0;
     min-height: 100%;
     max-height: none;
-    overflow: hidden;
+    overflow: visible;
+    z-index: 1;
   }
 
   body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link,
@@ -919,8 +930,8 @@ body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-preview img {
     min-height: 0;
   }
 
-  body.site-body[data-page="home"] .hero-gallery-slot .site-card-3d:hover {
-    transform: none;
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link:hover {
+    z-index: 2;
   }
 }
 
@@ -1264,7 +1275,8 @@ body.site-body #site-header .site-glass {
     animation: none !important;
   }
 
-  .site-card-3d:hover {
+  .site-card-3d:hover,
+  body.site-body[data-page="home"] .hero-gallery-slot .hero-gallery-link:hover .hero-gallery-preview-wrap.site-card-3d {
     transform: none;
   }
 }
