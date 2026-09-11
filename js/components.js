@@ -421,21 +421,38 @@
     );
   }
 
+  function buildLogoMottoArcSvg(motto) {
+    return (
+      '<svg class="site-logo-crest__arc" viewBox="0 0 120 18" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
+      '<defs><path id="site-logo-motto-arc" d="M 4 14 A 140 140 0 0 1 116 14" /></defs>' +
+      '<text class="site-logo-crest__text" font-size="7.5" font-weight="600" font-family="Noto Sans Devanagari, Nirmala UI, Mangal, sans-serif" fill="#0e7490">' +
+      '<textPath href="#site-logo-motto-arc" startOffset="50%" text-anchor="middle">' +
+      motto +
+      "</textPath></text></svg>"
+    );
+  }
+
   function buildLogoCrestHtml(schoolName) {
     var inner = buildLogoMarkInner(schoolName);
     var motto = (cfg.logoMottoMr || "").trim();
     if (!motto) return inner;
+
+    var crestedMark = inner
+      .replace(
+        'class="site-logo-mark"',
+        'class="site-logo-mark site-logo-mark--crested"'
+      )
+      .replace(
+        'class="site-logo-mark site-logo-mark--initials',
+        'class="site-logo-mark site-logo-mark--crested site-logo-mark--initials'
+      )
+      .replace(/^(<(?:span|div) class="site-logo-mark[^"]*">)/, "$1" + buildLogoMottoArcSvg(motto));
+
     return (
       '<span class="site-logo-crest" title="' +
       esc(motto) +
       '">' +
-      '<svg class="site-logo-crest__arc" viewBox="0 0 180 44" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
-      '<defs><path id="site-logo-motto-arc" d="M 10 36 A 80 80 0 0 1 170 36" /></defs>' +
-      '<text class="site-logo-crest__text" font-size="11" font-weight="600" font-family="Noto Sans Devanagari, Nirmala UI, Mangal, sans-serif" fill="#0e7490">' +
-      '<textPath href="#site-logo-motto-arc" startOffset="50%" text-anchor="middle">' +
-      motto +
-      "</textPath></text></svg>" +
-      inner +
+      crestedMark +
       '<span class="sr-only">' +
       esc(motto) +
       "</span></span>"
