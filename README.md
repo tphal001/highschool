@@ -1,12 +1,12 @@
-# Dr. Gadagkar High School - website
+# Dr. Gadagkar High School — website
 
-School site (HTML + JS), deployed on Vercel.
+Static school site (HTML + JS), deployed on Vercel.
 
 | | |
 |---|---|
 | **Repository** | [github.com/tphal001/highschool](https://github.com/tphal001/highschool) |
 | **Clone** | `git clone https://github.com/tphal001/highschool.git` |
-| **Live site** | [highschool-gold.vercel.app](https://highschool-gold.vercel.app) (custom domain can be added in Vercel) |
+| **Live site** | [www.dghschool.in](https://www.dghschool.in) |
 
 ## Content updates (staff)
 

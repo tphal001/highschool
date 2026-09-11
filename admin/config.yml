@@ -5,7 +5,7 @@ backend:
   name: github
   repo: tphal001/highschool
   branch: main
-  base_url: https://highschool-gold.vercel.app
+  base_url: https://www.dghschool.in
 
 media_folder: images
 public_folder: /images

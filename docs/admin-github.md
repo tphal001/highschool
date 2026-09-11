@@ -7,8 +7,8 @@ GitHub login needs a **server-side OAuth step**. This project implements that **
 ## 1. GitHub OAuth App
 
 1. GitHub → **Settings** → **Developer settings** → **OAuth Apps** → **New OAuth App**.
-2. **Homepage URL:** your live site, e.g. `https://highschool-gold.vercel.app`
-3. **Authorization callback URL:** **`https://highschool-gold.vercel.app/callback`**  
+2. **Homepage URL:** your live site, e.g. `https://www.dghschool.in`
+3. **Authorization callback URL:** **`https://www.dghschool.in/callback`**  
    (Must match `base_url` in `admin/config.yml` — same host, path `/callback`.)
 
 If you add a custom domain or use Vercel preview URLs, add **additional** callback URLs in the same GitHub OAuth app (GitHub allows several).
@@ -29,7 +29,7 @@ Redeploy after saving.
 In `admin/config.yml`, **`backend.base_url`** must be the **origin** where the CMS runs (no trailing slash), e.g.:
 
 ```yaml
-base_url: https://highschool-gold.vercel.app
+base_url: https://www.dghschool.in
 ```
 
 If you change the Vercel project name or use a custom domain, update **`base_url`** and the GitHub **callback URL** to match.
