@@ -615,7 +615,11 @@
       ? '<ul class="hero-institutions-list">' +
         names
           .map(function (name) {
-            return "<li>" + esc(name) + "</li>";
+            return (
+              '<li><span class="hero-institutions-list__mark" aria-hidden="true">★</span><span class="hero-institutions-list__name">' +
+              esc(name) +
+              "</span></li>"
+            );
           })
           .join("") +
         "</ul>"
@@ -658,7 +662,7 @@
 
       hero.innerHTML =
         '<div class="mx-auto max-w-7xl">' +
-        '<div class="grid gap-4 lg:grid-cols-12 lg:items-stretch lg:gap-x-6 lg:gap-y-5">' +
+        '<div class="grid gap-3 lg:grid-cols-12 lg:items-stretch lg:gap-x-6 lg:gap-y-3">' +
         '<div class="min-w-0 lg:col-span-7 lg:row-start-1">' +
         '<div id="hero-slider" class="site-card-3d relative aspect-[16/10] overflow-hidden rounded-xl border border-white/60 bg-slate-100 shadow-lg transition-all duration-300 ease-out hover:border-mes-accent/25">' +
         '<img id="hero-slide-img" src="' +
@@ -672,34 +676,29 @@
         '<span class="text-lg leading-none" aria-hidden="true">&#8250;</span></button>' +
         '<div id="hero-dots" class="absolute bottom-3 left-1/2 flex -translate-x-1/2 gap-1.5"></div>' +
         "</div></div>" +
-        '<div class="min-w-0 lg:col-span-12 lg:row-start-2" data-reveal>' +
+        '<div class="min-w-0 lg:col-span-7 lg:row-start-2" data-reveal>' +
         '<p class="text-[11px] font-semibold uppercase tracking-wider text-slate-500">' +
         esc(he.badge) +
         "</p>" +
-        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl lg:max-w-3xl">' +
+        '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl">' +
         headlineHtml() +
         "</h1>" +
-        '<div class="hero-sideband mt-2.5 grid gap-2.5 lg:grid-cols-12 lg:gap-x-6">' +
-        '<div class="min-w-0 lg:col-span-7">' +
+        '<div class="mt-2.5">' +
         buildHeroSchoolsBlockHtml(he) +
-        "</div>" +
-        '<div class="min-w-0 lg:col-span-5">' +
-        buildGalleryPreviewCardHtml({ heroBand: true }) +
-        "</div></div></div>" +
-        '<aside class="flex min-h-0 min-w-0 flex-col lg:col-span-5 lg:row-start-1 lg:h-full">' +
+        "</div></div>" +
+        '<div class="hero-right-stack min-w-0 lg:col-span-5 lg:row-start-1 lg:row-span-2" data-reveal>' +
         '<a href="' +
         esc(fundHref) +
-        '" class="group flex h-full min-h-0 flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
-        '<div class="site-glass site-card-3d flex min-h-0 flex-1 flex-col rounded-xl border border-mes-primary/10 p-4 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:border-mes-primary/40 group-hover:shadow-lg group-hover:shadow-mes-primary/20">' +
-        '<div class="shrink-0 border-b border-slate-200 pb-3">' +
-        '<h2 class="relative inline-block pb-2 font-display text-lg font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-14 after:bg-mes-red">' +
+        '" class="hero-fund-card group flex min-h-0 flex-1 flex-col rounded-lg focus:outline-none focus:ring-2 focus:ring-mes-primary/40 focus:ring-offset-2" aria-label="Open full fund appeal">' +
+        '<div class="site-glass site-card-3d flex min-h-0 flex-1 flex-col rounded-xl border border-mes-primary/10 p-3 shadow-sm transition-all duration-300 ease-out group-hover:-translate-y-0.5 group-hover:border-mes-primary/40 group-hover:shadow-lg group-hover:shadow-mes-primary/20 sm:p-4">' +
+        '<div class="shrink-0 border-b border-slate-200 pb-2">' +
+        '<h2 class="relative inline-block pb-1.5 font-display text-base font-bold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-12 after:bg-mes-red sm:text-lg">' +
         esc(fr.sectionTitle || "Fund raising appeal") +
-        "</h2>" +
-        "</div>" +
-        '<h3 class="mt-4 shrink-0 text-sm font-bold leading-snug text-mes-primary">' +
+        "</h2></div>" +
+        '<h3 class="mt-2 shrink-0 text-xs font-bold leading-snug text-mes-primary sm:mt-3 sm:text-sm">' +
         esc(fr.title || "") +
         "</h3>" +
-        '<div class="relative mt-3 min-h-[6rem] flex-1 overflow-hidden rounded-md border border-slate-200 bg-white lg:min-h-0">' +
+        '<div class="relative mt-2 min-h-[4.5rem] flex-1 overflow-hidden rounded-md border border-slate-200 bg-white sm:mt-3 sm:min-h-[5rem]">' +
         '<img src="' +
         esc(fr.image || he.image) +
         '" alt="" class="absolute inset-0 h-full w-full object-cover" loading="lazy"/>' +
@@ -709,14 +708,15 @@
             "</div>"
           : "") +
         "</div>" +
-        '<div class="mt-3 flex shrink-0 items-center gap-2 text-xs text-slate-600">' +
-        '<span class="flex h-7 w-7 items-center justify-center rounded-full bg-slate-200 text-[10px] font-bold text-slate-500">' +
+        '<div class="mt-2 flex shrink-0 items-center gap-2 text-[11px] text-slate-600 sm:mt-3 sm:text-xs">' +
+        '<span class="flex h-6 w-6 items-center justify-center rounded-full bg-slate-200 text-[9px] font-bold text-slate-500 sm:h-7 sm:w-7 sm:text-[10px]">' +
         esc(crest) +
-        "</span>" +
-        "<span>" +
+        "</span><span>" +
         esc(fr.footerLine || "") +
-        '</span></div><p class="site-action-link mt-3 shrink-0 text-xs font-semibold group-hover:underline">View full appeal →</p>' +
-        "</div></a></aside></div></div>";
+        '</span></div><p class="site-action-link mt-2 shrink-0 text-[11px] font-semibold group-hover:underline sm:mt-3 sm:text-xs">View full appeal →</p>' +
+        "</div></a>" +
+        buildGalleryPreviewCardHtml({ heroBand: true }) +
+        "</div></div></div>";
     }
 
     renderHomeHighlight();

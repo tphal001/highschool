@@ -20,6 +20,15 @@
     document.head.appendChild(st);
   }
 
+  if (typeof document !== "undefined" && !document.getElementById("site-devanagari-font")) {
+    var devFont = document.createElement("link");
+    devFont.id = "site-devanagari-font";
+    devFont.rel = "stylesheet";
+    devFont.href =
+      "https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@500;600&display=swap";
+    document.head.appendChild(devFont);
+  }
+
   if (typeof document !== "undefined" && !document.getElementById("site-atmosphere-css")) {
     var link = document.createElement("link");
     link.id = "site-atmosphere-css";
@@ -417,12 +426,14 @@
     var motto = (cfg.logoMottoMr || "").trim();
     if (!motto) return inner;
     return (
-      '<span class="site-logo-crest">' +
-      '<svg class="site-logo-crest__arc" viewBox="0 0 100 100" aria-hidden="true" focusable="false">' +
-      '<defs><path id="site-logo-motto-arc" d="M 12 54 A 38 38 0 0 1 88 54" /></defs>' +
-      '<text class="site-logo-crest__text">' +
-      '<textPath href="#site-logo-motto-arc" xlink:href="#site-logo-motto-arc" startOffset="50%" text-anchor="middle">' +
+      '<span class="site-logo-crest" title="' +
       esc(motto) +
+      '">' +
+      '<svg class="site-logo-crest__arc" viewBox="0 0 180 72" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">' +
+      '<defs><path id="site-logo-motto-arc" d="M 6 58 A 84 84 0 0 1 174 58" /></defs>' +
+      '<text class="site-logo-crest__text" font-size="12" font-weight="600" font-family="Noto Sans Devanagari, Nirmala UI, Mangal, sans-serif" fill="#0e7490">' +
+      '<textPath href="#site-logo-motto-arc" startOffset="50%" text-anchor="middle">' +
+      motto +
       "</textPath></text></svg>" +
       inner +
       '<span class="sr-only">' +
