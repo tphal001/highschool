@@ -699,18 +699,78 @@ body.site-body[data-page="home"] #hero-slider {
     0 0 0 1px rgba(8, 145, 178, 0.06) !important;
 }
 
-body.site-body[data-page="home"] .hero-schools-grid {
-  grid-auto-rows: 1fr;
+/* Home hero — fixed-height side band (institutions card + gallery preview) */
+body.site-body[data-page="home"] .hero-sideband {
+  height: 7.125rem;
+  align-items: stretch;
 }
 
-body.site-body[data-page="home"] .hero-school-postcard {
-  min-height: 3.75rem;
+body.site-body[data-page="home"] .hero-sideband > * {
+  min-height: 0;
+  height: 100%;
 }
 
-@media (min-width: 1024px) {
-  body.site-body[data-page="home"] .hero-schools-band,
-  body.site-body[data-page="home"] .hero-gallery-preview-wrap {
-    min-height: 10.75rem;
+body.site-body[data-page="home"] .hero-institutions-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+body.site-body[data-page="home"] .hero-institutions-card__lead,
+body.site-body[data-page="home"] .hero-institutions-list li {
+  font-family: "Noto Sans Devanagari", "Nirmala UI", "Mangal", sans-serif;
+}
+
+body.site-body[data-page="home"] .hero-institutions-card__lead {
+  margin: 0;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.35;
+  color: #0e7490;
+}
+
+body.site-body[data-page="home"] .hero-institutions-list {
+  margin: 0.35rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 0.65rem;
+  row-gap: 0.15rem;
+}
+
+body.site-body[data-page="home"] .hero-institutions-list li {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: #0c4a6e;
+}
+
+body.site-body[data-page="home"] .hero-gallery-preview-wrap {
+  height: 100%;
+}
+
+body.site-body[data-page="home"] .hero-gallery-preview {
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 4.35rem;
+}
+
+@media (min-width: 640px) {
+  body.site-body[data-page="home"] .hero-sideband {
+    height: 7.375rem;
+  }
+
+  body.site-body[data-page="home"] .hero-institutions-card__lead {
+    font-size: 0.75rem;
+  }
+
+  body.site-body[data-page="home"] .hero-institutions-list li {
+    font-size: 0.75rem;
+  }
+
+  body.site-body[data-page="home"] .hero-gallery-preview {
+    max-height: 4.55rem;
   }
 }
 

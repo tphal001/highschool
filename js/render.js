@@ -118,7 +118,7 @@
 
   function buildGalleryPreviewCardHtml(opts) {
     opts = opts || {};
-    var fillHeight = !!opts.fillHeight;
+    var heroBand = !!opts.heroBand;
     var galleryHref = "gallery.html?ctx=gallery#photo";
     var imgs = galleryAllImageSrcs(C.gallery);
     if (!imgs.length) {
@@ -133,17 +133,16 @@
     var mediaHtml = first
       ? '<img id="home-gallery-preview-img" src="' +
         esc(first) +
-        '" alt="" class="h-full w-full object-cover transition-opacity duration-500" loading="lazy"/>'
+        '" alt="" class="h-full w-full object-cover object-center transition-opacity duration-500" loading="lazy"/>'
       : '<div class="flex h-full items-center justify-center px-4 text-center text-xs text-slate-500">Add photos in the CMS gallery.</div>';
-    var previewClass = fillHeight
-      ? "hero-gallery-preview relative mt-1.5 min-h-[5.5rem] flex-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
+    var previewClass = heroBand
+      ? "hero-gallery-preview relative mt-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
       : "relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]";
-    var shellClass = fillHeight
-      ? "site-glass site-card-3d hero-gallery-preview-wrap flex h-full min-h-[9.5rem] flex-col rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
+    var shellClass = heroBand
+      ? "site-glass site-card-3d hero-gallery-preview-wrap flex h-full flex-col rounded-xl border border-mes-primary/15 p-2 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
       : "site-glass site-card-3d rounded-xl border border-mes-primary/15 p-2.5 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35";
     var linkClass =
-      "group block rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2" +
-      (fillHeight ? " h-full" : "");
+      "group block h-full rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-mes-accent focus-visible:ring-offset-2";
     return (
       '<a href="' +
       esc(galleryHref) +
@@ -161,7 +160,7 @@
       ">" +
       mediaHtml +
       (imgs.length > 1
-        ? '<div class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent px-2 pb-1.5 pt-6">' +
+        ? '<div class="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/45 to-transparent px-2 pb-1 pt-5">' +
           '<span class="text-[10px] font-semibold text-white/95 opacity-90 transition group-hover:opacity-100">Explore photos →</span></div>'
         : "") +
       "</div></div></a>"
@@ -607,37 +606,28 @@
     );
   }
 
-  function buildHeroSchoolPostcardHtml(name) {
-    return (
-      '<article class="hero-school-postcard site-card-3d flex flex-col justify-center rounded-lg border border-mes-primary/15 bg-gradient-to-br from-white via-white to-slate-50 px-3 py-2.5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-mes-accent/45 hover:shadow-md sm:px-3.5 sm:py-3">' +
-      '<span class="hero-school-postcard__rule mb-2 block h-0.5 w-9 rounded-full bg-gradient-to-r from-mes-accent to-mes-primary/30" aria-hidden="true"></span>' +
-      '<p class="font-display text-[0.8125rem] font-semibold leading-snug text-mes-primary sm:text-sm">' +
-      esc(name) +
-      "</p></article>"
-    );
-  }
-
   function buildHeroSchoolsBlockHtml(he) {
     he = he || {};
     var names = Array.isArray(he.schoolNames) ? he.schoolNames.filter(Boolean) : [];
     var line = (he.subtext || "").trim();
     if (!line && !names.length) return "";
-    var html =
-      '<div class="hero-schools-band flex h-full min-h-[9.5rem] flex-col">';
-    if (line) {
-      html +=
-        '<p class="shrink-0 text-sm font-semibold leading-snug text-mes-primary sm:text-base">' +
-        esc(line) +
-        "</p>";
-    }
-    if (names.length) {
-      html +=
-        '<div class="hero-schools-grid mt-2 grid flex-1 grid-cols-2 gap-2 sm:gap-2.5">' +
-        names.map(buildHeroSchoolPostcardHtml).join("") +
-        "</div>";
-    }
-    html += "</div>";
-    return html;
+    var listHtml = names.length
+      ? '<ul class="hero-institutions-list">' +
+        names
+          .map(function (name) {
+            return "<li>" + esc(name) + "</li>";
+          })
+          .join("") +
+        "</ul>"
+      : "";
+    return (
+      '<article class="hero-institutions-card site-glass site-card-3d h-full overflow-hidden rounded-xl border border-mes-primary/15 bg-gradient-to-br from-white via-white to-slate-50/90 p-2.5 shadow-sm sm:p-3">' +
+      (line
+        ? '<p class="hero-institutions-card__lead">' + esc(line) + "</p>"
+        : "") +
+      listHtml +
+      "</article>"
+    );
   }
 
   function renderHomePage() {
@@ -689,12 +679,12 @@
         '<h1 class="mt-2 font-display text-2xl font-bold leading-tight text-mes-primary sm:text-3xl md:text-4xl lg:max-w-3xl">' +
         headlineHtml() +
         "</h1>" +
-        '<div class="mt-3 grid gap-3 lg:grid-cols-12 lg:items-stretch lg:gap-x-6">' +
+        '<div class="hero-sideband mt-2.5 grid gap-2.5 lg:grid-cols-12 lg:gap-x-6">' +
         '<div class="min-w-0 lg:col-span-7">' +
         buildHeroSchoolsBlockHtml(he) +
         "</div>" +
-        '<div class="min-w-0 lg:col-span-5 flex">' +
-        buildGalleryPreviewCardHtml({ fillHeight: true }) +
+        '<div class="min-w-0 lg:col-span-5">' +
+        buildGalleryPreviewCardHtml({ heroBand: true }) +
         "</div></div></div>" +
         '<aside class="flex min-h-0 min-w-0 flex-col lg:col-span-5 lg:row-start-1 lg:h-full">' +
         '<a href="' +
