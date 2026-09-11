@@ -611,22 +611,19 @@
     );
   }
 
-  function buildHeroInstitutionListItemHtml(name) {
+  function buildHeroInstitutionLeadHtml(line) {
+    line = (line || "").trim();
+    if (!line) return "";
+    var comma = line.indexOf(",");
+    if (comma === -1) {
+      return '<p class="hero-institutions-card__lead">' + esc(line) + "</p>";
+    }
     return (
-      '<li><span class="hero-institutions-list__mark" aria-hidden="true">★</span><span class="hero-institutions-list__name">' +
-      esc(name) +
-      "</span></li>"
-    );
-  }
-
-  function buildHeroInstitutionListHtml(items, side) {
-    if (!items.length) return "";
-    return (
-      '<ul class="hero-institutions-list hero-institutions-list--' +
-      side +
-      '">' +
-      items.map(buildHeroInstitutionListItemHtml).join("") +
-      "</ul>"
+      '<p class="hero-institutions-card__lead">' +
+      esc(line.slice(0, comma + 1)) +
+      '<span class="hero-institutions-card__lead-sub">' +
+      esc(line.slice(comma + 1).trim()) +
+      "</span></p>"
     );
   }
 
@@ -635,16 +632,27 @@
     var names = Array.isArray(he.schoolNames) ? he.schoolNames.filter(Boolean) : [];
     var line = (he.subtext || "").trim();
     if (!line && !names.length) return "";
-    var leftNames = [names[0], names[2]].filter(Boolean);
-    var rightNames = [names[1], names[3]].filter(Boolean);
+    var schoolsHtml = names.length
+      ? '<div class="hero-institutions-schools" role="list">' +
+        names
+          .map(function (name) {
+            return (
+              '<div class="hero-institutions-school" role="listitem">' +
+              '<span class="hero-institutions-school__mark" aria-hidden="true">★</span>' +
+              '<span class="hero-institutions-school__name">' +
+              esc(name) +
+              "</span></div>"
+            );
+          })
+          .join("") +
+        "</div>"
+      : "";
     return (
       '<article class="hero-institutions-card site-glass h-full overflow-hidden rounded-xl border border-mes-primary/15 shadow-sm">' +
       '<div class="hero-institutions-card__inner">' +
-      '<div class="hero-institutions-card__grid">' +
-      (line ? '<p class="hero-institutions-card__lead">' + esc(line) + "</p>" : "") +
-      buildHeroInstitutionListHtml(leftNames, "left") +
-      buildHeroInstitutionListHtml(rightNames, "right") +
-      "</div></div></article>"
+      (line ? '<header class="hero-institutions-card__head">' + buildHeroInstitutionLeadHtml(line) + "</header>" : "") +
+      schoolsHtml +
+      "</div></article>"
     );
   }
 
