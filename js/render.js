@@ -611,30 +611,40 @@
     );
   }
 
+  function buildHeroInstitutionListItemHtml(name) {
+    return (
+      '<li><span class="hero-institutions-list__mark" aria-hidden="true">★</span><span class="hero-institutions-list__name">' +
+      esc(name) +
+      "</span></li>"
+    );
+  }
+
+  function buildHeroInstitutionListHtml(items, side) {
+    if (!items.length) return "";
+    return (
+      '<ul class="hero-institutions-list hero-institutions-list--' +
+      side +
+      '">' +
+      items.map(buildHeroInstitutionListItemHtml).join("") +
+      "</ul>"
+    );
+  }
+
   function buildHeroSchoolsBlockHtml(he) {
     he = he || {};
     var names = Array.isArray(he.schoolNames) ? he.schoolNames.filter(Boolean) : [];
     var line = (he.subtext || "").trim();
     if (!line && !names.length) return "";
-    var listHtml = names.length
-      ? '<ul class="hero-institutions-list">' +
-        names
-          .map(function (name) {
-            return (
-              '<li><span class="hero-institutions-list__mark" aria-hidden="true">★</span><span class="hero-institutions-list__name">' +
-              esc(name) +
-              "</span></li>"
-            );
-          })
-          .join("") +
-        "</ul>"
-      : "";
+    var leftNames = [names[0], names[2]].filter(Boolean);
+    var rightNames = [names[1], names[3]].filter(Boolean);
     return (
       '<article class="hero-institutions-card site-glass h-full overflow-hidden rounded-xl border border-mes-primary/15 shadow-sm">' +
       '<div class="hero-institutions-card__inner">' +
+      '<div class="hero-institutions-card__grid">' +
       (line ? '<p class="hero-institutions-card__lead">' + esc(line) + "</p>" : "") +
-      listHtml +
-      "</div></article>"
+      buildHeroInstitutionListHtml(leftNames, "left") +
+      buildHeroInstitutionListHtml(rightNames, "right") +
+      "</div></div></article>"
     );
   }
 
