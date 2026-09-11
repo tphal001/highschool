@@ -133,10 +133,14 @@
     var mediaHtml = first
       ? '<img id="home-gallery-preview-img" src="' +
         esc(first) +
-        '" alt="" class="h-full w-full object-cover object-center transition-opacity duration-500" loading="lazy"/>'
+        '" alt="" class="' +
+        (heroBand
+          ? "absolute inset-0 h-full w-full object-cover object-center transition-opacity duration-500"
+          : "h-full w-full object-cover object-center transition-opacity duration-500") +
+        '" loading="lazy"/>'
       : '<div class="flex h-full items-center justify-center px-4 text-center text-xs text-slate-500">Add photos in the CMS gallery.</div>';
     var previewClass = heroBand
-      ? "hero-gallery-preview relative mt-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
+      ? "hero-gallery-preview relative mt-1 min-h-0 flex-1 overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
       : "relative mt-1.5 h-[6rem] overflow-hidden rounded-lg border border-slate-200 bg-slate-100 sm:h-[6.25rem]";
     var shellClass = heroBand
       ? "site-glass site-card-3d hero-gallery-preview-wrap flex h-full min-h-0 flex-col rounded-xl border border-mes-primary/15 p-2 shadow-sm transition-all duration-300 ease-out hover:border-mes-primary/35"
