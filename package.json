@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "node scripts/build-content.mjs",
+    "build": "node scripts/repair-cms-json.mjs && node scripts/build-content.mjs",
     "seed": "node scripts/seed-cms.mjs",
     "repair-cms": "node scripts/repair-cms-json.mjs"
   }

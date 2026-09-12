@@ -256,6 +256,7 @@ collections:
       - label: Highlights (posters & popup)
         name: highlight
         file: content/cms/highlight.json
+        format: json
         fields:
           - {
               label: Popup when site opens,
@@ -338,6 +339,7 @@ collections:
       - label: Quick Announcements
         name: quickAnnouncements
         file: content/cms/quickAnnouncements.json
+        format: json
         fields:
           - label: Announcement cards (home page)
             name: items
