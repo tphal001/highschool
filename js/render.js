@@ -751,7 +751,7 @@
         "</span>" +
         '<p class="max-w-2xl text-sm font-medium leading-relaxed text-white/95 sm:text-base md:text-lg"><span class="font-semibold text-mes-goldLine">' +
         esc(l.title) +
-        "</span> — " +
+        "</span> - " +
         esc(l.line) +
         "</p>" +
         '<a href="' +

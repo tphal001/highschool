@@ -38,7 +38,7 @@ window.SITE_CONTENT = {
     "legacy": {
       "badge": "60+ Years",
       "title": "60+ Years of Excellence",
-      "line": "A legacy of learning, leadership, and community—built together since 1963.",
+      "line": "A legacy of learning, leadership, and community - built together since 1963. Empowering generations to make a difference.",
       "linkLabel": "Read our history →",
       "linkHref": "about.html#history"
     },
