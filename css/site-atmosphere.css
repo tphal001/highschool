@@ -623,6 +623,7 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   min-height: 3.25rem;
   padding: 0.45rem 0.5rem;
   overflow: hidden;
+  border-radius: 0.875rem;
 }
 
 .site-header-info-card__title {
@@ -654,7 +655,8 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 @media (min-width: 640px) {
   .site-header-info-card {
     min-height: 4.375rem;
-    padding: 0.5rem 0.55rem;
+    padding: 0.5rem 0.65rem;
+    border-radius: 9999px;
   }
 
   .site-header-info-card__title {
