@@ -146,7 +146,7 @@
       })
       .join("");
     return (
-      '<ul class="site-header-info-boxes mt-4 flex w-full flex-col gap-2 sm:mt-0 sm:max-w-lg sm:flex-row sm:items-stretch sm:justify-end sm:self-center lg:max-w-xl">' +
+      '<ul class="site-header-info-boxes mt-2 flex w-full flex-col gap-2 sm:mt-0 sm:max-w-lg sm:flex-row sm:items-stretch sm:justify-end sm:self-center lg:max-w-xl">' +
       html +
       "</ul>"
     );
@@ -401,7 +401,7 @@
         esc(logoImg) +
         '" alt="' +
         esc(schoolName) +
-        '" class="site-logo-mark__img" width="124" height="124" decoding="async" fetchpriority="high" />' +
+        '" class="site-logo-mark__img" width="112" height="112" decoding="async" fetchpriority="high" />' +
         "</span>"
       );
     }
@@ -435,10 +435,10 @@
         '<header id="site-header" class="fixed inset-x-0 top-0 z-50 border-b border-slate-200 shadow-sm transition-shadow duration-500 ease-premium">' +
         buildTopBar() +
         '<div class="relative bg-gradient-to-r from-mes-light/70 via-white to-white">' +
-        '<div class="site-header-brand-row mx-auto flex max-w-7xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-8 sm:py-4 lg:px-10">' +
+        '<div class="site-header-brand-row mx-auto flex max-w-7xl flex-col gap-2 px-4 py-1.5 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-8 sm:py-2 lg:px-10">' +
         '<a href="' +
         esc(logoHref) +
-        '" class="site-header-brand-link flex min-w-0 flex-1 items-center gap-3 sm:gap-4">' +
+        '" class="site-header-brand-link flex min-w-0 flex-1 items-center gap-2.5 sm:gap-3">' +
         logoBlock +
         '<div class="site-header-identity min-w-0">' +
         (affiliation
