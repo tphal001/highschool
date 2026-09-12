@@ -1,0 +1,35 @@
+name: Repair CMS JSON
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "content/cms/**"
+
+permissions:
+  contents: write
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Repair Decap blob JSON files
+        run: node scripts/repair-cms-json.mjs
+
+      - name: Commit cleaned CMS files
+        run: |
+          if git diff --quiet; then
+            echo "CMS JSON already clean."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/cms/*.json
+          git commit -m "Repair CMS JSON after Decap publish"
+          git push
