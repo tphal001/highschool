@@ -456,13 +456,28 @@ body.site-body[data-page="home"] .home-about-band {
 /* ── Header & footer ── */
 body.site-body #site-header {
   overflow: visible;
-  background: rgba(255, 255, 255, 0.86) !important;
-  backdrop-filter: blur(16px) saturate(1.2);
-  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  background: transparent !important;
   border-bottom-color: rgba(8, 145, 178, 0.1) !important;
   box-shadow:
     0 1px 0 rgba(255, 255, 255, 0.95) inset,
     0 10px 36px -10px rgba(12, 74, 110, 0.14);
+}
+
+/* Blur only the header backdrop — keeps logo and text sharp on top */
+body.site-body #site-header::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: blur(16px) saturate(1.2);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  pointer-events: none;
+}
+
+body.site-body #site-header > * {
+  position: relative;
+  z-index: 1;
 }
 
 body.site-body #site-header > .relative.bg-gradient-to-r {
@@ -538,18 +553,21 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
   overflow: visible;
 }
 
-/* Circular logo — blends PNG white box into header gradient */
+/* Circular logo — sharp render, no header blur bleed */
 .site-logo-mark {
   display: flex;
-  height: 4rem;
-  width: 4rem;
+  height: 5rem;
+  width: 5rem;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
   overflow: hidden;
   border-radius: 9999px;
-  background: linear-gradient(145deg, var(--site-cream), rgba(255, 255, 255, 0.92));
-  box-shadow: inset 0 0 0 1px rgba(8, 145, 178, 0.1);
+  background: #ffffff;
+  box-shadow:
+    inset 0 0 0 1px rgba(8, 145, 178, 0.12),
+    0 1px 3px rgba(12, 74, 110, 0.08);
+  isolation: isolate;
 }
 
 .site-logo-mark--initials {
@@ -559,17 +577,17 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 }
 
 .site-logo-mark__img {
+  display: block;
   height: 100%;
   width: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
-  padding: 0.2rem;
 }
 
 @media (min-width: 640px) {
   .site-logo-mark {
-    height: 4.75rem;
-    width: 4.75rem;
+    height: 5.5rem;
+    width: 5.5rem;
   }
 }
 
