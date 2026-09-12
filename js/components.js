@@ -603,7 +603,7 @@
         ? '<div class="announcement-card__media shrink-0 overflow-hidden border-b border-slate-100 bg-slate-100">' +
           '<img src="' +
           esc(image) +
-          '" alt="" class="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.02]" loading="lazy"/>' +
+          '" alt="" class="h-full w-full object-contain object-center transition duration-500 group-hover:scale-[1.02]" loading="lazy"/>' +
           "</div>"
         : "";
 

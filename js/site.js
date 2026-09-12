@@ -305,7 +305,13 @@
 
   function highlightPosterUrl(item, globalBust) {
     if (!item) return "";
-    var imgUrl = (item.posterImage || "").trim();
+    var raw = item.posterImage;
+    var imgUrl =
+      typeof raw === "string"
+        ? raw.trim()
+        : raw && typeof raw === "object"
+          ? String(raw.url || raw.path || raw.src || raw.image || "").trim()
+          : "";
     if (!imgUrl) return "";
     if (imgUrl.indexOf("http") !== 0 && imgUrl.charAt(0) !== "/") {
       if (imgUrl.indexOf("images/") === 0) imgUrl = "/" + imgUrl;
@@ -364,7 +370,7 @@
         '<div class="flex items-center justify-between gap-3 border-b border-mes-goldLine/25 px-6 py-3 sm:px-8">' +
         '<p id="highlight-modal-badge" class="text-sm font-bold uppercase tracking-[0.18em] text-mes-goldLine">Highlights</p>' +
         '<p id="highlight-modal-counter" class="hidden text-xs font-semibold text-white/70"></p></div>' +
-        '<div class="grid max-h-[inherit] overflow-y-auto lg:grid-cols-2 lg:items-start lg:overflow-hidden">' +
+        '<div class="highlight-modal-grid grid max-h-[inherit] overflow-y-auto lg:grid-cols-2 lg:items-stretch lg:overflow-hidden">' +
         '<div id="highlight-modal-media" class="relative flex items-center justify-center border-b border-mes-goldLine/15 bg-black/30 p-4 sm:p-6 lg:border-b-0 lg:border-r"></div>' +
         '<div class="flex flex-col justify-center px-6 py-8 sm:px-8 sm:py-10 lg:py-10">' +
         '<h2 id="highlight-news-title" class="font-display text-2xl font-bold leading-tight text-white sm:text-3xl lg:text-4xl"></h2>' +
@@ -405,7 +411,7 @@
             ? wrapHighlightPosterLink(
                 '<img src="' +
                   imgUrl.replace(/"/g, "&quot;") +
-                  '" alt="" class="mx-auto max-h-[min(50vh,22rem)] w-full max-w-md object-contain object-center lg:max-h-[min(72vh,26rem)]"/>',
+                  '" alt="" class="site-highlight-poster__image"/>',
                 item
               )
             : "");

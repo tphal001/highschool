@@ -362,7 +362,7 @@
         '<div class="announcement-card__media">' +
         '<img src="' +
         esc(img) +
-        '" alt="" class="h-full w-full object-cover object-center transition duration-500 group-hover:scale-[1.02] pointer-events-none" loading="lazy"/>' +
+        '" alt="" class="h-full w-full object-contain object-center transition duration-500 group-hover:scale-[1.02] pointer-events-none" loading="lazy"/>' +
         "</div></button>"
       : "";
     return (
@@ -429,7 +429,7 @@
     var posterImgHtml = img
       ? '<img src="' +
         esc(img) +
-        '" alt="" class="mx-auto w-full max-w-md object-contain object-center lg:max-w-none" loading="lazy"/>'
+        '" alt="" class="site-highlight-poster__image" loading="lazy"/>'
       : "";
     if (img && linkUrl) {
       var ext = isExternalHref(linkUrl);
@@ -444,9 +444,9 @@
     }
     return (
       '<article class="site-highlight-poster site-card-3d overflow-hidden rounded-3xl border border-mes-goldLine/40 bg-gradient-to-br from-mes-nav via-mes-navDeep to-slate-950 shadow-2xl" data-reveal>' +
-      '<div class="grid gap-0 lg:grid-cols-2 lg:items-start">' +
+      '<div class="site-highlight-poster__grid grid gap-0 lg:grid-cols-2 lg:items-stretch">' +
       (img
-        ? '<div class="site-highlight-poster__media border-b border-mes-goldLine/15 bg-black/25 p-5 sm:p-8 lg:border-b-0 lg:border-r">' +
+        ? '<div class="site-highlight-poster__media border-b border-mes-goldLine/15 bg-black/25 lg:border-b-0 lg:border-r">' +
           posterImgHtml +
           "</div>"
         : "") +

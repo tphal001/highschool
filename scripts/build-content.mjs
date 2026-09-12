@@ -211,8 +211,42 @@ function normalizeHighlightCmsFile(data) {
   return out;
 }
 
+function normalizeQuickAnnouncementsCmsFile(data) {
+  if (!data || typeof data !== "object") return data;
+  var out = Object.assign({}, data);
+  if (!Array.isArray(out.items)) return out;
+  out.items = out.items
+    .map(function (it) {
+      if (!it || typeof it !== "object") return null;
+      var title = String(it.title || "").trim();
+      if (!title) return null;
+      return Object.assign({}, it, {
+        image: normalizeImageField(it.image),
+        href: it.href != null && String(it.href).trim() ? String(it.href).trim() : "news.html?ctx=events",
+      });
+    })
+    .filter(Boolean);
+  return out;
+}
+
+function normalizeCmsPayload(filename, data) {
+  if (filename === "highlight.json") return normalizeHighlightCmsFile(data);
+  if (filename === "quickAnnouncements.json") return normalizeQuickAnnouncementsCmsFile(data);
+  return data;
+}
+
 function readJsonFile(fp) {
-  return unwrapCmsPayload(JSON.parse(fs.readFileSync(fp, "utf8")));
+  var filename = path.basename(fp);
+  var parsed = JSON.parse(fs.readFileSync(fp, "utf8"));
+  var clean = unwrapCmsPayload(parsed);
+  var normalized = normalizeCmsPayload(filename, clean);
+  var next = JSON.stringify(normalized, null, 2) + "\n";
+  var prev = fs.readFileSync(fp, "utf8");
+  if (next !== prev && next !== prev.trim() + "\n") {
+    fs.writeFileSync(fp, next, "utf8");
+    console.warn("Repaired CMS JSON: " + filename);
+  }
+  return normalized;
 }
 
 function readDefaults() {
@@ -266,7 +300,7 @@ function applyCmsFile(site, filename, data) {
       site.highlights = normalizeHighlightCmsFile(data);
       break;
     case "quickAnnouncements.json":
-      if (data.items) site.quickAnnouncements = data.items;
+      site.quickAnnouncements = normalizeQuickAnnouncementsCmsFile(data).items || [];
       break;
     case "latestUpdates.json":
       site.home = site.home || {};
