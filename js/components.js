@@ -205,9 +205,13 @@
     var isGold = item.variant === "gold";
 
     if (children && children.length) {
-      var panelWrap = isGold
-        ? "pointer-events-none absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,20rem)] max-w-[min(100vw-2rem,28rem)] translate-y-2 overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-mes-accentLight py-2 opacity-0 shadow-2xl shadow-black/20 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100"
-        : "pointer-events-none absolute left-0 top-full z-[70] min-w-[min(100vw-2rem,18rem)] max-w-[min(100vw-2rem,28rem)] translate-y-2 overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-white py-2 opacity-0 shadow-2xl shadow-black/15 transition-all duration-200 ease-out group-hover:pointer-events-auto group-hover:translate-y-0 group-hover:opacity-100";
+      var panelOuter =
+        "site-nav-dropdown absolute left-0 top-full z-[80] min-w-[min(100vw-2rem," +
+        (isGold ? "20rem" : "18rem") +
+        ")] max-w-[min(100vw-2rem,28rem)] overflow-visible pt-1 opacity-0 transition-all duration-200 ease-out group-hover:opacity-100 group-focus-within:opacity-100";
+      var panelInner = isGold
+        ? "overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-mes-accentLight py-2 shadow-2xl shadow-black/20"
+        : "overflow-visible rounded-b-xl border-t-2 border-mes-goldLine bg-white py-2 shadow-2xl shadow-black/15";
 
       var childClass = isGold
         ? "mx-1 block rounded-md px-3 py-2.5 text-sm font-bold leading-snug text-mes-primaryDark transition-all duration-200 ease-out first:mt-0 hover:translate-x-1 hover:bg-cyan-100/80 hover:shadow-md"
@@ -228,8 +232,11 @@
         CHEVRON +
         "</a>" +
         '<div class="' +
-        panelWrap +
+        panelOuter +
         '" role="menu">' +
+        '<div class="' +
+        panelInner +
+        '">' +
         children
           .map(function (c) {
             return (
@@ -243,7 +250,7 @@
             );
           })
           .join("") +
-        "</div></div>"
+        "</div></div></div>"
       );
     }
     var homeMark = isHomeNavItem(item) ? " js-nav-home-vimp" : "";

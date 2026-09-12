@@ -485,6 +485,16 @@ body.site-body #site-header > * {
   z-index: 1;
 }
 
+/* Nav dropdowns must sit above the news ticker strip below */
+body.site-body #site-header > #site-main-nav {
+  z-index: 30;
+  overflow: visible;
+}
+
+body.site-body #site-header > #site-news-ticker {
+  z-index: 5;
+}
+
 body.site-body #site-header > .relative.bg-gradient-to-r {
   overflow: hidden;
   background: linear-gradient(
@@ -1439,6 +1449,15 @@ announcement-card .announcement-card__media img,
 
 #site-main-nav .group > .site-nav-link {
   width: 100%;
+}
+
+#site-main-nav .site-nav-dropdown {
+  pointer-events: none;
+}
+
+#site-main-nav .group:hover .site-nav-dropdown,
+#site-main-nav .group:focus-within .site-nav-dropdown {
+  pointer-events: auto;
 }
 
 /* News ticker — light strip under nav */
