@@ -106,8 +106,8 @@
 
   /**
    * Home hero: padding-top = fixed header height + same gap as hero grid row-gap
-   * (see render.js: gap-4 / lg:gap-y-5) so the white strip under the menu matches
-   * the strip between the fund appeal card and the news card.
+   * (see render.js: gap-3 / lg:gap-y-3) so the strip under the ticker matches
+   * the strip between the slideshow row and the badge/institutions row.
    */
   function initHomeHeroTopPadding() {
     var hero = document.getElementById("home-hero");
@@ -118,9 +118,9 @@
       return parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     }
 
-    /** Matches Tailwind gap-y: gap-4 → 1rem, lg:gap-y-5 → 1.25rem */
+    /** Matches Tailwind gap-y-3 → 0.75rem */
     function heroStripRem() {
-      return window.matchMedia("(min-width: 1024px)").matches ? 1.25 : 1;
+      return 0.75;
     }
 
     function apply() {
