@@ -498,11 +498,11 @@
       })
       .join("");
     el.innerHTML =
-      '<div class="mb-3 sm:mb-4" data-reveal>' +
+      '<div class="mb-2" data-reveal>' +
       '<span class="inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-mes-primary">' +
       '<span class="text-base leading-none text-mes-accent" aria-hidden="true">★</span> Highlights' +
       "</span></div>" +
-      '<div class="site-highlights-stack flex flex-col gap-8 lg:gap-10">' +
+      '<div class="site-highlights-stack flex flex-col gap-5 lg:gap-6">' +
       cards +
       "</div>";
   }
@@ -745,7 +745,7 @@
       leg.innerHTML =
         '<div class="absolute inset-0 bg-gradient-to-r from-mes-nav via-mes-navDeep to-mes-nav bg-[length:200%_100%] animate-gradient-shift motion-reduce:animate-none"></div>' +
         '<div class="pointer-events-none absolute inset-0 bg-gradient-to-b from-white/10 to-transparent"></div>' +
-        '<div class="relative mx-auto flex max-w-7xl flex-col items-center justify-center gap-5 px-4 py-8 text-center sm:flex-row sm:gap-10 sm:px-8 sm:py-10 lg:px-10" data-reveal>' +
+        '<div class="relative mx-auto flex max-w-7xl flex-col items-center justify-center gap-4 px-4 py-5 text-center sm:flex-row sm:gap-8 sm:px-8 sm:py-6 lg:px-10" data-reveal>' +
         '<span class="font-display shrink-0 rounded-full border border-mes-goldLine/60 bg-mes-navDeep/80 px-5 py-2 text-sm font-bold tracking-wide text-white shadow-lg sm:text-base">' +
         esc(l.badge) +
         "</span>" +
@@ -777,23 +777,23 @@
     if (ap && h.aboutPreview) {
       var b = h.aboutPreview;
       ap.innerHTML =
-        '<div class="grid gap-12 lg:grid-cols-2 lg:items-center">' +
+        '<div class="grid gap-8 lg:grid-cols-2 lg:items-center">' +
         '<div data-reveal>' +
         '<div class="border-b border-slate-200 pb-2">' +
         '<h2 class="font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl">' +
         esc(b.title) +
         "</h2></div>" +
-        '<p class="mt-4 text-lg font-medium text-mes-primaryDark">' +
+        '<p class="mt-3 text-lg font-medium text-mes-primaryDark">' +
         esc(b.subtitle) +
         "</p>" +
         b.paragraphs
           .map(function (p) {
-            return '<p class="mt-4 text-lg leading-relaxed text-slate-600">' + esc(p) + "</p>";
+            return '<p class="mt-3 text-lg leading-relaxed text-slate-600">' + esc(p) + "</p>";
           })
           .join("") +
         '<a href="' +
         esc(b.linkHref) +
-        '" class="site-action-link mt-8 inline-flex font-semibold hover:underline">' +
+        '" class="site-action-link mt-6 inline-flex font-semibold hover:underline">' +
         esc(b.linkLabel) +
         " →</a>" +
         "</div>" +
@@ -818,7 +818,7 @@
       var featuredRow = "";
       if (firstStory) {
         featuredRow =
-          '<div class="home-alumni-featured mt-6 grid gap-6 lg:grid-cols-2 lg:items-stretch" data-reveal-stagger>' +
+          '<div class="home-alumni-featured mt-4 grid gap-4 lg:grid-cols-2 lg:items-stretch" data-reveal-stagger>' +
           '<div class="flex min-w-0 flex-col">' +
           buildAlumniSpotlightStoryHtml(firstStory) +
           "</div>" +
@@ -826,14 +826,14 @@
           "</div>";
       } else {
         featuredRow =
-          '<div class="mt-6 flex justify-center" data-reveal-stagger>' +
+          '<div class="mt-4 flex justify-center" data-reveal-stagger>' +
           '<div class="w-full max-w-md">' +
           buildAlumniNetworkGlanceHtml(al) +
           "</div></div>";
       }
       var moreStoriesHtml =
         moreStories.length > 0
-          ? '<div class="mt-8 grid gap-6 md:grid-cols-2" data-reveal-stagger>' +
+          ? '<div class="mt-5 grid gap-4 md:grid-cols-2" data-reveal-stagger>' +
             moreStories.map(buildAlumniSpotlightStoryHtml).join("") +
             "</div>"
           : "";
@@ -843,7 +843,7 @@
         '<h2 class="relative inline-block pb-2 font-display text-3xl font-bold tracking-tight text-mes-primary sm:text-4xl after:absolute after:bottom-0 after:left-0 after:h-[3px] after:w-24 after:bg-mes-red">' +
         esc(al.sectionTitle) +
         "</h2></div>" +
-        '<p class="mt-4 text-lg leading-relaxed text-slate-600">' +
+        '<p class="mt-3 text-lg leading-relaxed text-slate-600">' +
         esc(al.sectionSubtitle) +
         "</p>" +
         "</div>" +

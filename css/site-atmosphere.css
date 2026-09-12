@@ -370,6 +370,11 @@ body.site-body[data-page="home"] #home-highlight-section + .site-legacy-band {
   border-top-color: rgba(8, 145, 178, 0.06);
 }
 
+/* Home — back-to-back sections: trim double band padding */
+body.site-body[data-page="home"] main .home-section-balanced + .home-section-balanced {
+  padding-block-start: clamp(0.5rem, 0.45vw + 0.2rem, 0.75rem);
+}
+
 /* Home — About our school: extra-light band */
 body.site-body[data-page="home"] .home-about-band {
   background: linear-gradient(
