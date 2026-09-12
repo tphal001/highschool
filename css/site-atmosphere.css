@@ -556,8 +556,8 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 /* Circular logo — sharp render, no header blur bleed */
 .site-logo-mark {
   display: flex;
-  height: 5rem;
-  width: 5rem;
+  height: 6rem;
+  width: 6rem;
   flex-shrink: 0;
   align-items: center;
   justify-content: center;
@@ -586,8 +586,15 @@ body.site-body #site-header > .relative.bg-gradient-to-r {
 
 @media (min-width: 640px) {
   .site-logo-mark {
-    height: 5.5rem;
-    width: 5.5rem;
+    height: 7rem;
+    width: 7rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-logo-mark {
+    height: 7.75rem;
+    width: 7.75rem;
   }
 }
 

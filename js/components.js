@@ -401,7 +401,7 @@
         esc(logoImg) +
         '" alt="' +
         esc(schoolName) +
-        '" class="site-logo-mark__img" width="88" height="88" decoding="async" fetchpriority="high" />' +
+        '" class="site-logo-mark__img" width="124" height="124" decoding="async" fetchpriority="high" />' +
         "</span>"
       );
     }
