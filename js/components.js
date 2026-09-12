@@ -135,9 +135,11 @@
             ? '<a href="' +
               esc(b.href) +
               '" class="site-header-info-card site-glass site-card-3d relative block h-full border border-slate-200 shadow-sm transition-all duration-300 ease-out hover:border-mes-accent/50">' +
+              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-cyan-500"></span>' +
               inner +
               "</a>"
             : '<div class="site-header-info-card site-glass relative h-full border border-slate-200 shadow-sm">' +
+              '<span class="pointer-events-none absolute right-0 top-0 h-0 w-0 border-l-[8px] border-t-[8px] border-l-transparent border-t-cyan-500"></span>' +
               inner +
               "</div>";
         return '<li class="site-header-info-boxes__item min-w-0 flex-1 sm:max-w-[9rem] lg:max-w-[9.75rem]">' + wrap + "</li>";
